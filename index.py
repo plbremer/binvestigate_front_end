@@ -10,10 +10,10 @@ from app import app
 #from app import server
 from apps import compound
 from apps import species
-# from apps import organ
-# from apps import disease
+from apps import organ
+from apps import disease
 from apps import additional_filters
-# from apps import result
+from apps import result
 # from apps import visualizations
 
 
@@ -26,12 +26,13 @@ app.layout = html.Div(
 
         dcc.Store(id='store_from_species'),
         dcc.Store(id='store_to_species'),
-        # dcc.Store(id='store_from_organ'),
-        # dcc.Store(id='store_from_disease'),
 
-        # dcc.Store(id='store_to_species'),
-        # dcc.Store(id='store_to_organ'),
-        # dcc.Store(id='store_to_disease'),
+        dcc.Store(id='store_from_organ'),
+        dcc.Store(id='store_to_organ'),
+
+
+        dcc.Store(id='store_from_disease'),
+        dcc.Store(id='store_to_disease'),
 
         dcc.Store(id='store_additional'),
 
