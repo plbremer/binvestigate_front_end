@@ -112,14 +112,14 @@ layout=html.Div(
                                 html.H5('Pre-selected common groups of individuals')
                             ],
                             width={'size':4,'offset':0},
-                            align='center'
+                            #align='center'
                         ),
                         dbc.Col(
                             children=[
                                 html.H5('Pre-selected common groups of individuals')
                             ],
                             width={'size':4,'offset':8},
-                            align='center'
+                            #align='center'
                         )
                     ],
                 ),
@@ -264,14 +264,16 @@ layout=html.Div(
             dbc.Row(
                 children=[
                     dbc.Col(
-                        cyto.Cytoscape(
-                            id='cytoscape_from_species',
-                            layout={'name':'klay'},
-                            elements=species_network_dict_from['elements'],
-                            minZoom=0.15,
-                            maxZoom=5,
-                            stylesheet=basic_stylesheet,
-                            style={'width': '700px','height':'1000px'}
+                        dbc.Card(
+                            cyto.Cytoscape(
+                                id='cytoscape_from_species',
+                                layout={'name':'klay'},
+                                elements=species_network_dict_from['elements'],
+                                minZoom=0.15,
+                                maxZoom=5,
+                                stylesheet=basic_stylesheet,
+                                style={'width': '700px','height':'1000px'}
+                            )
                         )
                     ),
                     dbc.Col(

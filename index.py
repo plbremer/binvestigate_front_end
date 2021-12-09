@@ -51,7 +51,7 @@ app.layout = html.Div(
                         dcc.Link('Organ | ',href='/apps/organ'),
                         dcc.Link('Disease | ',href='/apps/disease'),
                         dcc.Link('Additional Filters | ',href='/apps/additional_filters'),
-                        dcc.Link('Results | ',href='/apps/results'),
+                        dcc.Link('Results | ',href='/apps/result'),
                         dcc.Link('Visualizations',href='/apps/visualizations')
                     ]
                 ),
@@ -86,8 +86,8 @@ def display_page(temp_pathname):
         return [disease.layout]
     elif temp_pathname == '/apps/additional_filters':
         return [additional_filters.layout]
-    elif temp_pathname == '/apps/results':
-        return [results.layout]
+    elif temp_pathname == '/apps/result':
+        return [result.layout]
     elif temp_pathname == '/apps/visualizations':
         return [visualizations.layout]
     else:

@@ -51,7 +51,7 @@ layout=html.Div(
                 html.Div(
                     children=[
                         daq.ToggleSwitch(
-                            id='toggleswitch_additional',
+                            id='toggleswitch_presence_absence',
                             value=True
                         )
                     ]
