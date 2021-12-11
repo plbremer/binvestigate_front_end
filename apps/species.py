@@ -355,7 +355,10 @@ def compile_set_of_valid_selections(temp_store_organ,temp_store_disease):
     elif (temp_store_disease is not None) and (temp_store_organ is not None):
         #filter the index panda to get a list of species that are valid choices
         valid_base_species_choices=list(set(index_panda.loc[index_panda.organ.isin(descendants_that_we_map_to_organ) & index_panda.disease.isin(descendants_that_we_map_to_disease)].species.to_list()))
-
+    
+    a=[i for i in valid_base_species_choices if (pandas.isna(i)==False)]
+    valid_base_species_choices=a
+    
     #create the list of nodes that are valid selections from the mapped-to-species
     #step 1 find the lowest common ancestor
     #step 2 find all nodes along each path from every mapped-to-species to LCA
