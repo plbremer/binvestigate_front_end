@@ -3,7 +3,11 @@ from dash import html
 import dash_bootstrap_components as dbc
 from dash.dependencies import Input, Output, State
 
-
+#things for api#
+import requests
+import pandas
+base_url='http://127.0.0.1:5000/'
+################
 
 import pathlib
 
@@ -12,6 +16,10 @@ from app import app
 
 PATH = pathlib.Path(__file__).parent
 DATA_PATH = PATH.joinpath("../datasets").resolve()
+
+
+
+
 
 
 
@@ -78,7 +86,8 @@ layout=html.Div(
     [Output(component_id='subsetted_table',component_property='columns'),
     Output(component_id='subsetted_table',component_property='data')],
     [Input(component_id='button_perform_slice',component_property='n_clicks')],
-    [State(component_id='store_from_species',component_property='data'),
+    [State(component_id='store_compound',component_property='data'),
+    State(component_id='store_from_species',component_property='data'),
     State(component_id='store_to_species',component_property='data'),
     State(component_id='store_from_organ',component_property='data'),
     State(component_id='store_to_organ',component_property='data'),
@@ -88,6 +97,7 @@ layout=html.Div(
 )
 def slice_database(
     button_perform_slice_n_clicks,
+    store_compound_data,
     store_from_species_data,
     store_to_species_data,
     store_from_organ_data,
@@ -97,6 +107,7 @@ def slice_database(
     store_additional_data
 ):
     print(button_perform_slice_n_clicks)
+    print(store_compound_data)
     print(store_from_species_data)
     print(store_to_species_data)
     print(store_from_organ_data)
@@ -105,5 +116,20 @@ def slice_database(
     print(store_to_disease_data)
     print(store_additional_data)
 
+    total_json_output=[
+        store_compound_data,
+        store_from_species_data,
+        store_to_species_data,
+        store_from_organ_data,
+        store_to_organ_data,
+        store_from_disease_data,
+        store_to_disease_data,
+        store_additional_data
+    ]
+
+    response=requests.post(base_url+'/foldchangetable/',json=total_json_output)
+    #temp=pandas.read_json(response.json(),orient='records')
+    #print(temp)
+    print(response.json())
 
 
