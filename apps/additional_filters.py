@@ -159,7 +159,7 @@ layout=html.Div(
                         dcc.Input(
                             id='min_leaf_dist_compounds',
                             placeholder='',
-                            value=0,
+                            value=-1,
                             debounce=True
                         )
                     ]
@@ -206,7 +206,7 @@ layout=html.Div(
                         dcc.Input(
                             id='min_leaf_dist_species',
                             placeholder='',
-                            value=0,
+                            value=-1,
                             debounce=True
                         )
                     ]
@@ -251,7 +251,7 @@ layout=html.Div(
                         dcc.Input(
                             id='min_leaf_dist_organs',
                             placeholder='',
-                            value=0,
+                            value=-1,
                             debounce=True
                         )
                     ]
@@ -297,7 +297,7 @@ layout=html.Div(
                         dcc.Input(
                             id='min_leaf_dist_diseases',
                             placeholder='',
-                            value=0,
+                            value=-1,
                             debounce=True
                         )
                     ]

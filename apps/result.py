@@ -116,20 +116,25 @@ def slice_database(
     print(store_to_disease_data)
     print(store_additional_data)
 
-    total_json_output=[
-        store_compound_data,
-        store_from_species_data,
-        store_to_species_data,
-        store_from_organ_data,
-        store_to_organ_data,
-        store_from_disease_data,
-        store_to_disease_data,
-        store_additional_data
-    ]
+    total_json_output={
+        'store_compound':store_compound_data,
+        'store_from_species':store_from_species_data,
+        'store_to_species':store_to_species_data,
+        'store_from_organ':store_from_organ_data,
+        'store_to_organ':store_to_organ_data,
+        'store_from_disease':store_from_disease_data,
+        'store_to_disease':store_to_disease_data,
+        'store_additional':store_additional_data
+    }
 
     response=requests.post(base_url+'/foldchangetable/',json=total_json_output)
     #temp=pandas.read_json(response.json(),orient='records')
     #print(temp)
     print(response.json())
+    
+    temp=pandas.read_json(response.json(),orient='records')
+    column_dict_list=[
+        {'name':temp_col,'id':temp_col} for temp_col in temp.columns
+    ]
 
-
+    return column_dict_list,temp.to_dict(orient='records')
