@@ -320,9 +320,21 @@ disease_map_to_dict={temp_tup[0]:temp_tup[1] for temp_tup in list(zip(disease_ma
 index_panda_address=DATA_PATH.joinpath('index_panda.bin')
 index_panda=pandas.read_pickle(index_panda_address)
 
+
 def compile_set_of_valid_selections(temp_store_species,temp_store_disease):
 
     if temp_store_species is not None:
+        
+        #if the store exists but is empty, then we need to make everything a valid choice
+        if len(temp_store_species['species'])==0:
+            total_descendant_set_species=set()
+            total_descendant_set_species=total_descendant_set_species.union(nx.algorithms.dag.descendants(networkx_species,'1'))
+            total_descendant_set_species.add('1')
+            descendants_that_we_map_to_species=set()
+            for temp_element in total_descendant_set_species:
+                if species_map_to_dict[temp_element]=='Yes':
+                    descendants_that_we_map_to_species.add(temp_element)        
+
         #for each store, we get a list of mapped-to descendants
         total_descendant_set_species=set()
         for temp_element in temp_store_species['species']:
@@ -334,6 +346,17 @@ def compile_set_of_valid_selections(temp_store_species,temp_store_disease):
                 descendants_that_we_map_to_species.add(temp_element)
     
     if temp_store_disease is not None:
+        
+        #if the store exists but is empty, then we need to make everything a valid choice
+        if len(temp_store_disease['disease'])==0:
+            total_descendant_set_disease=set()
+            total_descendant_set_disease=total_descendant_set_disease.union(nx.algorithms.dag.descendants(networkx_disease,'disease'))
+            total_descendant_set_disease.add('disease')
+            descendants_that_we_map_to_disease=set()
+            for temp_element in total_descendant_set_disease:
+                if disease_map_to_dict[temp_element]=='Yes':
+                    descendants_that_we_map_to_disease.add(temp_element)  
+        
         #do the same thing for disease
         total_descendant_set_disease=set()
         for temp_element in temp_store_disease['disease']:
@@ -353,12 +376,19 @@ def compile_set_of_valid_selections(temp_store_species,temp_store_disease):
     elif (temp_store_disease is not None) and (temp_store_species is None):
         valid_base_organ_choices=list(set(index_panda.loc[index_panda.disease.isin(descendants_that_we_map_to_disease)].organ.to_list()))
     elif (temp_store_disease is not None) and (temp_store_species is not None):
+        #if one has checkboxes but the other doesnt
+        if len(temp_store_disease['disease'])!=0 and len(temp_store_species['species'])==0:
+            valid_base_organ_choices=list(set(index_panda.loc[index_panda.disease.isin(descendants_that_we_map_to_disease)].organ.to_list()))
+        elif len(temp_store_disease['disease'])==0 and len(temp_store_species['species'])!=0:
+            valid_base_organ_choices=list(set(index_panda.loc[index_panda.species.isin(descendants_that_we_map_to_species)].organ.to_list()))
+        elif len(temp_store_disease['disease'])!=0 and len(temp_store_species['species'])!=0:
+            valid_base_organ_choices=list(set(index_panda.loc[index_panda.species.isin(descendants_that_we_map_to_species) & index_panda.disease.isin(descendants_that_we_map_to_disease)].organ.to_list()))
+                        
         #filter the index panda to get a list of organ that are valid choices
-        valid_base_organ_choices=list(set(index_panda.loc[index_panda.species.isin(descendants_that_we_map_to_species) & index_panda.disease.isin(descendants_that_we_map_to_disease)].organ.to_list()))
+        #valid_base_organ_choices=list(set(index_panda.loc[index_panda.species.isin(descendants_that_we_map_to_species) & index_panda.disease.isin(descendants_that_we_map_to_disease)].organ.to_list()))
     a=[i for i in valid_base_organ_choices if (pandas.isna(i)==False)]
     valid_base_organ_choices=a
-
-
+    
     #create the list of nodes that are valid selections from the mapped-to-organ
     #step 1 find the lowest common ancestor
     #step 2 find all nodes along each path from every mapped-to-organ to LCA
@@ -369,9 +399,7 @@ def compile_set_of_valid_selections(temp_store_species,temp_store_disease):
         return set(valid_base_organ_choices)
     else:
         #the basic idea is that we test the first two nodes, get a lca, then test the current lca against each other node. it either goes up or stays
-        print(valid_base_organ_choices)
         for i,temp_element in enumerate(valid_base_organ_choices):
-            print(temp_element)
             if i==0:
                 temp_tuple_tuple=((valid_base_organ_choices[0],valid_base_organ_choices[1],),)
                 temp_lca=next(nx.algorithms.lowest_common_ancestors.tree_all_pairs_lowest_common_ancestor(G=networkx_organ,pairs=temp_tuple_tuple))[1]
@@ -385,6 +413,9 @@ def compile_set_of_valid_selections(temp_store_species,temp_store_disease):
         nodes_for_subgraph_set=nodes_for_subgraph_set.union(set(nodes_to_lca))
 
     return nodes_for_subgraph_set
+
+
+
     
 def delete_node_reconnect_cyto_elements(temp_elements,temp_tapnode):
     #scroll through nodes and delete the element where [data][id] is the tempnode[id]
@@ -508,7 +539,12 @@ def callback_aggregate_from(
         temp_nodes_to_remove_organ=organ_elements_starting_from.difference(valid_organ_selections)
         for temp_node in temp_nodes_to_remove_organ:
             cytoscape_from_organ_elements=delete_node_reconnect_cyto_elements(cytoscape_from_organ_elements,temp_node)
-        cytoscape_from_organ_zoom=5/len(valid_organ_selections)
+        ##hot fix for internship applicaitons
+        try:
+            cytoscape_from_organ_zoom=5/len(valid_organ_selections)
+        except ZeroDivisionError:
+            cytoscape_from_organ_zoom=5/5
+        ##
         cytoscape_from_organ_pan={'x':600,'y':1}
         
         return cytoscape_from_organ_elements, checklist_from_organ_value, dropdown_from_organ_value,store_from_organ_data, dropdown_from_organ_options,checklist_from_organ_options,cytoscape_from_organ_zoom,cytoscape_from_organ_pan
@@ -526,9 +562,15 @@ def callback_aggregate_from(
         temp_nodes_to_remove_organ=organ_elements_starting_from.difference(valid_organ_selections)
         for temp_node in temp_nodes_to_remove_organ:
             cytoscape_from_organ_elements=delete_node_reconnect_cyto_elements(cytoscape_from_organ_elements,temp_node)
-        cytoscape_from_organ_zoom=5/len(valid_organ_selections)
+        ##hot fix for internship applicaitons
+        try:
+            cytoscape_from_organ_zoom=5/len(valid_organ_selections)
+        except ZeroDivisionError:
+            cytoscape_from_organ_zoom=5/5
+        ##
         cytoscape_from_organ_pan={'x':600,'y':1}
 
+        #print(cytoscape_from_organ_elements)
         for temp_node in cytoscape_from_organ_elements['nodes']:
             if temp_node['data']['id'] in store_from_organ_data['organ']:
                 temp_node['classes']='selected'
@@ -767,7 +809,12 @@ def callback_aggregate_to(
         temp_nodes_to_remove_organ=organ_elements_starting_to.difference(valid_organ_selections)
         for temp_node in temp_nodes_to_remove_organ:
             cytoscape_to_organ_elements=delete_node_reconnect_cyto_elements(cytoscape_to_organ_elements,temp_node)
-        cytoscape_to_organ_zoom=5/len(valid_organ_selections)
+        ##hot fix for internship applicaitons
+        try:
+            cytoscape_from_organ_zoom=5/len(valid_organ_selections)
+        except ZeroDivisionError:
+            cytoscape_from_organ_zoom=5/5
+        ##
         cytoscape_to_organ_pan={'x':600,'y':1}
         
         return cytoscape_to_organ_elements, checklist_to_organ_value, dropdown_to_organ_value,store_to_organ_data, dropdown_to_organ_options,checklist_to_organ_options,cytoscape_to_organ_zoom,cytoscape_to_organ_pan
@@ -785,7 +832,12 @@ def callback_aggregate_to(
         temp_nodes_to_remove_organ=organ_elements_starting_to.difference(valid_organ_selections)
         for temp_node in temp_nodes_to_remove_organ:
             cytoscape_to_organ_elements=delete_node_reconnect_cyto_elements(cytoscape_to_organ_elements,temp_node)
-        cytoscape_to_organ_zoom=5/len(valid_organ_selections)
+        ##hot fix for internship applicaitons
+        try:
+            cytoscape_from_organ_zoom=5/len(valid_organ_selections)
+        except ZeroDivisionError:
+            cytoscape_from_organ_zoom=5/5
+        ##
         cytoscape_to_organ_pan={'x':600,'y':1}
 
         for temp_node in cytoscape_to_organ_elements['nodes']:
