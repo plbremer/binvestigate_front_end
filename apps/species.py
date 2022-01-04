@@ -536,7 +536,7 @@ def callback_aggregate_from(
         for temp_node in temp_nodes_to_remove_species:
             cytoscape_from_species_elements=delete_node_reconnect_cyto_elements(cytoscape_from_species_elements,temp_node)
 
-        cytoscape_from_species_zoom=6/len(valid_species_selections)
+        cytoscape_from_species_zoom=5/len(valid_species_selections)
 
 
         cytoscape_from_species_pan={'x':600,'y':1}
@@ -557,7 +557,7 @@ def callback_aggregate_from(
         for temp_node in temp_nodes_to_remove_species:
             cytoscape_from_species_elements=delete_node_reconnect_cyto_elements(cytoscape_from_species_elements,temp_node)
 
-        cytoscape_from_species_zoom=6/len(valid_species_selections)
+        cytoscape_from_species_zoom=5/len(valid_species_selections)
 
         cytoscape_from_species_pan={'x':600,'y':1}
 
