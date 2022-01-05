@@ -39,9 +39,9 @@ for temp_element in compound_network_dict['elements']['nodes']:
 
 #defines the map between the various boxes and the node ids
 checklist_hashmap={
-    'both_glucoses': ['5','22'],
-    'alanine':['2'],
-    'all basic bins':['2', '3', '4', '5', '6', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '21', '22', '23']
+    'Both glucoses': ['5','22'],
+    'Alanine':['2'],
+    'All basic compounds':['2', '3', '4', '5', '6', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '21', '22', '23']
 }
 
 basic_stylesheet=[
@@ -73,75 +73,123 @@ basic_stylesheet=[
 # networkx=nx.readwrite.gpickle.read_gpickle(networkx_address)
 
 
+
 layout=html.Div(
     children=[
-        html.Div(
-            id='div_cytoscape_compound_cyto',
+        dbc.Row(
             children=[
-                cyto.Cytoscape(
-                    id='cytoscape_compound',
-                    layout={'name':'dagre'},
-                    elements=compound_network_dict['elements'],
-                    minZoom=0.3,
-                    maxZoom=5,
-                    stylesheet=basic_stylesheet,
-                    style={'width': '1500px','height':'750px'}
+                dbc.Col(
+                    children=[
+                                                
+                        html.H2("Compounds", className='text-center'),
+                        html.Br(),
+                        dbc.Card(
+                            children=[
+                                dbc.CardBody(
+                                    html.H4(
+                                        "Select compounds that you want to analyze. The four selection options \
+                                        update each other when one is updated.", className='text-center')
+                                )
+                            ]
+                        )
+                    ],
+                    width={'size':4}#,
+                    #align='center'
                 )
-            ]
+            ],
+            justify='center'
         ),
-        html.Div(    
+        html.Br(),
+        dbc.Row(
             children=[
-                dbc.Row(
-                    dbc.Col(
-                        children=[
-                            dcc.Checklist(
-                                id='checklist_compound',
-                                options=[
-                                    {'label': i, 'value': i} for i in checklist_hashmap.keys()
+                dbc.Col(
+                    children=[
+
+                        dbc.Card(
+                            dbc.CardBody(
+                                children=[
+                                    dbc.Card(html.H4("Use this button to reset selection to nothing")),
+                                    dbc.Card(
+                                        html.Button(
+                                            'Reset selections',
+                                            id='button_compound',
+                                        )
+                                    ),
                                 ]
                             )
-                        ],
-                        width='auto',
-                        align='center'
-                    )
-                ),
-            ]
-        ),
-        html.Div(    
-            children=[
-                dbc.Row(
-                    dbc.Col(
-                        children=[
-                            dcc.Dropdown(
-                                id='dropdown_compound',
-                                options=[
-                                    {'label': temp_node['data']['label'], 'value': temp_node['data']['id']} for temp_node in compound_network_dict['elements']['nodes']
-                                ],
-                                multi=True
+                        ),
+                        html.Br(),
+                        dbc.Card(
+                            dbc.CardBody(
+                                children=[                    
+                                    dbc.Card(html.H4("Use this dropdown to quickly choose (groups of) compound. You can type into it.")),
+                                    dbc.Card(
+                                        dcc.Dropdown(
+                                            id='dropdown_compound',
+                                            options=[
+                                                {'label': temp_node['data']['label'], 'value': temp_node['data']['id']} for temp_node in compound_network_dict['elements']['nodes']
+                                            ],
+                                            multi=True,
+                                            style={
+                                                'color': '#212121',
+                                                'background-color': '#212121',
+                                            }
+                                        )
+                                    ),
+                                ]
                             )
-                        ],
-                    )
-                ),
-            ]
-        ),
-        html.Div(    
-            children=[
-                dbc.Row(
-                    dbc.Col(
-                        children=[
-                            html.Button(
-                                'Reset selections',
-                                id='button_compound',
-                            )
-                        ],
-                    )
-                ),
-            ]
-        ),
+                        ),
+                        html.Br(),
+                        dbc.Card(
+                            dbc.CardBody(
+                                children=[                    
 
-    
+
+                                    dbc.Card(html.H4("Use these checkboxes to select multiple compound at once. Selecting multiple compound will compare each individually. Choosing their parent will aggregate them.")),
+                                    dbc.Card(
+                                        dcc.Checklist(
+                                            id='checklist_compound',
+                                            options=[
+                                                {'label': i, 'value': i} for i in checklist_hashmap.keys()
+                                            ],
+                                            labelStyle={'display':'block'}
+                                        )
+                                    ),
+                                ]
+                            )
+                        ),
+                        html.Br(),
+                        dbc.Card(
+                            dbc.CardBody(
+                                children=[                    
+
+                                    
+                                    dbc.Card(html.H4("Use this graph to visualize the selected (groups of) compound. Selections can be made by zooming/clicking nodes.")),
+                                    dbc.Card(
+                                        cyto.Cytoscape(
+                                            id='cytoscape_compound',
+                                            layout={'name':'dagre'},#,'fit':True},
+                                            elements=compound_network_dict['elements'],
+                                            minZoom=0.15,
+                                            maxZoom=3,
+                                            #responsive=True,
+                                            stylesheet=basic_stylesheet,
+                                            style={'width':'100%','height':'1000px'}
+                                            #style={'width': '200px','height':'1000px'}
+                                        )
+                                    )
+                                ]
+                            )
+                        )
+                    ],
+                    width={'size':8}
+                ),
+            ],
+            justify='center'
+        )
     ]
 )
+
 
 
 @app.callback(

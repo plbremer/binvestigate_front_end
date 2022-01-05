@@ -61,14 +61,10 @@ for temp_element in organ_network_dict_to['elements']['nodes']:
 
 #defines the map between the various boxes and the node ids
 checklist_hashmap_organ_from={
-    'some random plants': ['4081','29760','3760','3656','4081','3694'],
-    'some random bacteria':['45133','33196','3705','5007','5476','9397','3052','47906','3055','3081','3075','3076','554065','3077','3041','535','1485','1502','13442','5207','3046','3038','853'],
-    'monkeyish things':['9606','9544','9598','9557']
+    'Blood Components': ['A12.207.152.693','A12.207.152.846']
 }
 checklist_hashmap_organ_to={
-    'some random plants': ['4081','29760','3760','3656','4081','3694'],
-    'some random bacteria':['45133','33196','3705','5007','5476','9397','3052','47906','3055','3081','3075','3076','554065','3077','3041','535','1485','1502','13442','5207','3046','3038','853'],
-    'monkeyish things':['9606','9544','9598','9557']
+    'Blood Components': ['A12.207.152.693','A12.207.152.846']
 }
 
 
@@ -101,205 +97,206 @@ basic_stylesheet=[
 
 layout=html.Div(
     children=[
-        html.Div(
+        dbc.Row(
             children=[
-                html.Br(),
-                html.Br()
-            ]
-        ),
-        html.Div(    
-            children=[
-                dbc.Row(
+                dbc.Col(
                     children=[
-                        dbc.Col(
-                            children=[
-                                html.H5('Pre-selected common groups of individuals')
-                            ],
-                            width={'size':4,'offset':0},
-                            #align='center'
-                        ),
-                        dbc.Col(
-                            children=[
-                                html.H5('Pre-selected common groups of individuals')
-                            ],
-                            width={'size':4,'offset':8},
-                            #align='center'
-                        )
-                    ],
-                ),
-            ]
-        ),
-        html.Div(    
-            children=[
-                dbc.Row(
-                    children=[
-                        dbc.Col(
-                            children=[
-                                dcc.Checklist(
-                                    id='checklist_from_organ',
-                                    options=[
-                                        {'label': i, 'value': i} for i in checklist_hashmap_organ_from.keys()
-                                    ]
-                                )
-                            ],
-                            width={'size':4,'offset':0},
-                            align='center'
-                        ),
-                        dbc.Col(
-                            children=[
-                                dcc.Checklist(
-                                    id='checklist_to_organ',
-                                    options=[
-                                        {'label': i, 'value': i} for i in checklist_hashmap_organ_from.keys()
-                                    ]
-                                )
-                            ],
-                            width={'size':4,'offset':8},
-                            align='center'
-                        )
-                    ],
-
-                ),
-            ]
-        ),
-        html.Div(    
-            children=[
-                dbc.Row(
-                    children=[
-                        dbc.Col(
-                            children=[
-                                html.H5('Typable Dropdown with all selections')
-                            ],
-                            width={'size':4,'offset':0},
-                            align='center'
-                        ),
-                        dbc.Col(
-                            children=[
-                                html.H5('Typable Dropdown with all selections')
-                            ],
-                            width={'size':4,'offset':8},
-                            align='center'
-                        )
-                    ],
-                ),
-            ]
-        ),
-        html.Div(    
-            children=[
-                dbc.Row(
-                    children=[
-                        dbc.Col(
-                            children=[
-                                dcc.Dropdown(
-                                    id='dropdown_from_organ',
-                                    options=[
-                                        {'label': temp_node['data']['label'], 'value': temp_node['data']['id']} for temp_node in organ_network_dict_from['elements']['nodes']
-                                    ],
-                                    multi=True
-                                )
-                            ],
-                            width={'size':4,'offset':0},
-                        ),
-                        dbc.Col(
-                            children=[
-                                dcc.Dropdown(
-                                    id='dropdown_to_organ',
-                                    options=[
-                                        {'label': temp_node['data']['label'], 'value': temp_node['data']['id']} for temp_node in organ_network_dict_from['elements']['nodes']
-                                    ],
-                                    multi=True
-                                )
-                            ],
-                            width={'size':4,'offset':8},
-                        )
-                    ]
-                )
-            ]
-        ),
-        html.Div(    
-            children=[
-                dbc.Row(
-                    children=[
-                        dbc.Col(
-                            children=[
-                                html.Button(
-                                    'Reset selections',
-                                    id='button_from_organ',
-                                )
-                            ],
-                            width={'size':4,'offset':0},
-                        ),
-                        dbc.Col(
-                            children=[
-                                html.Button(
-                                    'Reset selections',
-                                    id='button_to_organ',
-                                )
-                            ],
-                            width={'size':4,'offset':8},
-                        )
-                    ]
-                ),
-            ]
-        ),
-        html.Div(    
-            children=[
-                dbc.Row(
-                    children=[
-                        dbc.Col(
-                            children=[
-                                html.H5('Visualization of Selections. Zoomable and clickable.')
-                            ],
-                            width={'size':4,'offset':0},
-                            align='center'
-                        ),
-                        dbc.Col(
-                            children=[
-                                html.H5('Visualization of Selections. Zoomable and clickable.')
-                            ],
-                            width={'size':4,'offset':8},
-                            align='center'
-                        )
-                    ],
-                ),
-            ]
-        ),
-        html.Div(
-            dbc.Row(
-                children=[
-                    dbc.Col(
+                        html.H2("Organs", className='text-center'),
+                        html.Br(),
                         dbc.Card(
-                            cyto.Cytoscape(
-                                id='cytoscape_from_organ',
-                                layout={'name':'klay','fit':False},
-                                elements=organ_network_dict_from['elements'],
-                                minZoom=0.15,
-                                maxZoom=5,
-                                stylesheet=basic_stylesheet,
-                                style={'width': '700px','height':'1000px'}
+                            children=[
+                                dbc.CardBody(
+                                    html.H4(
+                                        "Select organ that you want to compare. For both *from* and *to*, the four selection options \
+                                        update each other when one is updated. Moreover, selecting a organ on this page will filter invalid Organ and Disease organ on their respective pages.", className='text-center')
+                                )
+                            ]
+                        )
+                    ],
+                    width={'size':4}#,
+                    #align='center'
+                )
+            ],
+            justify='center'
+        ),
+        html.Br(),
+        dbc.Row(
+            children=[
+                dbc.Col(
+                    children=[
+                        html.H2("Organs selected here", className='text-center'),
+                        html.Br(),
+                        dbc.Card(
+                            dbc.CardBody(
+                                children=[
+                                    dbc.Card(html.H4("Use this button to reset selection to nothing")),
+                                    dbc.Card(
+                                        html.Button(
+                                            'Reset selections',
+                                            id='button_from_organ',
+                                        )
+                                    ),
+
+                                ]
+                            )
+                        ),
+                        html.Br(),
+                        dbc.Card(
+                            dbc.CardBody(
+                                children=[                    
+                                    dbc.Card(html.H4("Use this dropdown to quickly choose (groups of) organ. You can type into it.")),
+                                    dbc.Card(
+                                        dcc.Dropdown(
+                                            id='dropdown_from_organ',
+                                            options=[
+                                                {'label': temp_node['data']['label'], 'value': temp_node['data']['id']} for temp_node in organ_network_dict_from['elements']['nodes']
+                                            ],
+                                            multi=True,
+                                            style={
+                                                'color': '#212121',
+                                                'background-color': '#212121',
+                                            }
+                                        )
+                                    ),
+                                ]
+                            )
+                        ),
+                        html.Br(),
+                        dbc.Card(
+                            dbc.CardBody(
+                                children=[                    
+                                    dbc.Card(html.H4("Use these checkboxes to select multiple organ at once. Selecting multiple organ will compare each individually. Choosing their parent will aggregate them.")),
+                                    dbc.Card(
+                                        dcc.Checklist(
+                                            id='checklist_from_organ',
+                                            options=[
+                                                {'label': i, 'value': i} for i in checklist_hashmap_organ_from.keys()
+                                            ],
+                                            labelStyle={'display':'block'}
+                                        )
+                                    ),
+                                ]
+                            )
+                        ),
+                        html.Br(),
+                        dbc.Card(
+                            dbc.CardBody(
+                                children=[                    
+                                    dbc.Card(html.H4("Use this graph to visualize the selected (groups of) organ. Selections can be made by zooming/clicking nodes.")),
+                                    dbc.Card(
+                                        cyto.Cytoscape(
+                                            id='cytoscape_from_organ',
+                                            layout={'name':'klay'},#,'fit':True},
+                                            elements=organ_network_dict_from['elements'],
+                                            minZoom=0.15,
+                                            maxZoom=3,
+                                            #responsive=True,
+                                            stylesheet=basic_stylesheet,
+                                            style={'width':'100%','height':'1000px'}
+                                            #style={'width': '200px','height':'1000px'}
+                                        )
+                                    )
+                                ]
                             )
                         )
-                    ),
-                    dbc.Col(
-                        html.H1('VS'),
-                        width={'size':2,'offset':0}
-                    ),
-                    dbc.Col(
-                        cyto.Cytoscape(
-                            id='cytoscape_to_organ',
-                            layout={'name':'klay','fit':False},
-                            elements=organ_network_dict_to['elements'],
-                            minZoom=0.15,
-                            maxZoom=5,
-                            stylesheet=basic_stylesheet,
-                            style={'width': '700px','height':'1000px'}
+                    ],
+                    width={'size':4}
+                ),
+                dbc.Col(
+                    children=[
+                        #dbc.Card(
+                        #    html.H4("lorem ipsum")
+                        #)
+                        html.H2('get compared to', className='text-center')
+                    ],
+                    width={'size':2}
+                ),
+                dbc.Col(
+                    children=[
+                        
+                        html.H2("Organs selected here", className='text-center'),
+                        html.Br(),
+                        dbc.Card(
+                            dbc.CardBody(
+                                children=[
+                                    dbc.Card(html.H4("Use this button to reset selection to nothing")),
+                                    dbc.Card(
+                                        html.Button(
+                                            'Reset selections',
+                                            id='button_to_organ',
+                                        )
+                                    ),
+                                ]
+                            )
+                        ),
+                        html.Br(),
+                        dbc.Card(
+                            dbc.CardBody(
+                                children=[                    
+                                    dbc.Card(html.H4("Use this dropdown to quickly choose (groups of) organ. You can type into it.")),
+                                    dbc.Card(
+                                        dcc.Dropdown(
+                                            id='dropdown_to_organ',
+                                            options=[
+                                                {'label': temp_node['data']['label'], 'value': temp_node['data']['id']} for temp_node in organ_network_dict_to['elements']['nodes']
+                                            ],
+                                            multi=True,
+                                            style={
+                                                'color': '#212121',
+                                                'background-color': '#212121',
+                                            }
+                                        )
+                                    ),
+                                ]
+                            )
+                        ),
+                        html.Br(),
+                        dbc.Card(
+                            dbc.CardBody(
+                                children=[                    
+                                    dbc.Card(html.H4("Use these checkboxes to select multiple organ at once. Selecting multiple organ will compare each individually. Choosing their parent will aggregate them.")),
+                                    dbc.Card(
+                                        dcc.Checklist(
+                                            id='checklist_to_organ',
+                                            options=[
+                                                {'label': i, 'value': i} for i in checklist_hashmap_organ_to.keys()
+                                            ],
+                                            labelStyle={'display':'block'}
+                                        )
+                                    ),
+                                ]
+                            )
+                        ),
+                        html.Br(),
+                        dbc.Card(
+                            dbc.CardBody(
+                                children=[                    
+                                    dbc.Card(html.H4("Use this graph to visualize the selected (groups of) organ. Selections can be made by zooming/clicking nodes.")),
+                                    dbc.Card(
+                                        cyto.Cytoscape(
+                                            id='cytoscape_to_organ',
+                                            layout={'name':'klay'},#,'fit':True},
+                                            elements=organ_network_dict_to['elements'],
+                                            minZoom=0.15,
+                                            maxZoom=3,
+                                            #responsive=True,
+                                            stylesheet=basic_stylesheet,
+                                            style={'width':'100%','height':'1000px'}
+                                            #style={'width': '200px','height':'1000px'}
+                                        )
+                                    )
+                                ]
+                            )
                         )
-                    ),
-                ]
-            )
-        ),
+                    ],
+                    width={'size':4}
+                ),
+            ],
+            justify='around'
+        )
     ]
 )
+
 
 
 
@@ -477,8 +474,8 @@ def delete_node_reconnect_cyto_elements(temp_elements,temp_tapnode):
     Output(component_id='dropdown_from_organ',component_property='options'),
     Output(component_id='checklist_from_organ',component_property='options'),
 
-    Output(component_id='cytoscape_from_organ',component_property='zoom'),
-    Output(component_id='cytoscape_from_organ',component_property='pan')
+    #Output(component_id='cytoscape_from_organ',component_property='zoom'),
+    #Output(component_id='cytoscape_from_organ',component_property='pan')
     ],
     
     [Input(component_id='cytoscape_from_organ',component_property='tapNodeData'),
@@ -547,7 +544,7 @@ def callback_aggregate_from(
         ##
         cytoscape_from_organ_pan={'x':600,'y':1}
         
-        return cytoscape_from_organ_elements, checklist_from_organ_value, dropdown_from_organ_value,store_from_organ_data, dropdown_from_organ_options,checklist_from_organ_options,cytoscape_from_organ_zoom,cytoscape_from_organ_pan
+        return cytoscape_from_organ_elements, checklist_from_organ_value, dropdown_from_organ_value,store_from_organ_data, dropdown_from_organ_options,checklist_from_organ_options#,cytoscape_from_organ_zoom,cytoscape_from_organ_pan
 
     elif (len(callback_context.triggered)>1) and (store_from_organ_data is not None):
         
@@ -579,7 +576,7 @@ def callback_aggregate_from(
         dropdown_from_organ_value=store_from_organ_data['organ']
         checklist_from_organ_value=store_from_organ_data['checkboxes']
         #dont do anthing to store_from_organ_data
-        return cytoscape_from_organ_elements, checklist_from_organ_value, dropdown_from_organ_value,store_from_organ_data, dropdown_from_organ_options,checklist_from_organ_options,cytoscape_from_organ_zoom,cytoscape_from_organ_pan
+        return cytoscape_from_organ_elements, checklist_from_organ_value, dropdown_from_organ_value,store_from_organ_data, dropdown_from_organ_options,checklist_from_organ_options#,cytoscape_from_organ_zoom,cytoscape_from_organ_pan
 
     elif (len(callback_context.triggered)==1) and (callback_context.triggered[0]['prop_id']=='cytoscape_from_organ.tapNodeData'):
         this_click=set()
@@ -614,7 +611,7 @@ def callback_aggregate_from(
         #store checkboxes        
         store_from_organ_data['checkboxes']=checklist_from_organ_value
 
-        return cytoscape_from_organ_elements, checklist_from_organ_value, dropdown_from_organ_value,store_from_organ_data, dropdown_from_organ_options,checklist_from_organ_options,cytoscape_from_organ_zoom,cytoscape_from_organ_pan
+        return cytoscape_from_organ_elements, checklist_from_organ_value, dropdown_from_organ_value,store_from_organ_data, dropdown_from_organ_options,checklist_from_organ_options#,cytoscape_from_organ_zoom,cytoscape_from_organ_pan
 
     elif (len(callback_context.triggered)==1) and (callback_context.triggered[0]['prop_id']=='checklist_from_organ.value'):
 
@@ -633,7 +630,7 @@ def callback_aggregate_from(
             #dropdown
             dropdown_from_organ_value=store_from_organ_data['organ']
             
-            return cytoscape_from_organ_elements, checklist_from_organ_value, dropdown_from_organ_value,store_from_organ_data, dropdown_from_organ_options,checklist_from_organ_options,cytoscape_from_organ_zoom,cytoscape_from_organ_pan
+            return cytoscape_from_organ_elements, checklist_from_organ_value, dropdown_from_organ_value,store_from_organ_data, dropdown_from_organ_options,checklist_from_organ_options#,cytoscape_from_organ_zoom,cytoscape_from_organ_pan
            
         elif len(store_from_organ_data['checkboxes']) > len(checklist_from_organ_value):
 
@@ -651,7 +648,7 @@ def callback_aggregate_from(
             #dropdown
             dropdown_from_organ_value=store_from_organ_data['organ']
 
-            return cytoscape_from_organ_elements, checklist_from_organ_value, dropdown_from_organ_value,store_from_organ_data, dropdown_from_organ_options,checklist_from_organ_options,cytoscape_from_organ_zoom,cytoscape_from_organ_pan
+            return cytoscape_from_organ_elements, checklist_from_organ_value, dropdown_from_organ_value,store_from_organ_data, dropdown_from_organ_options,checklist_from_organ_options#,cytoscape_from_organ_zoom,cytoscape_from_organ_pan
 
     elif (len(callback_context.triggered)==1) and (callback_context.triggered[0]['prop_id']=='dropdown_from_organ.value'):
 
@@ -685,7 +682,7 @@ def callback_aggregate_from(
                     store_from_organ_data['checkboxes'].append(temp_checkbox)
                     checklist_from_organ_value.append(temp_checkbox)
 
-            return cytoscape_from_organ_elements, checklist_from_organ_value, dropdown_from_organ_value,store_from_organ_data, dropdown_from_organ_options,checklist_from_organ_options,cytoscape_from_organ_zoom,cytoscape_from_organ_pan
+            return cytoscape_from_organ_elements, checklist_from_organ_value, dropdown_from_organ_value,store_from_organ_data, dropdown_from_organ_options,checklist_from_organ_options#,cytoscape_from_organ_zoom,cytoscape_from_organ_pan
 
         elif len(store_from_organ_data['organ']) > len(dropdown_from_organ_value):
 
@@ -722,7 +719,7 @@ def callback_aggregate_from(
                 except ValueError:
                     continue
 
-            return cytoscape_from_organ_elements, checklist_from_organ_value, dropdown_from_organ_value,store_from_organ_data, dropdown_from_organ_options,checklist_from_organ_options,cytoscape_from_organ_zoom,cytoscape_from_organ_pan
+            return cytoscape_from_organ_elements, checklist_from_organ_value, dropdown_from_organ_value,store_from_organ_data, dropdown_from_organ_options,checklist_from_organ_options#,cytoscape_from_organ_zoom,cytoscape_from_organ_pan
 
     elif (len(callback_context.triggered)==1) and (callback_context.triggered[0]['prop_id']=='button_from_organ.n_clicks'):
 
@@ -736,7 +733,7 @@ def callback_aggregate_from(
         checklist_from_organ_value=list()
         dropdown_from_organ_value=None
 
-        return cytoscape_from_organ_elements, checklist_from_organ_value, dropdown_from_organ_value,store_from_organ_data, dropdown_from_organ_options,checklist_from_organ_options,cytoscape_from_organ_zoom,cytoscape_from_organ_pan
+        return cytoscape_from_organ_elements, checklist_from_organ_value, dropdown_from_organ_value,store_from_organ_data, dropdown_from_organ_options,checklist_from_organ_options#,cytoscape_from_organ_zoom,cytoscape_from_organ_pan
 
 @app.callback(
     [Output(component_id='cytoscape_to_organ',component_property='elements'),
@@ -747,8 +744,8 @@ def callback_aggregate_from(
     Output(component_id='dropdown_to_organ',component_property='options'),
     Output(component_id='checklist_to_organ',component_property='options'),
 
-    Output(component_id='cytoscape_to_organ',component_property='zoom'),
-    Output(component_id='cytoscape_to_organ',component_property='pan')
+    #Output(component_id='cytoscape_to_organ',component_property='zoom'),
+    #Output(component_id='cytoscape_to_organ',component_property='pan')
     ],
     
     [Input(component_id='cytoscape_to_organ',component_property='tapNodeData'),
@@ -817,7 +814,7 @@ def callback_aggregate_to(
         ##
         cytoscape_to_organ_pan={'x':600,'y':1}
         
-        return cytoscape_to_organ_elements, checklist_to_organ_value, dropdown_to_organ_value,store_to_organ_data, dropdown_to_organ_options,checklist_to_organ_options,cytoscape_to_organ_zoom,cytoscape_to_organ_pan
+        return cytoscape_to_organ_elements, checklist_to_organ_value, dropdown_to_organ_value,store_to_organ_data, dropdown_to_organ_options,checklist_to_organ_options#,cytoscape_to_organ_zoom,cytoscape_to_organ_pan
 
     elif (len(callback_context.triggered)>1) and (store_to_organ_data is not None):
         
@@ -848,7 +845,7 @@ def callback_aggregate_to(
         dropdown_to_organ_value=store_to_organ_data['organ']
         checklist_to_organ_value=store_to_organ_data['checkboxes']
         #dont do anthing to store_to_organ_data
-        return cytoscape_to_organ_elements, checklist_to_organ_value, dropdown_to_organ_value,store_to_organ_data, dropdown_to_organ_options,checklist_to_organ_options,cytoscape_to_organ_zoom,cytoscape_to_organ_pan
+        return cytoscape_to_organ_elements, checklist_to_organ_value, dropdown_to_organ_value,store_to_organ_data, dropdown_to_organ_options,checklist_to_organ_options#,cytoscape_to_organ_zoom,cytoscape_to_organ_pan
 
     elif (len(callback_context.triggered)==1) and (callback_context.triggered[0]['prop_id']=='cytoscape_to_organ.tapNodeData'):
         this_click=set()
@@ -883,7 +880,7 @@ def callback_aggregate_to(
         #store checkboxes        
         store_to_organ_data['checkboxes']=checklist_to_organ_value
 
-        return cytoscape_to_organ_elements, checklist_to_organ_value, dropdown_to_organ_value,store_to_organ_data, dropdown_to_organ_options,checklist_to_organ_options,cytoscape_to_organ_zoom,cytoscape_to_organ_pan
+        return cytoscape_to_organ_elements, checklist_to_organ_value, dropdown_to_organ_value,store_to_organ_data, dropdown_to_organ_options,checklist_to_organ_options#,cytoscape_to_organ_zoom,cytoscape_to_organ_pan
 
     elif (len(callback_context.triggered)==1) and (callback_context.triggered[0]['prop_id']=='checklist_to_organ.value'):
 
@@ -902,7 +899,7 @@ def callback_aggregate_to(
             #dropdown
             dropdown_to_organ_value=store_to_organ_data['organ']
             
-            return cytoscape_to_organ_elements, checklist_to_organ_value, dropdown_to_organ_value,store_to_organ_data, dropdown_to_organ_options,checklist_to_organ_options,cytoscape_to_organ_zoom,cytoscape_to_organ_pan
+            return cytoscape_to_organ_elements, checklist_to_organ_value, dropdown_to_organ_value,store_to_organ_data, dropdown_to_organ_options,checklist_to_organ_options#,cytoscape_to_organ_zoom,cytoscape_to_organ_pan
            
         elif len(store_to_organ_data['checkboxes']) > len(checklist_to_organ_value):
 
@@ -920,7 +917,7 @@ def callback_aggregate_to(
             #dropdown
             dropdown_to_organ_value=store_to_organ_data['organ']
 
-            return cytoscape_to_organ_elements, checklist_to_organ_value, dropdown_to_organ_value,store_to_organ_data, dropdown_to_organ_options,checklist_to_organ_options,cytoscape_to_organ_zoom,cytoscape_to_organ_pan
+            return cytoscape_to_organ_elements, checklist_to_organ_value, dropdown_to_organ_value,store_to_organ_data, dropdown_to_organ_options,checklist_to_organ_options#,cytoscape_to_organ_zoom,cytoscape_to_organ_pan
 
     elif (len(callback_context.triggered)==1) and (callback_context.triggered[0]['prop_id']=='dropdown_to_organ.value'):
 
@@ -954,7 +951,7 @@ def callback_aggregate_to(
                     store_to_organ_data['checkboxes'].append(temp_checkbox)
                     checklist_to_organ_value.append(temp_checkbox)
 
-            return cytoscape_to_organ_elements, checklist_to_organ_value, dropdown_to_organ_value,store_to_organ_data, dropdown_to_organ_options,checklist_to_organ_options,cytoscape_to_organ_zoom,cytoscape_to_organ_pan
+            return cytoscape_to_organ_elements, checklist_to_organ_value, dropdown_to_organ_value,store_to_organ_data, dropdown_to_organ_options,checklist_to_organ_options#,cytoscape_to_organ_zoom,cytoscape_to_organ_pan
 
         elif len(store_to_organ_data['organ']) > len(dropdown_to_organ_value):
 
@@ -991,7 +988,7 @@ def callback_aggregate_to(
                 except ValueError:
                     continue
 
-            return cytoscape_to_organ_elements, checklist_to_organ_value, dropdown_to_organ_value,store_to_organ_data, dropdown_to_organ_options,checklist_to_organ_options,cytoscape_to_organ_zoom,cytoscape_to_organ_pan
+            return cytoscape_to_organ_elements, checklist_to_organ_value, dropdown_to_organ_value,store_to_organ_data, dropdown_to_organ_options,checklist_to_organ_options#,cytoscape_to_organ_zoom,cytoscape_to_organ_pan
 
     elif (len(callback_context.triggered)==1) and (callback_context.triggered[0]['prop_id']=='button_to_organ.n_clicks'):
 
@@ -1005,4 +1002,4 @@ def callback_aggregate_to(
         checklist_to_organ_value=list()
         dropdown_to_organ_value=None
 
-        return cytoscape_to_organ_elements, checklist_to_organ_value, dropdown_to_organ_value,store_to_organ_data, dropdown_to_organ_options,checklist_to_organ_options,cytoscape_to_organ_zoom,cytoscape_to_organ_pan
+        return cytoscape_to_organ_elements, checklist_to_organ_value, dropdown_to_organ_value,store_to_organ_data, dropdown_to_organ_options,checklist_to_organ_options#,cytoscape_to_organ_zoom,cytoscape_to_organ_pan
