@@ -41,6 +41,7 @@ layout=html.Div(
         ),
         html.Br(),
         html.H4('Where there is a non-null value for every field from all of the preceding pages, this table fills. Otherwise, it remains as an empty table.'),
+        html.H4('At the moment, results render with back-end encoding. Updates coming soon :)')
         html.Br(),
         html.Br(),
 
