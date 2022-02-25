@@ -1,3 +1,7 @@
+# for now this is the exact same thing as the leaf frontend
+# except that we dont remove the groups
+
+
 import json
 import networkx as nx
 from pprint import pprint
@@ -156,28 +160,28 @@ def remove_redundant_options(temp_network_dict):
     return temp_network_dict
     
 
-table_species_address=DATA_PATH.joinpath('table_species_dash.bin')
-table_organ_address=DATA_PATH.joinpath('table_organ_dash.bin')
-table_disease_address=DATA_PATH.joinpath('table_disease_dash.bin')
+# table_species_address=DATA_PATH.joinpath('table_species_dash.bin')
+# table_organ_address=DATA_PATH.joinpath('table_organ_dash.bin')
+# table_disease_address=DATA_PATH.joinpath('table_disease_dash.bin')
 
-species_map_panda=pd.read_pickle(table_species_address)
-species_map_dict={temp_tup[0]:temp_tup[1] for temp_tup in list(zip(species_map_panda.node_id.to_list(),species_map_panda.we_map_to.to_list()))}
-organ_map_panda=pd.read_pickle(table_organ_address)
-organ_map_dict={temp_tup[0]:temp_tup[1] for temp_tup in list(zip(organ_map_panda.node_id.to_list(),organ_map_panda.we_map_to.to_list()))}
-disease_map_panda=pd.read_pickle(table_disease_address)
-disease_map_dict={temp_tup[0]:temp_tup[1] for temp_tup in list(zip(disease_map_panda.node_id.to_list(),disease_map_panda.we_map_to.to_list()))}
+# species_map_panda=pd.read_pickle(table_species_address)
+# species_map_dict={temp_tup[0]:temp_tup[1] for temp_tup in list(zip(species_map_panda.node_id.to_list(),species_map_panda.we_map_to.to_list()))}
+# organ_map_panda=pd.read_pickle(table_organ_address)
+# organ_map_dict={temp_tup[0]:temp_tup[1] for temp_tup in list(zip(organ_map_panda.node_id.to_list(),organ_map_panda.we_map_to.to_list()))}
+# disease_map_panda=pd.read_pickle(table_disease_address)
+# disease_map_dict={temp_tup[0]:temp_tup[1] for temp_tup in list(zip(disease_map_panda.node_id.to_list(),disease_map_panda.we_map_to.to_list()))}
 
-species_network_dict_from=remove_unmapped_nodes(species_network_dict_from,species_map_dict)
-organ_network_dict_from=remove_unmapped_nodes(organ_network_dict_from,organ_map_dict)
-organ_network_dict_from=remove_redundant_options(organ_network_dict_from)
-disease_network_dict_from=remove_unmapped_nodes(disease_network_dict_from,disease_map_dict)
-disease_network_dict_from=remove_redundant_options(disease_network_dict_from)
+# species_network_dict_from=remove_unmapped_nodes(species_network_dict_from,species_map_dict)
+# organ_network_dict_from=remove_unmapped_nodes(organ_network_dict_from,organ_map_dict)
+# organ_network_dict_from=remove_redundant_options(organ_network_dict_from)
+# disease_network_dict_from=remove_unmapped_nodes(disease_network_dict_from,disease_map_dict)
+# disease_network_dict_from=remove_redundant_options(disease_network_dict_from)
 
-species_network_dict_to=remove_unmapped_nodes(species_network_dict_to,species_map_dict)
-organ_network_dict_to=remove_unmapped_nodes(organ_network_dict_to,organ_map_dict)
-organ_network_dict_to=remove_redundant_options(organ_network_dict_to)
-disease_network_dict_to=remove_unmapped_nodes(disease_network_dict_to,disease_map_dict)
-disease_network_dict_to=remove_redundant_options(disease_network_dict_to)
+# species_network_dict_to=remove_unmapped_nodes(species_network_dict_to,species_map_dict)
+# organ_network_dict_to=remove_unmapped_nodes(organ_network_dict_to,organ_map_dict)
+# organ_network_dict_to=remove_redundant_options(organ_network_dict_to)
+# disease_network_dict_to=remove_unmapped_nodes(disease_network_dict_to,disease_map_dict)
+# disease_network_dict_to=remove_redundant_options(disease_network_dict_to)
 
 app.layout=html.Div(
     children=[

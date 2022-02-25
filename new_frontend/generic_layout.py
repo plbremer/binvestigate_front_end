@@ -1,28 +1,18 @@
-import json
-import networkx as nx
-from pprint import pprint
-import pandas as pd
 
-from dash import Dash
 from dash import html
 import dash_core_components as dcc
 import dash_bootstrap_components as dbc
-from dash.dependencies import Input, Output, State
 import dash_table as dt
 import dash_bio as dashbio
 
-
-base_url='http://127.0.0.1:5000/'
-import requests
-
+import json
 import pathlib
+import pandas as pd
+
+
+
 PATH = pathlib.Path(__file__).parent
 DATA_PATH = PATH.joinpath("../datasets").resolve()
-
-external_stylesheets = [dbc.themes.DARKLY]
-app=Dash(__name__,external_stylesheets=external_stylesheets)
-server=app.server
-
 
 #load the base species network
 species_json_address=DATA_PATH.joinpath('cyto_format_species.json')
@@ -50,7 +40,6 @@ for temp_element in species_network_dict_to['elements']['nodes']:
     temp_element['data']['label']=temp_element['data']['scientific_name']
     # temp_element['classes']='not_selected'
     #species_elements_starting_to.add(temp_element['data']['id'])
-
 
 organ_json_address=DATA_PATH.joinpath('cyto_format_organ.json')
 temp_json_file=open(organ_json_address,'r')
@@ -85,8 +74,6 @@ for temp_element in organ_network_dict_to['elements']['nodes']:
     #temp_element['classes']='not_selected'
     #organ_elements_starting_to.add(temp_element['data']['id'])
 
-
-
 disease_json_address=DATA_PATH.joinpath('cyto_format_disease.json')
 temp_json_file=open(disease_json_address,'r')
 disease_network_dict_from=json.load(temp_json_file)
@@ -119,6 +106,7 @@ for temp_element in disease_network_dict_to['elements']['nodes']:
     #    temp_element['data']['label']=temp_element['data']['name']
     #temp_element['classes']='not_selected'
     #disease_elements_starting_to.add(temp_element['data']['id'])
+
 
 
 def remove_unmapped_nodes(temp_network_dict,temp_mapped_to_dict):
@@ -156,30 +144,37 @@ def remove_redundant_options(temp_network_dict):
     return temp_network_dict
     
 
-table_species_address=DATA_PATH.joinpath('table_species_dash.bin')
-table_organ_address=DATA_PATH.joinpath('table_organ_dash.bin')
-table_disease_address=DATA_PATH.joinpath('table_disease_dash.bin')
 
-species_map_panda=pd.read_pickle(table_species_address)
-species_map_dict={temp_tup[0]:temp_tup[1] for temp_tup in list(zip(species_map_panda.node_id.to_list(),species_map_panda.we_map_to.to_list()))}
-organ_map_panda=pd.read_pickle(table_organ_address)
-organ_map_dict={temp_tup[0]:temp_tup[1] for temp_tup in list(zip(organ_map_panda.node_id.to_list(),organ_map_panda.we_map_to.to_list()))}
-disease_map_panda=pd.read_pickle(table_disease_address)
-disease_map_dict={temp_tup[0]:temp_tup[1] for temp_tup in list(zip(disease_map_panda.node_id.to_list(),disease_map_panda.we_map_to.to_list()))}
 
-species_network_dict_from=remove_unmapped_nodes(species_network_dict_from,species_map_dict)
-organ_network_dict_from=remove_unmapped_nodes(organ_network_dict_from,organ_map_dict)
-organ_network_dict_from=remove_redundant_options(organ_network_dict_from)
-disease_network_dict_from=remove_unmapped_nodes(disease_network_dict_from,disease_map_dict)
-disease_network_dict_from=remove_redundant_options(disease_network_dict_from)
 
-species_network_dict_to=remove_unmapped_nodes(species_network_dict_to,species_map_dict)
-organ_network_dict_to=remove_unmapped_nodes(organ_network_dict_to,organ_map_dict)
-organ_network_dict_to=remove_redundant_options(organ_network_dict_to)
-disease_network_dict_to=remove_unmapped_nodes(disease_network_dict_to,disease_map_dict)
-disease_network_dict_to=remove_redundant_options(disease_network_dict_to)
 
-app.layout=html.Div(
+
+
+if temp_app_name=="basic_query":
+    table_species_address=DATA_PATH.joinpath('table_species_dash.bin')
+    table_organ_address=DATA_PATH.joinpath('table_organ_dash.bin')
+    table_disease_address=DATA_PATH.joinpath('table_disease_dash.bin')
+
+    species_map_panda=pd.read_pickle(table_species_address)
+    species_map_dict={temp_tup[0]:temp_tup[1] for temp_tup in list(zip(species_map_panda.node_id.to_list(),species_map_panda.we_map_to.to_list()))}
+    organ_map_panda=pd.read_pickle(table_organ_address)
+    organ_map_dict={temp_tup[0]:temp_tup[1] for temp_tup in list(zip(organ_map_panda.node_id.to_list(),organ_map_panda.we_map_to.to_list()))}
+    disease_map_panda=pd.read_pickle(table_disease_address)
+    disease_map_dict={temp_tup[0]:temp_tup[1] for temp_tup in list(zip(disease_map_panda.node_id.to_list(),disease_map_panda.we_map_to.to_list()))}
+
+    species_network_dict_from=remove_unmapped_nodes(species_network_dict_from,species_map_dict)
+    organ_network_dict_from=remove_unmapped_nodes(organ_network_dict_from,organ_map_dict)
+    organ_network_dict_from=remove_redundant_options(organ_network_dict_from)
+    disease_network_dict_from=remove_unmapped_nodes(disease_network_dict_from,disease_map_dict)
+    disease_network_dict_from=remove_redundant_options(disease_network_dict_from)
+
+    species_network_dict_to=remove_unmapped_nodes(species_network_dict_to,species_map_dict)
+    organ_network_dict_to=remove_unmapped_nodes(organ_network_dict_to,organ_map_dict)
+    organ_network_dict_to=remove_redundant_options(organ_network_dict_to)
+    disease_network_dict_to=remove_unmapped_nodes(disease_network_dict_to,disease_map_dict)
+    disease_network_dict_to=remove_redundant_options(disease_network_dict_to)
+
+temp_layout=html.Div(
     children=[
         dbc.Row(
             children=[
@@ -616,185 +611,9 @@ app.layout=html.Div(
                 )
             ]
         )
-
-        
     ]
 )
 
 
-
-@app.callback(
-    [Output(component_id='table_query_summary',component_property='columns'),
-    Output(component_id='table_query_summary',component_property='data'),
-
-    Output(component_id='table_average_welch_bins',component_property='columns'),
-    Output(component_id='table_average_welch_bins',component_property='data'),
-    Output(component_id='table_median_mw_bins',component_property='columns'),
-    Output(component_id='table_median_mw_bins',component_property='data'),
-    
-    Output(component_id='table_average_welch_classyfire',component_property='columns'),
-    Output(component_id='table_average_welch_classyfire',component_property='data'),
-    Output(component_id='table_median_mw_classyfire',component_property='columns'),
-    Output(component_id='table_median_mw_classyfire',component_property='data'),
-    
-    Output(component_id='volcano_average_welch_bins',component_property='figure'),
-    Output(component_id='volcano_median_mw_bins',component_property='figure'),
-    Output(component_id='volcano_average_welch_classyfire',component_property='figure'),
-    Output(component_id='volcano_median_mw_classyfire',component_property='figure')],
-
-    [Input(component_id='button_query',component_property='n_clicks')],
-    [State(component_id='dropdown_from_species',component_property='value'),
-    State(component_id='dropdown_from_organ',component_property='value'),
-    State(component_id='dropdown_from_disease',component_property='value'),
-    State(component_id='dropdown_to_species',component_property='value'),
-    State(component_id='dropdown_to_organ',component_property='value'),
-    State(component_id='dropdown_to_disease',component_property='value'),
-    ]
-)
-def perform_volcano_query(
-    query,
-    from_species_value,
-    from_organ_value,
-    from_disease_value,
-    to_species_value,
-    to_organ_value,
-    to_disease_value
-):
-    '''
-    we perform the query information post as well as the
-    '''
-
-
-    ########metadata query########
-    metadata_json_output={
-        "from_species":from_species_value,
-        "from_organ":from_organ_value,
-        "from_disease":from_disease_value,
-        "to_species":to_species_value,
-        "to_organ":to_organ_value,
-        "to_disease":to_disease_value
-        }
-    response=requests.post(base_url+'/metadataresource/',json=metadata_json_output)
-    total_panda=pd.read_json(response.json(),orient='records')
-    print(total_panda)
-
-    query_summary_column_list=[
-        {'name':temp_col,'id':temp_col} for temp_col in total_panda.columns
-    ]
-    print(query_summary_column_list)
-    query_summary_data=total_panda.to_dict(orient='records')
-    # query_summary_data=[
-    #     {temp_key]:str(query_summary_data[temp_key]) for temp_key in query_summary_data}
-    # ]
-    for temp_key in query_summary_data[0]:
-        query_summary_data[0][temp_key]=str(query_summary_data[0][temp_key])
-    print(query_summary_data) 
-    # query_summary_data=[
-    #     {
-    #         'triplet_count_to': 1, 
-    #         'sample_count_list_to': 3160, 
-    #         'min_sample_count_to': 3160, 
-    #         'sum_sample_count_to': 3160, 
-    #         'unique_triplet_list_real_to': 234,#[['Plasma', '10090', 'No']], 
-    #         'triplet_count_from': 1, 
-    #         'sample_count_list_from': 234,#[3160], 
-    #         'min_sample_count_from': 3160, 
-    #         'sum_sample_count_from': 3160, 
-    #         'unique_triplet_list_real_from': 234# [['Plasma', '10090', 'No']]
-    #     }
-    # ]
-
-
-    #############################
-    
-
-
-    #################volcano query#######3
-
-    volcano_json_output={
-        "from_species":from_species_value,
-        "from_organ":from_organ_value,
-        "from_disease":from_disease_value,
-        "to_species":to_species_value,
-        "to_organ":to_organ_value,
-        "to_disease":to_disease_value,
-        "include_known":"Yes",
-        "include_unknown":"Yes",
-        "fold_median_min":0,
-        "fold_average_min":0,
-        "p_welch_max":1,
-        "p_mann_max":1        
-    }
-
-
-    response=requests.post(base_url+'/volcanoresource/',json=volcano_json_output)
-    total_panda=pd.read_json(response.json(),orient='records')
-    #pd.set_option('display.max_rows',200)
-    print(total_panda)
-
-    average_welch_column_list=[
-        {'name':'compound','id':'compound'},{'name':'fold_average','id':'fold_average'},{'name':'sig_welch','id':'sig_welch'},
-    ]
-    average_welch_data_bin=total_panda.loc[
-        (~total_panda['compound'].str.contains('CHEMONTID')),
-        ['compound','fold_average','sig_welch']
-    ].to_dict(orient='records')
-    average_welch_data_classyfire=total_panda.loc[
-        (total_panda['compound'].str.contains('CHEMONTID')),
-        ['compound','fold_average','sig_welch']
-    ].to_dict(orient='records')
-    median_mw_column_list=[
-        {'name':'compound','id':'compound'},{'name':'fold_median','id':'fold_median'},{'name':'sig_mannwhit','id':'sig_mannwhit'},
-    ]
-    median_mw_data_bin=total_panda.loc[
-        (~total_panda['compound'].str.contains('CHEMONTID')),
-        ['compound','fold_median','sig_mannwhit']
-    ].to_dict(orient='records')
-    median_mw_data_classyfire=total_panda.loc[
-        (total_panda['compound'].str.contains('CHEMONTID')),
-        ['compound','fold_median','sig_mannwhit']
-    ].to_dict(orient='records')
-    print(total_panda)
-    print(total_panda.loc[(~total_panda['compound'].str.contains('CHEMONTID'))])
-    print(total_panda.loc[(total_panda['compound'].str.contains('CHEMONTID'))])
-
-    bins_panda=total_panda.loc[(~total_panda['compound'].str.contains('CHEMONTID'))].copy(deep=True)
-    classyfire_panda=total_panda.loc[(total_panda['compound'].str.contains('CHEMONTID'))].copy(deep=True).reset_index()
-
-
-    volcano_average_bin=dashbio.VolcanoPlot(
-        dataframe=bins_panda,
-        snp='compound',
-        p='sig_welch',
-        effect_size='fold_average',
-        gene=None
-    )
-    volcano_average_classyfire=dashbio.VolcanoPlot(
-        dataframe=classyfire_panda,
-        snp='compound',
-        p='sig_welch',
-        effect_size='fold_average',
-        gene=None
-    )
-    volcano_median_bin=dashbio.VolcanoPlot(
-        dataframe=bins_panda,
-        snp='compound',
-        p='sig_mannwhit',
-        effect_size='fold_median',
-        gene=None
-    )
-    volcano_median_classyfire=dashbio.VolcanoPlot(
-        dataframe=classyfire_panda,
-        snp='compound',
-        p='sig_mannwhit',
-        effect_size='fold_median',
-        gene=None
-    )
-
-    #################################################3
-
-    return query_summary_column_list,query_summary_data,average_welch_column_list,average_welch_data_bin,median_mw_column_list,median_mw_data_bin,average_welch_column_list,average_welch_data_classyfire,median_mw_column_list,median_mw_data_classyfire,volcano_average_bin,volcano_median_bin,volcano_average_classyfire,volcano_median_classyfire
-
-if __name__ == '__main__':
-
-    app.run_server(debug=True)
+if __name__ == "__main__":
+    pass
