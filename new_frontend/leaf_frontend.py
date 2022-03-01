@@ -25,102 +25,46 @@ app = Dash(__name__, external_stylesheets=external_stylesheets)
 server = app.server
 
 
-# load the base species network
+############### LOAD HIERARCHIES ##############
 species_json_address = DATA_PATH.joinpath("cyto_format_species.json")
 temp_json_file = open(species_json_address, "r")
 species_network_dict_from = json.load(temp_json_file)
 temp_json_file.close()
-# species_elements_starting_from=set()
 for temp_element in species_network_dict_from["elements"]["nodes"]:
-    # id and label are special keys for cytoscape dicts
-    # they are always expected. our conversion script makes the id but does not make the name
-    # so we add it manually here
-    # we do not know how we intend to name species
     temp_element["data"]["label"] = temp_element["data"]["scientific_name"]
-    # temp_element['classes']='not_selected'
-    # species_elements_starting_from.add(temp_element['data']['id'])
 temp_json_file = open(species_json_address, "r")
 species_network_dict_to = json.load(temp_json_file)
 temp_json_file.close()
-# species_elements_starting_to=set()
 for temp_element in species_network_dict_to["elements"]["nodes"]:
-    # id and label are special keys for cytoscape dicts
-    # they are always expected. our conversion script makes the id but does not make the name
-    # so we add it manually here
-    # we do not know how we intend to name species
     temp_element["data"]["label"] = temp_element["data"]["scientific_name"]
-    # temp_element['classes']='not_selected'
-    # species_elements_starting_to.add(temp_element['data']['id'])
-
 
 organ_json_address = DATA_PATH.joinpath("cyto_format_organ.json")
 temp_json_file = open(organ_json_address, "r")
 organ_network_dict_from = json.load(temp_json_file)
 temp_json_file.close()
-# organ_elements_starting_from=set()
 for temp_element in organ_network_dict_from["elements"]["nodes"]:
-    # id and label are special keys for cytoscape dicts
-    # they are always expected. our conversion script makes the id but does not make the name
-    # so we add it manually here
-    # we do not know how we intend to name organ
-    # try:
     temp_element["data"]["label"] = temp_element["data"]["mesh_label"]
-    # except KeyError:
-    #    temp_element['data']['label']=temp_element['data']['name']
-    # temp_element['classes']='not_selected'
-    # print(temp_element)
-    # organ_elements_starting_from.add(temp_element['data']['id'])
 temp_json_file = open(organ_json_address, "r")
 organ_network_dict_to = json.load(temp_json_file)
 temp_json_file.close()
-# organ_elements_starting_to=set()
 for temp_element in organ_network_dict_to["elements"]["nodes"]:
-    # id and label are special keys for cytoscape dicts
-    # they are always expected. our conversion script makes the id but does not make the name
-    # so we add it manually here
-    # we do not know how we intend to name organ
-    # try:
     temp_element["data"]["label"] = temp_element["data"]["mesh_label"]
-    # except KeyError:
-    #    temp_element['data']['label']=temp_element['data']['name']
-    # temp_element['classes']='not_selected'
-    # organ_elements_starting_to.add(temp_element['data']['id'])
-
 
 disease_json_address = DATA_PATH.joinpath("cyto_format_disease.json")
 temp_json_file = open(disease_json_address, "r")
 disease_network_dict_from = json.load(temp_json_file)
 temp_json_file.close()
-# disease_elements_starting_from=set()
 for temp_element in disease_network_dict_from["elements"]["nodes"]:
-    # id and label are special keys for cytoscape dicts
-    # they are always expected. our conversion script makes the id but does not make the name
-    # so we add it manually here
-    # we do not know how we intend to name disease
-    # try:
     temp_element["data"]["label"] = temp_element["data"]["mesh_label"]
-    # except KeyError:
-    #    temp_element['data']['label']=temp_element['data']['name']
-    # temp_element['classes']='not_selected'
-    # print(temp_element)
-    # disease_elements_starting_from.add(temp_element['data']['id'])
 temp_json_file = open(disease_json_address, "r")
 disease_network_dict_to = json.load(temp_json_file)
 temp_json_file.close()
-# disease_elements_starting_to=set()
 for temp_element in disease_network_dict_to["elements"]["nodes"]:
-    # id and label are special keys for cytoscape dicts
-    # they are always expected. our conversion script makes the id but does not make the name
-    # so we add it manually here
-    # we do not know how we intend to name disease
-    # try:
     temp_element["data"]["label"] = temp_element["data"]["mesh_label"]
-    # except KeyError:
-    #    temp_element['data']['label']=temp_element['data']['name']
-    # temp_element['classes']='not_selected'
-    # disease_elements_starting_to.add(temp_element['data']['id'])
+###########################################
 
 
+######### HELPER FUNCTIONS ################
 def remove_unmapped_nodes(temp_network_dict, temp_mapped_to_dict):
     """
     here we completely ignore the edges in the dict
@@ -157,8 +101,10 @@ def remove_redundant_options(temp_network_dict):
             only_appeared_once_mesh_label.append(temp_data)
     temp_network_dict["elements"]["nodes"] = only_appeared_once_mesh_label
     return temp_network_dict
+########################################
 
 
+#############Load pandas for data selection options ##########
 table_species_address = DATA_PATH.joinpath("table_species_dash.bin")
 table_organ_address = DATA_PATH.joinpath("table_organ_dash.bin")
 table_disease_address = DATA_PATH.joinpath("table_disease_dash.bin")
@@ -184,7 +130,11 @@ disease_map_dict = {
         zip(disease_map_panda.node_id.to_list(), disease_map_panda.we_map_to.to_list())
     )
 }
+########################################
 
+
+
+############Update pandas for data selection#################
 species_network_dict_from = remove_unmapped_nodes(
     species_network_dict_from, species_map_dict
 )
@@ -204,7 +154,10 @@ disease_network_dict_to = remove_unmapped_nodes(
     disease_network_dict_to, disease_map_dict
 )
 disease_network_dict_to = remove_redundant_options(disease_network_dict_to)
+#############################################
 
+
+#####################Structure of app#################
 app.layout = html.Div(
     children=[
         dbc.Row(
@@ -666,7 +619,7 @@ app.layout = html.Div(
         ),
     ]
 )
-
+######################################################
 
 @app.callback(
     [
@@ -713,10 +666,16 @@ def perform_volcano_query(
     to_disease_value,
 ):
     """
-    we perform the query information post as well as the
+    The singular page callback
+    We take data from the 6 fields (both species, organs, and diseases)
+    We call the API twice
+    Once to obtain information about the query "metadata query"
+    Once to obtain the comparison results 
+    Once to obtain information from the tables for the volcano plot and for the datatables
     """
 
-    ########metadata query########
+    ################metadata query######################
+    #prepare json for api
     metadata_json_output = {
         "from_species": from_species_value,
         "from_organ": from_organ_value,
@@ -725,40 +684,24 @@ def perform_volcano_query(
         "to_organ": to_organ_value,
         "to_disease": to_disease_value,
     }
+    #obtain results from api
     response = requests.post(base_url + "/metadataresource/", json=metadata_json_output)
     total_panda = pd.read_json(response.json(), orient="records")
-    print(total_panda)
 
+    #prepare column list for table
     query_summary_column_list = [
         {"name": temp_col, "id": temp_col} for temp_col in total_panda.columns
     ]
-    print(query_summary_column_list)
+
+    #prepare data for table
     query_summary_data = total_panda.to_dict(orient="records")
-    # query_summary_data=[
-    #     {temp_key]:str(query_summary_data[temp_key]) for temp_key in query_summary_data}
-    # ]
     for temp_key in query_summary_data[0]:
         query_summary_data[0][temp_key] = str(query_summary_data[0][temp_key])
-    print(query_summary_data)
-    # query_summary_data=[
-    #     {
-    #         'triplet_count_to': 1,
-    #         'sample_count_list_to': 3160,
-    #         'min_sample_count_to': 3160,
-    #         'sum_sample_count_to': 3160,
-    #         'unique_triplet_list_real_to': 234,#[['Plasma', '10090', 'No']],
-    #         'triplet_count_from': 1,
-    #         'sample_count_list_from': 234,#[3160],
-    #         'min_sample_count_from': 3160,
-    #         'sum_sample_count_from': 3160,
-    #         'unique_triplet_list_real_from': 234# [['Plasma', '10090', 'No']]
-    #     }
-    # ]
+    #####################################################
 
-    #############################
 
-    #################volcano query#######3
-
+    ##################volcano query######################
+    #prepare json for api
     volcano_json_output = {
         "from_species": from_species_value,
         "from_organ": from_organ_value,
@@ -774,11 +717,11 @@ def perform_volcano_query(
         "p_mann_max": 1,
     }
 
+    #call api
     response = requests.post(base_url + "/volcanoresource/", json=volcano_json_output)
     total_panda = pd.read_json(response.json(), orient="records")
-    # pd.set_option('display.max_rows',200)
-    print(total_panda)
 
+    #prepare columns and data for all four tables
     average_welch_column_list = [
         {"name": "compound", "id": "compound"},
         {"name": "fold_average", "id": "fold_average"},
@@ -805,10 +748,6 @@ def perform_volcano_query(
         (total_panda["compound"].str.contains("CHEMONTID")),
         ["compound", "fold_median", "sig_mannwhit"],
     ].to_dict(orient="records")
-    print(total_panda)
-    print(total_panda.loc[(~total_panda["compound"].str.contains("CHEMONTID"))])
-    print(total_panda.loc[(total_panda["compound"].str.contains("CHEMONTID"))])
-
     bins_panda = total_panda.loc[
         (~total_panda["compound"].str.contains("CHEMONTID"))
     ].copy(deep=True)
@@ -818,6 +757,7 @@ def perform_volcano_query(
         .reset_index()
     )
 
+    #prepare figures for volcano plots
     volcano_average_bin = dashbio.VolcanoPlot(
         dataframe=bins_panda,
         snp="compound",
@@ -846,7 +786,6 @@ def perform_volcano_query(
         effect_size="fold_median",
         gene=None,
     )
-
     #################################################3
 
     return (
