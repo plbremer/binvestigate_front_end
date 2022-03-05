@@ -186,41 +186,95 @@ def remove_redundant_options(temp_network_dict):
 # disease_network_dict_to=remove_unmapped_nodes(disease_network_dict_to,disease_map_dict)
 # disease_network_dict_to=remove_redundant_options(disease_network_dict_to)
 
-app.layout = html.Div(
+
+#####################Structure of app#################
+app.layout=html.Div(
     children=[
         dbc.Row(
             children=[
                 dbc.Col(
                     children=[
-                        html.H2("Blah", className="text-center"),
+                        html.H2("Metadata Group Comparator", className='text-center'),
                         html.Br(),
                         dbc.Card(
                             children=[
-                                dbc.CardBody(html.H4("Blah", className="text-center"))
+                                dbc.CardBody(
+                                    html.H4(
+                                        "Select metadata and observe volcano plots below", className='text-center')
+                                )
                             ]
-                        ),
+                        )
                     ],
-                    width={"size": 4}  # ,
-                    # align='center'
+                    width={'size':4}#,
+                    #align='center'
                 )
             ],
-            justify="center",
+            justify='center'
         ),
         html.Br(),
         dbc.Row(
             children=[
                 dbc.Col(
                     children=[
-                        html.H2("Blah", className="text-center"),
+                        html.H2("Selections here", className='text-center'),
+                        html.Br(),
+                        #dbc.Card(
+                            #dbc.CardBody(
+                            #    children=[
+                            #        dbc.Card(html.H4("Blah")),
+                            #        dbc.Card(
+                            #            html.Button(
+                            #                'Reset selections',
+                            #                id='button_from_species',
+                            #            )
+                            #        ),
+                            #    ]
+                            #)
+                        #),
                         html.Br(),
                         dbc.Card(
                             dbc.CardBody(
-                                children=[
-                                    dbc.Card(html.H4("Blah")),
+                                children=[                    
+                                    dbc.Card(html.H4("Available Species")),
                                     dbc.Card(
-                                        html.Button(
-                                            "Reset selections",
-                                            id="button_from_species",
+                                        dcc.Dropdown(
+                                            id='dropdown_from_species',
+                                            options=[
+                                                {'label': temp_node['data']['label'], 'value': temp_node['data']['id']} for temp_node in species_network_dict_from['elements']['nodes']
+                                            ],
+                                            multi=False,
+                                            style={
+                                                'color': '#212121',
+                                                'background-color': '#3EB489',
+                                            }
+                                        )
+                                    ),
+                                    dbc.Card(html.H4("Available Organs")),
+                                    dbc.Card(
+                                        dcc.Dropdown(
+                                            id='dropdown_from_organ',
+                                            options=[
+                                                {'label': temp_node['data']['label'], 'value': temp_node['data']['id']} for temp_node in organ_network_dict_from['elements']['nodes']
+                                            ],
+                                            multi=False,
+                                            style={
+                                                'color': '#212121',
+                                                'background-color': '#3EB489',
+                                            }
+                                        )
+                                    ),
+                                    dbc.Card(html.H4("Available Diseases")),
+                                    dbc.Card(
+                                        dcc.Dropdown(
+                                            id='dropdown_from_disease',
+                                            options=[
+                                                {'label': temp_node['data']['label'], 'value': temp_node['data']['id']} for temp_node in disease_network_dict_from['elements']['nodes']
+                                            ],
+                                            multi=False,
+                                            style={
+                                                'color': '#212121',
+                                                'background-color': '#3EB489',
+                                            }
                                         )
                                     ),
                                 ]
@@ -229,80 +283,7 @@ app.layout = html.Div(
                         html.Br(),
                         dbc.Card(
                             dbc.CardBody(
-                                children=[
-                                    dbc.Card(html.H4("blah")),
-                                    dbc.Card(
-                                        dcc.Dropdown(
-                                            id="dropdown_from_species",
-                                            options=[
-                                                {
-                                                    "label": temp_node["data"]["label"],
-                                                    "value": temp_node["data"]["id"],
-                                                }
-                                                for temp_node in species_network_dict_from[
-                                                    "elements"
-                                                ][
-                                                    "nodes"
-                                                ]
-                                            ],
-                                            multi=False,
-                                            style={
-                                                "color": "#212121",
-                                                "background-color": "#212121",
-                                            },
-                                        )
-                                    ),
-                                    dbc.Card(html.H4("blah")),
-                                    dbc.Card(
-                                        dcc.Dropdown(
-                                            id="dropdown_from_organ",
-                                            options=[
-                                                {
-                                                    "label": temp_node["data"]["label"],
-                                                    "value": temp_node["data"]["id"],
-                                                }
-                                                for temp_node in organ_network_dict_from[
-                                                    "elements"
-                                                ][
-                                                    "nodes"
-                                                ]
-                                            ],
-                                            multi=False,
-                                            style={
-                                                "color": "#212121",
-                                                "background-color": "#212121",
-                                            },
-                                        )
-                                    ),
-                                    dbc.Card(html.H4("blah")),
-                                    dbc.Card(
-                                        dcc.Dropdown(
-                                            id="dropdown_from_disease",
-                                            options=[
-                                                {
-                                                    "label": temp_node["data"]["label"],
-                                                    "value": temp_node["data"]["id"],
-                                                }
-                                                for temp_node in disease_network_dict_from[
-                                                    "elements"
-                                                ][
-                                                    "nodes"
-                                                ]
-                                            ],
-                                            multi=False,
-                                            style={
-                                                "color": "#212121",
-                                                "background-color": "#212121",
-                                            },
-                                        )
-                                    ),
-                                ]
-                            )
-                        ),
-                        html.Br(),
-                        dbc.Card(
-                            dbc.CardBody(
-                                # children=[
+                                # children=[                    
                                 #     dbc.Card(html.H4("Use these checkboxes to select multiple species at once. Selecting multiple species will compare each individually. Choosing their parent will aggregate them.")),
                                 #     dbc.Card(
                                 #         dcc.Checklist(
@@ -313,34 +294,88 @@ app.layout = html.Div(
                                 #             labelStyle={'display':'block'}
                                 #         )
                                 #     ),
+
                                 # ]
                             )
                         ),
                         html.Br(),
+
                     ],
-                    width={"size": 4},
+                    width={'size':4}
                 ),
                 dbc.Col(
                     children=[
-                        # dbc.Card(
+                        #dbc.Card(
                         #    html.H4("lorem ipsum")
-                        # )
-                        html.H2("blah", className="text-center")
+                        #)
+                        html.H2('get compared to', className='text-center')
                     ],
-                    width={"size": 2},
+                    width={'size':2}
                 ),
                 dbc.Col(
                     children=[
-                        html.H2("Blah", className="text-center"),
+                        
+                        html.H2("Selections here", className='text-center'),
+                        html.Br(),
+                        #dbc.Card(
+                        #    dbc.CardBody(
+                        #        children=[
+                        #            dbc.Card(html.H4("Blah")),
+                        #            dbc.Card(
+                        #                html.Button(
+                        #                    'Reset selections',
+                        #                    id='button_to_species2',
+                        #                )
+                        #            ),3#
+                        #  
+                        # 
+                        #        ]
+                        #    )
+                        #),
                         html.Br(),
                         dbc.Card(
                             dbc.CardBody(
-                                children=[
-                                    dbc.Card(html.H4("Blah")),
+                                children=[                    
+                                    dbc.Card(html.H4("Available Species")),
                                     dbc.Card(
-                                        html.Button(
-                                            "Reset selections",
-                                            id="button_to_species2",
+                                        dcc.Dropdown(
+                                            id='dropdown_to_species',
+                                            options=[
+                                                {'label': temp_node['data']['label'], 'value': temp_node['data']['id']} for temp_node in species_network_dict_to['elements']['nodes']
+                                            ],
+                                            multi=False,
+                                            style={
+                                                'color': '#212121',
+                                                'background-color': '#3EB489',
+                                            }
+                                        )
+                                    ),
+                                    dbc.Card(html.H4("Available Organs")),
+                                    dbc.Card(
+                                        dcc.Dropdown(
+                                            id='dropdown_to_organ',
+                                            options=[
+                                                {'label': temp_node['data']['label'], 'value': temp_node['data']['id']} for temp_node in organ_network_dict_to['elements']['nodes']
+                                            ],
+                                            multi=False,
+                                            style={
+                                                'color': '#212121',
+                                                'background-color': '#3EB489',
+                                            }
+                                        )
+                                    ),
+                                    dbc.Card(html.H4("Available Diseases")),
+                                    dbc.Card(
+                                        dcc.Dropdown(
+                                            id='dropdown_to_disease',
+                                            options=[
+                                                {'label': temp_node['data']['label'], 'value': temp_node['data']['id']} for temp_node in disease_network_dict_to['elements']['nodes']
+                                            ],
+                                            multi=False,
+                                            style={
+                                                'color': '#212121',
+                                                'background-color': '#3EB489',
+                                            }
                                         )
                                     ),
                                 ]
@@ -349,78 +384,7 @@ app.layout = html.Div(
                         html.Br(),
                         dbc.Card(
                             dbc.CardBody(
-                                children=[
-                                    dbc.Card(html.H4("blah")),
-                                    dbc.Card(
-                                        dcc.Dropdown(
-                                            id="dropdown_to_species",
-                                            options=[
-                                                {
-                                                    "label": temp_node["data"]["label"],
-                                                    "value": temp_node["data"]["id"],
-                                                }
-                                                for temp_node in species_network_dict_to[
-                                                    "elements"
-                                                ][
-                                                    "nodes"
-                                                ]
-                                            ],
-                                            multi=False,
-                                            style={
-                                                "color": "#212121",
-                                                "background-color": "#212121",
-                                            },
-                                        )
-                                    ),
-                                    dbc.Card(html.H4("blah")),
-                                    dbc.Card(
-                                        dcc.Dropdown(
-                                            id="dropdown_to_organ",
-                                            options=[
-                                                {
-                                                    "label": temp_node["data"]["label"],
-                                                    "value": temp_node["data"]["id"],
-                                                }
-                                                for temp_node in organ_network_dict_to[
-                                                    "elements"
-                                                ]["nodes"]
-                                            ],
-                                            multi=False,
-                                            style={
-                                                "color": "#212121",
-                                                "background-color": "#212121",
-                                            },
-                                        )
-                                    ),
-                                    dbc.Card(html.H4("blah")),
-                                    dbc.Card(
-                                        dcc.Dropdown(
-                                            id="dropdown_to_disease",
-                                            options=[
-                                                {
-                                                    "label": temp_node["data"]["label"],
-                                                    "value": temp_node["data"]["id"],
-                                                }
-                                                for temp_node in disease_network_dict_to[
-                                                    "elements"
-                                                ][
-                                                    "nodes"
-                                                ]
-                                            ],
-                                            multi=False,
-                                            style={
-                                                "color": "#212121",
-                                                "background-color": "#212121",
-                                            },
-                                        )
-                                    ),
-                                ]
-                            )
-                        ),
-                        html.Br(),
-                        dbc.Card(
-                            dbc.CardBody(
-                                # children=[
+                                # children=[                    
                                 #     dbc.Card(html.H4("Use these checkboxes to select multiple species at once. Selecting multiple species will compare each individually. Choosing their parent will aggregate them.")),
                                 #     dbc.Card(
                                 #         dcc.Checklist(
@@ -435,91 +399,99 @@ app.layout = html.Div(
                             )
                         ),
                         html.Br(),
+
                     ],
-                    width={"size": 4},
+                    width={'size':4}
                 ),
             ],
-            justify="around",
+            justify='around'
         ),
         dbc.Row(
             children=[
                 dbc.Col(
                     children=[
-                        html.H2("Other options", className="text-center"),
+                        html.H2("Other options", className='text-center'),
                         html.Br(),
                         dbc.Card(
                             children=[
-                                dbc.CardBody(html.H4("Blah", className="text-center"))
+                                dbc.CardBody(
+                                    html.H4(
+                                        "Node distance, count filters coming soon", className='text-center')
+                                )
                             ]
-                        ),
+                        )
                     ],
-                    width={"size": 4}  # ,
-                    # align='center'
+                    width={'size':4}#,
+                    #align='center'
                 )
             ],
-            justify="center",
+            justify='center'
         ),
         dbc.Row(
             children=[
                 dbc.Col(
                     children=[
-                        html.H2("Execute query", className="text-center"),
                         html.Br(),
+                        html.H2("Execute query", className='text-center'),
+                        #html.Br(),
                         dbc.Card(
                             dbc.CardBody(
                                 children=[
-                                    dbc.Card(html.H4("Blah", className="text-center")),
+                                    dbc.Card(
+                                        html.H4("Click to query backend", className='text-center')
+                                    ),
                                     dbc.Card(
                                         html.Button(
-                                            "Execute Query",
-                                            id="button_query",
+                                            'Execute Query',
+                                            id='button_query',
                                         )
-                                    ),
+                                    )
                                 ]
                             )
-                        ),
+                        )
                     ],
-                    width={"size": 4}  # ,
-                    # align='center'
+                    width={'size':4}#,
+                    #align='center'
                 )
             ],
-            justify="center",
+            justify='center'
         ),
+
         dbc.Row(
             children=[
                 dbc.Col(
                     children=[
-                        html.H2("Results", className="text-center"),
                         html.Br(),
+                        html.H2("Results", className='text-center'),
+                        #html.Br(),
                         dbc.Card(
                             dbc.CardBody(
                                 children=[
                                     dbc.Card(
                                         html.H4(
-                                            "Query Summary", className="text-center"
-                                        )
+                                            "Query Summary - reformat coming soon", className='text-center')
                                     ),
                                     dbc.Card(
                                         dt.DataTable(
-                                            id="table_query_summary",
-                                            columns=[{"name": "temp", "id": "temp"}],
+                                            id='table_query_summary',
+                                            columns=[{'name': 'temp', 'id': 'temp'}],
                                             data=[],
                                             page_current=0,
                                             page_size=10,
-                                            page_action="custom",
-                                            style_header={
-                                                "backgroundColor": "rgb(30, 30, 30)",
-                                                "color": "white",
-                                            },
-                                            style_data={
-                                                "backgroundColor": "rgb(50, 50, 50)",
-                                                "color": "white",
-                                            },
+                                            page_action='custom',
+                                                style_header={
+                                                    'backgroundColor': 'rgb(30, 30, 30)',
+                                                    'color': 'white'
+                                                },
+                                                style_data={
+                                                    'backgroundColor': 'rgb(50, 50, 50)',
+                                                    'color': 'white'
+                                                }
                                         )
-                                    ),
+                                    )
                                 ]
                             )
-                        ),
+                        )
                     ]
                 )
             ]
@@ -531,122 +503,133 @@ app.layout = html.Div(
                         dbc.Card(
                             dbc.CardBody(
                                 children=[
-                                    dbc.Card(html.H4("Blah", className="text-center")),
+                                    dbc.Card(
+                                        html.H4(
+                                            "Welch p-Value vs. Average Fold", className='text-center')
+                                    ),
                                     dbc.Card(
                                         dcc.Graph(
-                                            id="volcano_average_welch_bins",
+                                            id='volcano_average_welch_bins',
                                         )
                                     ),
                                     dbc.Card(
                                         dt.DataTable(
-                                            id="table_average_welch_bins",
-                                            columns=[{"name": "temp", "id": "temp"}],
+                                            id='table_average_welch_bins',
+                                            columns=[{'name': 'temp', 'id': 'temp'}],
                                             data=[],
                                             page_current=0,
                                             page_size=10,
-                                            page_action="custom",
-                                            style_header={
-                                                "backgroundColor": "rgb(30, 30, 30)",
-                                                "color": "white",
-                                            },
-                                            style_data={
-                                                "backgroundColor": "rgb(50, 50, 50)",
-                                                "color": "white",
-                                            },
+                                            page_action='custom',
+                                                style_header={
+                                                    'backgroundColor': 'rgb(30, 30, 30)',
+                                                    'color': 'white'
+                                                },
+                                                style_data={
+                                                    'backgroundColor': 'rgb(50, 50, 50)',
+                                                    'color': 'white'
+                                                }
                                         )
                                     ),
                                     dbc.Card(
                                         dcc.Graph(
-                                            id="volcano_average_welch_classyfire",
+                                            id='volcano_average_welch_classyfire',
                                         )
                                     ),
                                     dbc.Card(
                                         dt.DataTable(
-                                            id="table_average_welch_classyfire",
-                                            columns=[{"name": "temp", "id": "temp"}],
+                                            id='table_average_welch_classyfire',
+                                            columns=[{'name': 'temp', 'id': 'temp'}],
                                             data=[],
                                             page_current=0,
                                             page_size=10,
-                                            page_action="custom",
-                                            style_header={
-                                                "backgroundColor": "rgb(30, 30, 30)",
-                                                "color": "white",
-                                            },
-                                            style_data={
-                                                "backgroundColor": "rgb(50, 50, 50)",
-                                                "color": "white",
-                                            },
+                                            page_action='custom',
+                                                style_header={
+                                                    'backgroundColor': 'rgb(30, 30, 30)',
+                                                    'color': 'white'
+                                                },
+                                                style_data={
+                                                    'backgroundColor': 'rgb(50, 50, 50)',
+                                                    'color': 'white'
+                                                }
                                         )
-                                    ),
+                                    )
                                 ]
                             )
                         )
                     ],
-                    width={"size": 4},
+                    width={'size':4}
                 ),
-                dbc.Col(children=[], width={"size": 2}),
+                dbc.Col(
+                    children=[
+                    ],
+                    width={'size':2}
+                ),
                 dbc.Col(
                     children=[
                         dbc.Card(
                             dbc.CardBody(
                                 children=[
-                                    dbc.Card(html.H4("Blah", className="text-center")),
+                                    dbc.Card(
+                                        html.H4(
+                                            "Mann Whitney p-Value vs. Median Fold", className='text-center')
+                                    ),
                                     dbc.Card(
                                         dcc.Graph(
-                                            id="volcano_median_mw_bins",
+                                            id='volcano_median_mw_bins',
                                         )
                                     ),
                                     dbc.Card(
                                         dt.DataTable(
-                                            id="table_median_mw_bins",
-                                            columns=[{"name": "temp", "id": "temp"}],
+                                            id='table_median_mw_bins',
+                                            columns=[{'name': 'temp', 'id': 'temp'}],
                                             data=[],
                                             page_current=0,
                                             page_size=10,
-                                            page_action="custom",
-                                            style_header={
-                                                "backgroundColor": "rgb(30, 30, 30)",
-                                                "color": "white",
-                                            },
-                                            style_data={
-                                                "backgroundColor": "rgb(50, 50, 50)",
-                                                "color": "white",
-                                            },
+                                            page_action='custom',
+                                                style_header={
+                                                    'backgroundColor': 'rgb(30, 30, 30)',
+                                                    'color': 'white'
+                                                },
+                                                style_data={
+                                                    'backgroundColor': 'rgb(50, 50, 50)',
+                                                    'color': 'white'
+                                                }
                                         )
                                     ),
                                     dbc.Card(
                                         dcc.Graph(
-                                            id="volcano_median_mw_classyfire",
+                                            id='volcano_median_mw_classyfire',
                                         )
                                     ),
                                     dbc.Card(
                                         dt.DataTable(
-                                            id="table_median_mw_classyfire",
-                                            columns=[{"name": "temp", "id": "temp"}],
+                                            id='table_median_mw_classyfire',
+                                            columns=[{'name': 'temp', 'id': 'temp'}],
                                             data=[],
                                             page_current=0,
                                             page_size=10,
-                                            page_action="custom",
-                                            style_header={
-                                                "backgroundColor": "rgb(30, 30, 30)",
-                                                "color": "white",
-                                            },
-                                            style_data={
-                                                "backgroundColor": "rgb(50, 50, 50)",
-                                                "color": "white",
-                                            },
+                                            page_action='custom',
+                                                style_header={
+                                                    'backgroundColor': 'rgb(30, 30, 30)',
+                                                    'color': 'white'
+                                                },
+                                                style_data={
+                                                    'backgroundColor': 'rgb(50, 50, 50)',
+                                                    'color': 'white'
+                                                }
                                         )
-                                    ),
+                                    )
                                 ]
                             )
                         )
                     ],
-                    width={"size": 4},
-                ),
+                    width={'size':4}
+                )
             ]
-        ),
+        )
     ]
 )
+######################################################
 
 
 @app.callback(
@@ -761,35 +744,31 @@ def perform_volcano_query(
     print(total_panda)
 
     average_welch_column_list = [
-        {"name": "compound", "id": "compound"},
+        {"name": "english_name", "id": "english_name"},
         {"name": "fold_average", "id": "fold_average"},
         {"name": "sig_welch", "id": "sig_welch"},
     ]
     average_welch_data_bin = total_panda.loc[
         (~total_panda["compound"].str.contains("CHEMONTID")),
-        ["compound", "fold_average", "sig_welch"],
+        ["english_name", "fold_average", "sig_welch"],
     ].to_dict(orient="records")
     average_welch_data_classyfire = total_panda.loc[
         (total_panda["compound"].str.contains("CHEMONTID")),
-        ["compound", "fold_average", "sig_welch"],
+        ["english_name", "fold_average", "sig_welch"],
     ].to_dict(orient="records")
     median_mw_column_list = [
-        {"name": "compound", "id": "compound"},
+        {"name": "english_name", "id": "english_name"},
         {"name": "fold_median", "id": "fold_median"},
         {"name": "sig_mannwhit", "id": "sig_mannwhit"},
     ]
     median_mw_data_bin = total_panda.loc[
         (~total_panda["compound"].str.contains("CHEMONTID")),
-        ["compound", "fold_median", "sig_mannwhit"],
+        ["english_name", "fold_median", "sig_mannwhit"],
     ].to_dict(orient="records")
     median_mw_data_classyfire = total_panda.loc[
         (total_panda["compound"].str.contains("CHEMONTID")),
-        ["compound", "fold_median", "sig_mannwhit"],
+        ["english_name", "fold_median", "sig_mannwhit"],
     ].to_dict(orient="records")
-    print(total_panda)
-    print(total_panda.loc[(~total_panda["compound"].str.contains("CHEMONTID"))])
-    print(total_panda.loc[(total_panda["compound"].str.contains("CHEMONTID"))])
-
     bins_panda = total_panda.loc[
         (~total_panda["compound"].str.contains("CHEMONTID"))
     ].copy(deep=True)
@@ -799,35 +778,35 @@ def perform_volcano_query(
         .reset_index()
     )
 
+    #prepare figures for volcano plots
     volcano_average_bin = dashbio.VolcanoPlot(
         dataframe=bins_panda,
-        snp="compound",
+        snp="english_name",
         p="sig_welch",
         effect_size="fold_average",
         gene=None,
     )
     volcano_average_classyfire = dashbio.VolcanoPlot(
         dataframe=classyfire_panda,
-        snp="compound",
+        snp="english_name",
         p="sig_welch",
         effect_size="fold_average",
         gene=None,
     )
     volcano_median_bin = dashbio.VolcanoPlot(
         dataframe=bins_panda,
-        snp="compound",
+        snp="english_name",
         p="sig_mannwhit",
         effect_size="fold_median",
         gene=None,
     )
     volcano_median_classyfire = dashbio.VolcanoPlot(
         dataframe=classyfire_panda,
-        snp="compound",
+        snp="english_name",
         p="sig_mannwhit",
         effect_size="fold_median",
         gene=None,
     )
-
     #################################################3
 
     return (
