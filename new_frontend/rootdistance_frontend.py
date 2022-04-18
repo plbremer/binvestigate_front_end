@@ -25,7 +25,24 @@ app = Dash(__name__, external_stylesheets=external_stylesheets)
 server = app.server
 
 
+root_dist_max_compound=10
+root_dist_max_species=10
+root_dist_max_organ=10
+root_dist_max_disease=10
+
+
 ############### LOAD HIERARCHIES ##############
+compound_json_address = DATA_PATH.joinpath("cyto_format_compound.json")
+temp_json_file = open(compound_json_address, "r")
+compound_dict = json.load(temp_json_file)
+temp_json_file.close()
+for temp_element in compound_dict["elements"]["nodes"]:
+    #options included 'id' 'inchikey' 'name' 'value'
+    #also has property "type_of_node" (is it a leaf or not)
+    temp_element["data"]["label"] = temp_element["data"]["id"]
+# [(temp_element["data"]["label"] := temp_element["data"]["id"]) for temp_element in compound_dict["elements"]["nodes"]\
+#     if temp_element['type_of_node']=='from_binvestigate']
+
 species_json_address = DATA_PATH.joinpath("cyto_format_species.json")
 temp_json_file = open(species_json_address, "r")
 species_network_dict_from = json.load(temp_json_file)
@@ -101,6 +118,12 @@ def remove_redundant_options(temp_network_dict):
     temp_network_dict["elements"]["nodes"] = only_appeared_once_mesh_label
     return temp_network_dict
 ########################################
+
+############create compound selection options################
+# no-- #i think that we will just have "if from_binvestigate== True in the load?"
+
+#############################################################
+
 
 #############Load pandas for data selection options ##########
 table_species_address = DATA_PATH.joinpath("table_species_dash.bin")
@@ -178,6 +201,45 @@ app.layout=html.Div(
             ],
             justify='center'
         ),
+        dbc.Row(
+            children=[
+                dbc.Col(
+                    children=[
+                        html.H2("Choose compound stuff here", className='text-center'),
+                        html.Br(),
+                        dbc.Card(
+                            children=[
+                                dbc.CardBody(
+                                    html.H4(
+                                        "asdf", className='text-center')
+                                )
+                            ]
+                        ),
+                        dbc.Card(
+                            dbc.CardBody(
+                                dcc.Slider(0,root_dist_max_compound,1,value=0,id='slider_compound')
+                            )
+                        ),
+                        dbc.Card(
+                            dcc.Dropdown(
+                                id='dropdown_compound',
+                                options=[
+                                    {'label': temp_node['data']['label'], 'value': temp_node['data']['label']} for temp_node in compound_dict['elements']['nodes'] if (temp_node['data']['type_of_node']=='from_binvestigate')#species_network_dict_from['elements']['nodes']
+                                ],
+                                multi=False,
+                                style={
+                                    'color': '#212121',
+                                    'background-color': '#3EB489',
+                                }
+                            )
+                        ),
+                    ],
+                    width={'size':4}#,
+                    #align='center'
+                )
+            ],
+            justify='center'
+        ),
         html.Br(),
         dbc.Row(
             children=[
@@ -201,19 +263,11 @@ app.layout=html.Div(
                         html.Br(),
                         dbc.Card(
                             dbc.CardBody(
-                                # children=[                    
-                                #     dbc.Card(html.H4("Use these checkboxes to select multiple species at once. Selecting multiple species will compare each individually. Choosing their parent will aggregate them.")),
-                                #     dbc.Card(
-                                #         dcc.Checklist(
-                                #             id='checklist_from_species',
-                                #             options=[
-                                #                 {'label': i, 'value': i} for i in checklist_hashmap_species_from.keys()
-                                #             ],
-                                #             labelStyle={'display':'block'}
-                                #         )
-                                #     ),
-
-                                # ]
+                                children=[
+                                    dcc.Slider(0,root_dist_max_species,1,value=0,id='slider_from_species'),
+                                    dcc.Slider(0,root_dist_max_organ,1,value=0,id='slider_from_organ'),
+                                    dcc.Slider(0,root_dist_max_disease,1,value=0,id='slider_from_disease'),
+                                ]
                             )
                         ),
                         html.Br(),
@@ -303,19 +357,11 @@ app.layout=html.Div(
                         html.Br(),
                         dbc.Card(
                             dbc.CardBody(
-                                # children=[                    
-                                #     dbc.Card(html.H4("Use these checkboxes to select multiple species at once. Selecting multiple species will compare each individually. Choosing their parent will aggregate them.")),
-                                #     dbc.Card(
-                                #         dcc.Checklist(
-                                #             id='checklist_from_species',
-                                #             options=[
-                                #                 {'label': i, 'value': i} for i in checklist_hashmap_species_from.keys()
-                                #             ],
-                                #             labelStyle={'display':'block'}
-                                #         )
-                                #     ),
-
-                                # ]
+                                children=[
+                                    dcc.Slider(0,root_dist_max_species,1,value=0,id='slider_to_species'),
+                                    dcc.Slider(0,root_dist_max_organ,1,value=0,id='slider_to_organ'),
+                                    dcc.Slider(0,root_dist_max_disease,1,value=0,id='slider_to_disease'),
+                                ]
                             )
                         ),
                         html.Br(),
@@ -424,46 +470,6 @@ app.layout=html.Div(
             ],
             justify='center'
         ),
-
-        dbc.Row(
-            children=[
-                dbc.Col(
-                    children=[
-                        html.Br(),
-                        html.H2("Results", className='text-center'),
-                        #html.Br(),
-                        dbc.Card(
-                            dbc.CardBody(
-                                children=[
-                                    dbc.Card(
-                                        html.H4(
-                                            "Query Summary - reformat coming soon", className='text-center')
-                                    ),
-                                    dbc.Card(
-                                        dt.DataTable(
-                                            id='table_query_summary',
-                                            columns=[{'name': 'temp', 'id': 'temp'}],
-                                            data=[],
-                                            page_current=0,
-                                            page_size=10,
-                                            page_action='custom',
-                                                style_header={
-                                                    'backgroundColor': 'rgb(30, 30, 30)',
-                                                    'color': 'white'
-                                                },
-                                                style_data={
-                                                    'backgroundColor': 'rgb(50, 50, 50)',
-                                                    'color': 'white'
-                                                }
-                                        )
-                                    )
-                                ]
-                            )
-                        )
-                    ]
-                )
-            ]
-        ),
         dbc.Row(
             children=[
                 dbc.Col(
@@ -480,47 +486,6 @@ app.layout=html.Div(
                                             id='volcano_average_welch_bins',
                                         )
                                     ),
-                                    dbc.Card(
-                                        dt.DataTable(
-                                            id='table_average_welch_bins',
-                                            columns=[{'name': 'temp', 'id': 'temp'}],
-                                            data=[],
-                                            page_current=0,
-                                            page_size=10,
-                                            page_action='custom',
-                                                style_header={
-                                                    'backgroundColor': 'rgb(30, 30, 30)',
-                                                    'color': 'white'
-                                                },
-                                                style_data={
-                                                    'backgroundColor': 'rgb(50, 50, 50)',
-                                                    'color': 'white'
-                                                }
-                                        )
-                                    ),
-                                    dbc.Card(
-                                        dcc.Graph(
-                                            id='volcano_average_welch_classyfire',
-                                        )
-                                    ),
-                                    dbc.Card(
-                                        dt.DataTable(
-                                            id='table_average_welch_classyfire',
-                                            columns=[{'name': 'temp', 'id': 'temp'}],
-                                            data=[],
-                                            page_current=0,
-                                            page_size=10,
-                                            page_action='custom',
-                                                style_header={
-                                                    'backgroundColor': 'rgb(30, 30, 30)',
-                                                    'color': 'white'
-                                                },
-                                                style_data={
-                                                    'backgroundColor': 'rgb(50, 50, 50)',
-                                                    'color': 'white'
-                                                }
-                                        )
-                                    )
                                 ]
                             )
                         )
@@ -545,47 +510,6 @@ app.layout=html.Div(
                                         dcc.Graph(
                                             id='volcano_median_mw_bins',
                                         )
-                                    ),
-                                    dbc.Card(
-                                        dt.DataTable(
-                                            id='table_median_mw_bins',
-                                            columns=[{'name': 'temp', 'id': 'temp'}],
-                                            data=[],
-                                            page_current=0,
-                                            page_size=10,
-                                            page_action='custom',
-                                                style_header={
-                                                    'backgroundColor': 'rgb(30, 30, 30)',
-                                                    'color': 'white'
-                                                },
-                                                style_data={
-                                                    'backgroundColor': 'rgb(50, 50, 50)',
-                                                    'color': 'white'
-                                                }
-                                        )
-                                    ),
-                                    dbc.Card(
-                                        dcc.Graph(
-                                            id='volcano_median_mw_classyfire',
-                                        )
-                                    ),
-                                    dbc.Card(
-                                        dt.DataTable(
-                                            id='table_median_mw_classyfire',
-                                            columns=[{'name': 'temp', 'id': 'temp'}],
-                                            data=[],
-                                            page_current=0,
-                                            page_size=10,
-                                            page_action='custom',
-                                                style_header={
-                                                    'backgroundColor': 'rgb(30, 30, 30)',
-                                                    'color': 'white'
-                                                },
-                                                style_data={
-                                                    'backgroundColor': 'rgb(50, 50, 50)',
-                                                    'color': 'white'
-                                                }
-                                        )
                                     )
                                 ]
                             )
@@ -594,7 +518,228 @@ app.layout=html.Div(
                     width={'size':4}
                 )
             ]
-        )
+        ),
+        dbc.Row(
+            children=[
+                dbc.Col(
+                    children=[
+                        html.H2("result table", className='text-center'),
+                        html.Br(),
+                        dbc.Card(
+                            children=[
+                                dbc.CardBody(
+                                    dt.DataTable(
+                                            id='table_result',
+                                            columns=[{'name': 'temp', 'id': 'temp'}],
+                                            data=[],
+                                            page_current=0,
+                                            page_size=10,
+                                            page_action='custom',
+                                                style_header={
+                                                    'backgroundColor': 'rgb(30, 30, 30)',
+                                                    'color': 'white'
+                                                },
+                                                style_data={
+                                                    'backgroundColor': 'rgb(50, 50, 50)',
+                                                    'color': 'white'
+                                                }
+                                    )
+                                )
+                            ]
+                        )
+                    ],
+                    width={'size':4}#,
+                    #align='center'
+                )
+            ],
+            justify='center'
+        ),
     ]
 )
 ######################################################
+
+
+@app.callback(
+    [
+        # Output(component_id="table_query_summary", component_property="columns"),
+        # Output(component_id="table_query_summary", component_property="data"),
+        # Output(component_id="table_average_welch_bins", component_property="columns"),
+        # Output(component_id="table_average_welch_bins", component_property="data"),
+        # Output(component_id="table_median_mw_bins", component_property="columns"),
+        # Output(component_id="table_median_mw_bins", component_property="data"),
+        # Output(
+        #     component_id="table_average_welch_classyfire", component_property="columns"
+        # ),
+        # Output(
+        #     component_id="table_average_welch_classyfire", component_property="data"
+        # ),
+        Output(component_id="table_result", component_property="columns"),
+        Output(component_id="table_result", component_property="data"),
+        # Output(component_id="table_median_mw_classyfire", component_property="columns"),
+        # Output(component_id="table_median_mw_classyfire", component_property="data"),
+        Output(component_id="volcano_average_welch_bins", component_property="figure"),
+        Output(component_id="volcano_median_mw_bins", component_property="figure"),
+        # Output(
+        #     component_id="volcano_average_welch_classyfire", component_property="figure"
+        # ),
+        # Output(
+        #     component_id="volcano_median_mw_classyfire", component_property="figure"
+        # ),
+    ],
+    [Input(component_id="button_query", component_property="n_clicks")],
+    [
+        State(component_id="dropdown_compound",component_property="value"),
+        State(component_id="dropdown_from_species", component_property="value"),
+        State(component_id="dropdown_from_organ", component_property="value"),
+        State(component_id="dropdown_from_disease", component_property="value"),
+        State(component_id="dropdown_to_species", component_property="value"),
+        State(component_id="dropdown_to_organ", component_property="value"),
+        State(component_id="dropdown_to_disease", component_property="value"),
+
+        State(component_id="slider_compound",component_property="value"),
+        State(component_id="slider_from_species", component_property="value"),
+        State(component_id="slider_from_organ", component_property="value"),
+        State(component_id="slider_from_disease", component_property="value"),
+        State(component_id="slider_to_species", component_property="value"),
+        State(component_id="slider_to_organ", component_property="value"),
+        State(component_id="slider_to_disease", component_property="value"),        
+    ],
+)
+def perform_volcano_query(
+    query,
+    
+    dropdown_compound_value,
+    dropdown_from_species_value,
+    dropdown_from_organ_value,
+    dropdown_from_disease_value,
+    dropdown_to_species_value,
+    dropdown_to_organ_value,
+    dropdown_to_disease_value,
+
+    slider_compound_value,
+    slider_from_species_value,
+    slider_from_organ_value,
+    slider_from_disease_value,
+    slider_to_species_value,
+    slider_to_organ_value,
+    slider_to_disease_value,
+):
+    """
+    The singular page callback
+    """
+
+    # ################metadata query######################
+    # #prepare json for api
+    # metadata_json_output = {
+    #     "from_species": from_species_value,
+    #     "from_organ": from_organ_value,
+    #     "from_disease": from_disease_value,
+    #     "to_species": to_species_value,
+    #     "to_organ": to_organ_value,
+    #     "to_disease": to_disease_value,
+    # }
+    # #obtain results from api
+    # response = requests.post(base_url + "/metadataresource/", json=metadata_json_output)
+    # total_panda = pd.read_json(response.json(), orient="records")
+
+    # #prepare column list for table
+    # query_summary_column_list = [
+    #     {"name": temp_col, "id": temp_col} for temp_col in total_panda.columns
+    # ]
+
+    # #prepare data for table
+    # query_summary_data = total_panda.to_dict(orient="records")
+    # for temp_key in query_summary_data[0]:
+    #     query_summary_data[0][temp_key] = str(query_summary_data[0][temp_key])
+    # #####################################################
+
+
+    ##################main query######################
+    #prepare json for api
+    # root_distance_json_output = {
+    #     "from_species": dropdown_from_species_value,
+    #     "from_organ": dropdown_from_organ_value,
+    #     "from_disease": dropdown_from_disease_value,
+    #     "to_species": dropdown_to_species_value,
+    #     "to_organ": dropdown_to_organ_value,
+    #     "to_disease": dropdown_to_disease_value,
+
+    #     'compound_dfr':slider_compound_value,
+    #     'species_from_dfr':slider_from_species_value,
+    #     'organ_from_dfr':slider_from_organ_value,
+    #     'disease_from_dfr':slider_from_disease_value,
+    #     'species_to_dfr':slider_to_species_value,
+    #     'organ_to_dfr':slider_to_organ_value,
+    #     'disease_to_dfr':slider_to_disease_value,
+        
+    #     'page_size':50,
+    #     'page_current':0
+    # }
+
+    root_distance_json_output = {
+        "compound":2,
+        "from_species":562,
+        "from_organ":"A15.145.846",
+        "from_disease":"No",
+        "to_species":314146,
+        "to_organ":"A12.207.270.695",
+        "to_disease":"No",
+
+        "compound_dfr":2,
+        "species_from_dfr": 8,
+        "organ_from_dfr":8,
+        "disease_from_dfr":8,
+        "species_to_dfr": 8,
+        "organ_to_dfr":8,
+        "disease_to_dfr":8,
+        
+        "page_size":50,
+        "page_current":0
+    }
+
+
+
+
+    #call api
+    response = requests.post(base_url + "/rootdistanceresource/", json=root_distance_json_output)
+    total_panda = pd.read_json(response.json(), orient="records")
+    print(total_panda)
+
+    result_table_column_list=[
+        {'name':temp_col,'id':temp_col} for temp_col in total_panda.columns
+    ]
+    result_table_data=total_panda.to_dict(orient="records")
+
+    #prepare figures for volcano plots
+    volcano_average_bin = dashbio.VolcanoPlot(
+        dataframe=total_panda,
+        #snp="english_name",
+        snp=None,
+        p="sig_welch",
+        effect_size="fold_average",
+        gene=None,
+    )
+    volcano_median_bin = dashbio.VolcanoPlot(
+        dataframe=total_panda,
+        #snp="english_name",
+        snp=None,
+        p="sig_mannwhit",
+        effect_size="fold_median",
+        gene=None,
+    )
+    #################################################3
+
+    return (
+        result_table_column_list,
+        result_table_data,
+        volcano_average_bin,
+        volcano_median_bin
+    )
+
+
+
+
+
+if __name__ == "__main__":
+
+    app.run_server(debug=True)
