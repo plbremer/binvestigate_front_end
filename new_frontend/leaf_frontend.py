@@ -3,6 +3,7 @@ import networkx as nx
 from pprint import pprint
 import pandas as pd
 
+import dash
 from dash import Dash
 from dash import html
 import dash_core_components as dcc
@@ -132,6 +133,13 @@ disease_map_dict = {
 }
 ########################################
 
+
+#####Read in panda for filtering options after one is selected######
+index_panda_address=DATA_PATH.joinpath("index_panda.bin")
+index_panda=pd.read_pickle(index_panda_address)
+index_panda=index_panda.sort_index()
+
+####################################################################
 
 
 ############Update pandas for data selection#################
@@ -786,6 +794,106 @@ def perform_volcano_query(
         volcano_median_classyfire,
     )
 
+
+@app.callback(
+    [
+        Output(component_id="dropdown_from_species", component_property="options"),
+        Output(component_id="dropdown_from_organ", component_property="options"),
+        Output(component_id="dropdown_from_disease", component_property="options"),
+    ],
+    [
+        Input(component_id="dropdown_from_species", component_property="value"),
+        Input(component_id="dropdown_from_organ", component_property="value"),
+        Input(component_id="dropdown_from_disease", component_property="value"),
+    ],
+    # [
+    #     input(component_id="dropdown_from_species", component_property="value"),
+    #     input(component_id="dropdown_from_organ", component_property="value"),
+    #     input(component_id="dropdown_from_disease", component_property="value"),
+    # ],
+)
+def update_input_options_from(
+    from_species_value_input,
+    from_organ_value_input,
+    from_disease_value_input,
+    # from_species_value_input,
+    # from_organ_value_input,
+    # from_disease_value_input,
+):
+    # print(from_species_value_input)
+    # print(from_organ_value_input)
+    # print(from_disease_value_input)
+    # print(dash.callback_context.triggered)
+
+    #determine valid species options
+    temp_view=index_panda.copy()
+    if from_species_value_input!=None:
+        #we have to do some hoop jump through hoops because of the mesh hierarchies
+        #haveing multiple instances of things like "plasma"
+        temp_species_choice=temp_view.loc[temp_view.species==from_species_value_input].index[0][1]
+        temp_view=temp_view.loc[
+    
+            slice(None),
+            slice(temp_species_choice,temp_species_choice),
+            slice(None)
+        ]
+        #print(temp_view)
+    if from_organ_value_input!=None:
+        #we have to do some hoop jump through hoops because of the mesh hierarchies
+        #haveing multiple instances of things like "plasma"
+        temp_organ_choice=temp_view.loc[temp_view.organ==from_organ_value_input].index[0][0]
+        temp_view=temp_view.loc[
+            slice(temp_organ_choice,temp_organ_choice),
+            slice(None),
+            slice(None)
+        ]
+        #print(temp_view)
+    if from_disease_value_input!=None:
+        #we have to do some hoop jump through hoops because of the mesh hierarchies
+        #haveing multiple instances of things like "plasma"
+        #print(temp_view)
+        temp_disease_choice=temp_view.loc[temp_view.disease==from_disease_value_input].index[0][2]
+        temp_view=temp_view.loc[
+            slice(None),
+            slice(None),
+            slice(temp_disease_choice,temp_disease_choice)
+        ]
+        #print(temp_view)
+    #print(temp_view)
+    # options=[
+    #     {'label': temp_node['data']['label'], 'value': temp_node['data']['id']} for temp_node in species_network_dict_from['elements']['nodes']
+    # ],
+    # for temp_node in species_network_dict_from['elements']['nodes']:
+    #     print({'label': temp_node['data']['label'], 'value': temp_node['data']['id']})
+    #     #print(temp_node)
+    # for temp_node in organ_network_dict_from['elements']['nodes']:
+    #     print({'label': temp_node['data']['label'], 'value': temp_node['data']['id']})
+    # print(temp_view.species)
+    # print(temp_view.species.values)
+    # print(temp_view.species.values.to_list())    
+    valid_species=set(temp_view.species.values)
+    #print(valid_species)
+    species_options=[
+        {'label': temp_node['data']['label'], 'value': temp_node['data']['id']} \
+            for temp_node in species_network_dict_from['elements']['nodes'] \
+                if temp_node['data']['id'] in valid_species
+    ]
+    valid_organ=set(temp_view.organ.values)
+    #print(valid_organ)
+    organ_options=[
+        {'label': temp_node['data']['label'], 'value': temp_node['data']['id']} \
+            for temp_node in organ_network_dict_from['elements']['nodes'] \
+                if temp_node['data']['id'] in valid_organ
+    ]
+    valid_disease=set(temp_view.disease.values)
+    #print(valid_disease)
+    disease_options=[
+        {'label': temp_node['data']['label'], 'value': temp_node['data']['id']} \
+            for temp_node in disease_network_dict_from['elements']['nodes'] \
+                if temp_node['data']['id'] in valid_disease
+    ]
+
+    return species_options,organ_options,disease_options
 
 if __name__ == "__main__":
 
