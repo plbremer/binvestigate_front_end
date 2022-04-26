@@ -502,9 +502,17 @@ app.layout=html.Div(
                                     # dbc.Card(
                                     #     html.H4("Click to query backend", className='text-center')
                                     # ),
+                                    dcc.Checklist(
+                                        id='checklist_query',
+                                        options={
+                                            'Classes':'Classes',
+                                            'Knowns':'Knowns',
+                                            'Unknowns':'Unknowns'
+                                        }
+                                    ),
                                     html.Button(
                                         'Get Results',
-                                        id='button_query_bins',
+                                        id='button_query',
                                     )
                                 ]
                             )
@@ -540,7 +548,7 @@ app.layout=html.Div(
                                     ),
                                     dbc.Card(
                                         dcc.Graph(
-                                            id='volcano_average_welch_bins',
+                                            id='volcano_average_welch',
                                         )
                                     ),
                                 ]
@@ -559,7 +567,7 @@ app.layout=html.Div(
                                     ),
                                     dbc.Card(
                                         dcc.Graph(
-                                            id='volcano_median_mw_bins',
+                                            id='volcano_median_mw',
                                         )
                                     ),
                                 ]
@@ -573,7 +581,7 @@ app.layout=html.Div(
             children=[
                 dbc.Card(
                     dt.DataTable(
-                        id='table_bins',
+                        id='table',
                         columns=[{'name': 'temp', 'id': 'temp'}],
                         data=[],
                         page_current=0,
@@ -599,100 +607,100 @@ app.layout=html.Div(
             ],
             justify='center'
         ),
-        dbc.Row(
-            children=[ 
-                dbc.Col(
-                    children=[
-                        html.Br(),
-                        html.H2("Results - Compound Classes", className='text-center'),
-                        #html.Br(),
-                        dbc.Card(
-                            dbc.CardBody(
-                                children=[
-                                    # dbc.Card(
-                                    #     html.H4("Click to query backend", className='text-center')
-                                    # ),
-                                    dbc.Card(
-                                        html.Button(
-                                            'Get Results',
-                                            id='button_query_classyfire',
-                                        )
-                                    )
-                                ]
-                            )
-                        )
-                    ],
-                    width={'size':6}#,
-                    #align='center'
-                )
-            ],
-            justify='center'
-        ),
-        dbc.Row(
-            children=[
-                dbc.Col(
-                    children=[
-                        dbc.Card(
-                            dbc.CardBody(
-                                children=[
-                                    dbc.Card(
-                                        html.H4(
-                                            "Welch p-Value vs. Average Fold", className='text-center')
-                                    ),
-                                    dbc.Card(
-                                        dcc.Graph(
-                                            id='volcano_average_welch_classyfire',
-                                        )
-                                    ),
-                                ]
-                            )
-                        )
-                    ]
-                ),                
-                dbc.Col(
-                    children=[
-                        dbc.Card(
-                            dbc.CardBody(
-                                children=[
-                                    dbc.Card(
-                                        html.H4(
-                                            "Mann Whitney p-Value vs. Median Fold", className='text-center')
-                                    ),
-                                    dbc.Card(
-                                        dcc.Graph(
-                                            id='volcano_median_mw_classyfire',
-                                        )
-                                    ),
-                                ]
-                            )
-                        )
-                    ]
-                ),
-            ]
-        ),
-        dbc.Row(
-            children=[
-                dbc.Card(
-                    dt.DataTable(
-                        id='table_classyfire',
-                        columns=[{'name': 'temp', 'id': 'temp'}],
-                        data=[],
-                        page_current=0,
-                        page_size=10,
-                        page_action='custom',
-                        style_header={
-                            'backgroundColor': 'rgb(30, 30, 30)',
-                            'color': 'white'
-                        },
-                        style_data={
-                            'backgroundColor': 'rgb(50, 50, 50)',
-                            'color': 'white'
-                        }
-                    )
-                ),
-            ],
-            justify='center'
-        )
+        # dbc.Row(
+        #     children=[ 
+        #         dbc.Col(
+        #             children=[
+        #                 html.Br(),
+        #                 html.H2("Results - Compound Classes", className='text-center'),
+        #                 #html.Br(),
+        #                 dbc.Card(
+        #                     dbc.CardBody(
+        #                         children=[
+        #                             # dbc.Card(
+        #                             #     html.H4("Click to query backend", className='text-center')
+        #                             # ),
+        #                             dbc.Card(
+        #                                 html.Button(
+        #                                     'Get Results',
+        #                                     id='button_query_classyfire',
+        #                                 )
+        #                             )
+        #                         ]
+        #                     )
+        #                 )
+        #             ],
+        #             width={'size':6}#,
+        #             #align='center'
+        #         )
+        #     ],
+        #     justify='center'
+        # ),
+        # dbc.Row(
+        #     children=[
+        #         dbc.Col(
+        #             children=[
+        #                 dbc.Card(
+        #                     dbc.CardBody(
+        #                         children=[
+        #                             dbc.Card(
+        #                                 html.H4(
+        #                                     "Welch p-Value vs. Average Fold", className='text-center')
+        #                             ),
+        #                             dbc.Card(
+        #                                 dcc.Graph(
+        #                                     id='volcano_average_welch_classyfire',
+        #                                 )
+        #                             ),
+        #                         ]
+        #                     )
+        #                 )
+        #             ]
+        #         ),                
+        #         dbc.Col(
+        #             children=[
+        #                 dbc.Card(
+        #                     dbc.CardBody(
+        #                         children=[
+        #                             dbc.Card(
+        #                                 html.H4(
+        #                                     "Mann Whitney p-Value vs. Median Fold", className='text-center')
+        #                             ),
+        #                             dbc.Card(
+        #                                 dcc.Graph(
+        #                                     id='volcano_median_mw_classyfire',
+        #                                 )
+        #                             ),
+        #                         ]
+        #                     )
+        #                 )
+        #             ]
+        #         ),
+        #     ]
+        # ),
+        # dbc.Row(
+        #     children=[
+        #         dbc.Card(
+        #             dt.DataTable(
+        #                 id='table_classyfire',
+        #                 columns=[{'name': 'temp', 'id': 'temp'}],
+        #                 data=[],
+        #                 page_current=0,
+        #                 page_size=10,
+        #                 page_action='custom',
+        #                 style_header={
+        #                     'backgroundColor': 'rgb(30, 30, 30)',
+        #                     'color': 'white'
+        #                 },
+        #                 style_data={
+        #                     'backgroundColor': 'rgb(50, 50, 50)',
+        #                     'color': 'white'
+        #                 }
+        #             )
+        #         ),
+        #     ],
+        #     justify='center'
+        # )
     ]
 )
 ######################################################
@@ -773,31 +781,32 @@ def perform_metadata_query(
     [
         # Output(component_id="table_query_summary", component_property="columns"),
         # Output(component_id="table_query_summary", component_property="data"),
-        Output(component_id="table_bins", component_property="columns"),
-        Output(component_id="table_bins", component_property="data"),
-        Output(component_id="table_classyfire", component_property="columns"),
-        Output(component_id="table_classyfire", component_property="data"),
-        Output(component_id="volcano_average_welch_bins", component_property="figure"),
-        Output(component_id="volcano_median_mw_bins", component_property="figure"),
-        Output(
-            component_id="volcano_average_welch_classyfire", component_property="figure"
-        ),
-        Output(
-            component_id="volcano_median_mw_classyfire", component_property="figure"
-        ),
+        Output(component_id="table", component_property="columns"),
+        Output(component_id="table", component_property="data"),
+        # Output(component_id="table_classyfire", component_property="columns"),
+        # Output(component_id="table_classyfire", component_property="data"),
+        Output(component_id="volcano_average_welch", component_property="figure"),
+        Output(component_id="volcano_median_mw", component_property="figure"),
+        # Output(
+        #     component_id="volcano_average_welch_classyfire", component_property="figure"
+        # ),
+        # Output(
+        #     component_id="volcano_median_mw_classyfire", component_property="figure"
+        # ),
     ],
     [
-        Input(component_id="button_query_bins", component_property="n_clicks"),
-        Input(component_id="table_bins", component_property="page_current"),
-        Input(component_id="table_bins", component_property="page_size"),
-        Input(component_id="table_bins", component_property="sort_by"),
-        Input(component_id="table_bins", component_property="filter_query"),
-        Input(component_id="table_classyfire", component_property="page_current"),
-        Input(component_id="table_classyfire", component_property="page_size"),
-        Input(component_id="table_classyfire", component_property="sort_by"),
-        Input(component_id="table_classyfire", component_property="filter_query"),
+        Input(component_id="button_query", component_property="n_clicks"),
+        Input(component_id="table", component_property="page_current"),
+        Input(component_id="table", component_property="page_size"),
+        Input(component_id="table", component_property="sort_by"),
+        Input(component_id="table", component_property="filter_query"),
+        # Input(component_id="table_classyfire", component_property="page_current"),
+        # Input(component_id="table_classyfire", component_property="page_size"),
+        # Input(component_id="table_classyfire", component_property="sort_by"),
+        # Input(component_id="table_classyfire", component_property="filter_query"),
     ],
     [
+        State(component_id="checklist_query",component_property="value"),
         State(component_id="dropdown_from_species", component_property="value"),
         State(component_id="dropdown_from_organ", component_property="value"),
         State(component_id="dropdown_from_disease", component_property="value"),
@@ -812,10 +821,11 @@ def perform_volcano_query(
     page_size,
     sort_by,
     filter_query,
-    table_classyfire_page_current,
-    table_classyfire_page_size,
-    table_classyfire_sort_by,
-    table_classyfire_filter_query,
+    # table_classyfire_page_current,
+    # table_classyfire_page_size,
+    # table_classyfire_sort_by,
+    # table_classyfire_filter_query,
+    checklist_query,
     from_species_value,
     from_organ_value,
     from_disease_value,
@@ -841,6 +851,19 @@ def perform_volcano_query(
 
     print('before json')
 
+    if "Classes" in checklist_query:
+        include_classes='Yes'
+    else:
+        include_classes='No'
+    if "Knowns" in checklist_query:
+        include_knowns='Yes'
+    else:
+        include_knowns='No'
+    if "Unknowns" in checklist_query:
+        include_unknowns='Yes'
+    else:
+        include_unknowns='No'
+
     ##################volcano query######################
     #prepare json for api
     volcano_json_output = {
@@ -850,9 +873,9 @@ def perform_volcano_query(
         "to_species": to_species_value,
         "to_organ": to_organ_value,
         "to_disease": to_disease_value,
-        "include_classes": "Yes",
-        "include_knowns": "Yes",
-        "include_unknowns": "Yes",
+        "include_classes": include_classes,
+        "include_knowns": include_knowns,
+        "include_unknowns": include_unknowns,
         "page_current":page_current,
         "page_size":page_size,
         "sort_by":sort_by,
@@ -865,80 +888,76 @@ def perform_volcano_query(
     total_panda = pd.read_json(response.json(), orient="records")
     print(total_panda)
 
-    #prepare columns and data for all four tables
-    column_list_bin = [
+    #prepare columns and data for the table
+    column_list = [
         {"name": "english_name", "id": "english_name"},
         {"name": "fold_average", "id": "fold_average","type": "numeric","format": Format(group=Group.yes, precision=2, scheme=Scheme.exponent)},
         {"name": "sig_welch", "id": "sig_welch","type": "numeric","format": Format(group=Group.yes, precision=2, scheme=Scheme.exponent)},
         {"name": "fold_median", "id": "fold_median","type": "numeric","format": Format(group=Group.yes, precision=2, scheme=Scheme.exponent)},
         {"name": "sig_mannwhit", "id": "sig_mannwhit","type": "numeric","format": Format(group=Group.yes, precision=2, scheme=Scheme.exponent)}
     ]
-    data_bin = total_panda.loc[
-        (~total_panda["compound"].str.contains("CHEMONTID")),
-        ["english_name", "fold_average", "sig_welch","fold_median","sig_mannwhit"],
-    ].to_dict(orient="records")
-    column_list_classyfire = [
-        {"name": "english_name", "id": "english_name"},
-        {"name": "fold_average", "id": "fold_average","type": "numeric","format": Format(group=Group.yes, precision=2, scheme=Scheme.exponent)},
-        {"name": "sig_welch", "id": "sig_welch","type": "numeric","format": Format(group=Group.yes, precision=2, scheme=Scheme.exponent)},
-        {"name": "fold_median", "id": "fold_median","type": "numeric","format": Format(group=Group.yes, precision=2, scheme=Scheme.exponent)},
-        {"name": "sig_mannwhit", "id": "sig_mannwhit","type": "numeric","format": Format(group=Group.yes, precision=2, scheme=Scheme.exponent)}
-    ]
-    data_classyfire = total_panda.loc[
-        (total_panda["compound"].str.contains("CHEMONTID")),
-        ["english_name", "fold_average", "sig_welch","fold_median","sig_mannwhit"],
-    ].to_dict(orient="records")
+    data = total_panda.to_dict(orient='records')#.loc[
+    #     (~total_panda["compound"].str.contains("CHEMONTID")),
+    #     ["english_name", "fold_average", "sig_welch","fold_median","sig_mannwhit"],
+    # ].to_dict(orient="records")
+    # column_list = [
+    #     {"name": "english_name", "id": "english_name"},
+    #     {"name": "fold_average", "id": "fold_average","type": "numeric","format": Format(group=Group.yes, precision=2, scheme=Scheme.exponent)},
+    #     {"name": "sig_welch", "id": "sig_welch","type": "numeric","format": Format(group=Group.yes, precision=2, scheme=Scheme.exponent)},
+    #     {"name": "fold_median", "id": "fold_median","type": "numeric","format": Format(group=Group.yes, precision=2, scheme=Scheme.exponent)},
+    #     {"name": "sig_mannwhit", "id": "sig_mannwhit","type": "numeric","format": Format(group=Group.yes, precision=2, scheme=Scheme.exponent)}
+    # ]
+    # data_classyfire = total_panda.loc[
+    #     (total_panda["compound"].str.contains("CHEMONTID")),
+    #     ["english_name", "fold_average", "sig_welch","fold_median","sig_mannwhit"],
+    # ].to_dict(orient="records")
 
     #these are prepared for the volcano plots
-    bins_panda = total_panda.loc[
-        (~total_panda["compound"].str.contains("CHEMONTID"))
-    ].copy(deep=True)
-    classyfire_panda = (
-        total_panda.loc[(total_panda["compound"].str.contains("CHEMONTID"))]
-        .copy(deep=True)
-        .reset_index()
-    )
+    #panda = total_panda.copy(deep=True)#loc[
+    #    (~total_panda["compound"].str.contains("CHEMONTID"))
+    #].copy(deep=True)
+    # classyfire_panda = (
+    #     total_panda.loc[(total_panda["compound"].str.contains("CHEMONTID"))]
+    #     .copy(deep=True)
+    #     .reset_index()
+    # )
 
     #prepare figures for volcano plots
-    volcano_average_bin = dashbio.VolcanoPlot(
-        dataframe=bins_panda,
+    volcano_average = dashbio.VolcanoPlot(
+        dataframe=total_panda,#bins_panda,
         snp="english_name",
         p="sig_welch",
         effect_size="fold_average",
         gene=None,
     )
-    volcano_average_classyfire = dashbio.VolcanoPlot(
-        dataframe=classyfire_panda,
-        snp="english_name",
-        p="sig_welch",
-        effect_size="fold_average",
-        gene=None,
-    )
-    volcano_median_bin = dashbio.VolcanoPlot(
-        dataframe=bins_panda,
-        snp="english_name",
-        p="sig_mannwhit",
-        effect_size="fold_median",
-        gene=None,
-    )
-    volcano_median_classyfire = dashbio.VolcanoPlot(
-        dataframe=classyfire_panda,
+    # volcano_average_classyfire = dashbio.VolcanoPlot(
+    #     dataframe=total_panda,#classyfire_panda,
+    #     snp="english_name",
+    #     p="sig_welch",
+    #     effect_size="fold_average",
+    #     gene=None,
+    # )
+    volcano_median = dashbio.VolcanoPlot(
+        dataframe=total_panda,#bins_panda,
         snp="english_name",
         p="sig_mannwhit",
         effect_size="fold_median",
         gene=None,
     )
+    # volcano_median_classyfire = dashbio.VolcanoPlot(
+    #     dataframe=total_panda,#classyfire_panda,
+    #     snp="english_name",
+    #     p="sig_mannwhit",
+    #     effect_size="fold_median",
+    #     gene=None,
+    # )
     #################################################3
 
     return (
-        column_list_bin,
-        data_bin,
-        column_list_classyfire,
-        data_classyfire,
-        volcano_average_bin,
-        volcano_median_bin,
-        volcano_average_classyfire,
-        volcano_median_classyfire,
+        column_list,
+        data,
+        volcano_average,
+        volcano_median,
     )
 
 
