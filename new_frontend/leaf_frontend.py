@@ -406,7 +406,7 @@ app.layout=html.Div(
                 dbc.Col(
                     children=[
                         html.Br(),
-                        html.H2("Describe Groups", className='text-center'),
+                        html.H2("Describe Comparison", className='text-center'),
                         #html.Br(),
                         # html.H2("Describ", className='text-center'),
                         dbc.Card(
@@ -531,7 +531,7 @@ app.layout=html.Div(
                             )
                         )
                     ],
-                    width={'size':6}#,
+                    width={'size':3}#,
                     #align='center'
                 )
             ],
@@ -562,7 +562,7 @@ app.layout=html.Div(
                                     ),
                                     dbc.Card(
                                         dcc.Graph(
-                                            id='volcano_average_welch',
+                                            id='volcano_average_welch'
                                         )
                                     ),
                                 ]
@@ -607,7 +607,7 @@ app.layout=html.Div(
                         ],
                         data=[],
                         page_current=0,
-                        page_size=10,
+                        page_size=50,
                         page_action='custom',
                         style_header={
                             'backgroundColor': 'rgb(30, 30, 30)',
@@ -965,6 +965,8 @@ def perform_volcano_query(
         p="sig_welch",
         effect_size="fold_average",
         gene=None,
+        xlabel='log2 Fold Change',
+        genomewideline_value=1e-2,
     )
     # volcano_average_classyfire = dashbio.VolcanoPlot(
     #     dataframe=total_panda,#classyfire_panda,
@@ -979,6 +981,8 @@ def perform_volcano_query(
         p="sig_mannwhit",
         effect_size="fold_median",
         gene=None,
+        xlabel='log2 Fold Change',
+        genomewideline_value=1e-2,
     )
     # volcano_median_classyfire = dashbio.VolcanoPlot(
     #     dataframe=total_panda,#classyfire_panda,
