@@ -191,17 +191,8 @@ app.layout=html.Div(
                     children=[
                         html.H2("Metadata Group Comparator", className='text-center'),
                         html.Br(),
-                        # dbc.Card(
-                        #     children=[
-                        #         dbc.CardBody(
-                        #             html.H4(
-                        #                 "Select metadata and observe volcano plots below", className='text-center')
-                        #         )
-                        #     ]
-                        # )
                     ],
-                    width={'size':6}#,
-                    #align='center'
+                    width={'size':6}
                 )
             ],
             justify='center'
@@ -211,21 +202,7 @@ app.layout=html.Div(
             children=[
                 dbc.Col(
                     children=[
-                        # html.H2("Selections here", className='text-center'),
                         html.Br(),
-                        #dbc.Card(
-                            #dbc.CardBody(
-                            #    children=[
-                            #        dbc.Card(html.H4("Blah")),
-                            #        dbc.Card(
-                            #            html.Button(
-                            #                'Reset selections',
-                            #                id='button_from_species',
-                            #            )
-                            #        ),
-                            #    ]
-                            #)
-                        #),
                         html.Br(),
                         dbc.Card(
                             dbc.CardBody(
@@ -276,57 +253,19 @@ app.layout=html.Div(
                             )
                         ),
                         html.Br(),
-                        # dbc.Card(
-                        #     dbc.CardBody(
-                        #         # children=[                    
-                        #         #     dbc.Card(html.H4("Use these checkboxes to select multiple species at once. Selecting multiple species will compare each individually. Choosing their parent will aggregate them.")),
-                        #         #     dbc.Card(
-                        #         #         dcc.Checklist(
-                        #         #             id='checklist_from_species',
-                        #         #             options=[
-                        #         #                 {'label': i, 'value': i} for i in checklist_hashmap_species_from.keys()
-                        #         #             ],
-                        #         #             labelStyle={'display':'block'}
-                        #         #         )
-                        #         #     ),
-
-                        #         # ]
-                        #     )
-                        # ),
                         html.Br(),
-
                     ],
                     width={'size':4}
                 ),
                 dbc.Col(
                     children=[
-                        #dbc.Card(
-                        #    html.H4("lorem ipsum")
-                        #)
-                        # html.H2('get compared to', className='text-center')
+
                     ],
                     width={'size':2}
                 ),
                 dbc.Col(
                     children=[
-                        
-                        # html.H2("Selections here", className='text-center'),
                         html.Br(),
-                        #dbc.Card(
-                        #    dbc.CardBody(
-                        #        children=[
-                        #            dbc.Card(html.H4("Blah")),
-                        #            dbc.Card(
-                        #                html.Button(
-                        #                    'Reset selections',
-                        #                    id='button_to_species2',
-                        #                )
-                        #            ),3#
-                        #  
-                        # 
-                        #        ]
-                        #    )
-                        #),
                         html.Br(),
                         dbc.Card(
                             dbc.CardBody(
@@ -377,24 +316,7 @@ app.layout=html.Div(
                             )
                         ),
                         html.Br(),
-                        # dbc.Card(
-                        #     dbc.CardBody(
-                        #         # children=[                    
-                        #         #     dbc.Card(html.H4("Use these checkboxes to select multiple species at once. Selecting multiple species will compare each individually. Choosing their parent will aggregate them.")),
-                        #         #     dbc.Card(
-                        #         #         dcc.Checklist(
-                        #         #             id='checklist_to_species',
-                        #         #             options=[
-                        #         #                 {'label': i, 'value': i} for i in checklist_hashmap_species_to.keys()
-                        #         #             ],
-                        #         #             labelStyle={'display':'block'}
-                        #         #         )
-                        #         #     ),
-                        #         # ]
-                        #     )
-                        # ),
                         html.Br(),
-
                     ],
                     width={'size':4}
                 ),
@@ -407,21 +329,15 @@ app.layout=html.Div(
                     children=[
                         html.Br(),
                         html.H2("Describe Comparison", className='text-center'),
-                        #html.Br(),
-                        # html.H2("Describ", className='text-center'),
                         dbc.Card(
                             dbc.CardBody(
                                 children=[
-                                    # dbc.Card(
-                                    #     html.H4("Click to query backend", className='text-center')
-                                    # ),
                                     dbc.Row(
                                         children=[
                                             dbc.Col(
                                                 html.Button(
                                                     'Describe Groups',
                                                     id='query_metadata',
-                                                    #style={'width':'200px','horizontalAlign':'center'}
                                                 ),
                                                 width={'size':2}
                                             ),
@@ -434,7 +350,6 @@ app.layout=html.Div(
                                                 dbc.Card(
                                                     dt.DataTable(
                                                         id='table_query_summary_from',
-                                                        #columns=[{'name': 'temp', 'id': 'temp'}],
                                                         columns=[
                                                             {'name': 'Triplet List', 'id': 'unique_triplet_list_real_from'}, 
                                                             {'name': 'Triplet Count', 'id': 'triplet_count_from'}, 
@@ -443,9 +358,6 @@ app.layout=html.Div(
                                                             {'name': 'Sample Count Sum', 'id': 'sum_sample_count_from'}
                                                         ],
                                                         data=[],
-                                                        # page_current=0,
-                                                        # page_size=10,
-                                                        # page_action='custom',
                                                         style_header={
                                                             'backgroundColor': 'rgb(30, 30, 30)',
                                                             'color': 'white'
@@ -453,7 +365,6 @@ app.layout=html.Div(
                                                         style_data={
                                                             'backgroundColor': 'rgb(50, 50, 50)',
                                                             'color': 'white',
-                                                            #'whiteSpace':'normal'
                                                         },
                                                         style_cell={"whiteSpace": "pre-line"},
                                                     )
@@ -472,9 +383,6 @@ app.layout=html.Div(
                                                             {'name': 'Sample Count Sum', 'id': 'sum_sample_count_to'}
                                                         ],
                                                         data=[],
-                                                        # page_current=0,
-                                                        # page_size=10,
-                                                        # page_action='custom',
                                                         style_header={
                                                             'backgroundColor': 'rgb(30, 30, 30)',
                                                             'color': 'white'
@@ -492,12 +400,10 @@ app.layout=html.Div(
                                         justify='around'
                                     )
                                 ],
-                                #justify='around'
                             )
                         )
                     ],
-                    width={'size':12}#,
-                    #align='center'
+                    width={'size':12}
                 )
             ],
             justify='center'
@@ -508,13 +414,9 @@ app.layout=html.Div(
                     children=[
                         html.Br(),
                         html.H2("Results - Individual Compounds", className='text-center'),
-                        #html.Br(),
                         dbc.Card(
                             dbc.CardBody(
                                 children=[
-                                    # dbc.Card(
-                                    #     html.H4("Click to query backend", className='text-center')
-                                    # ),
                                     dcc.Checklist(
                                         id='checklist_query',
                                         options={
@@ -531,24 +433,12 @@ app.layout=html.Div(
                             )
                         )
                     ],
-                    width={'size':3}#,
-                    #align='center'
+                    width={'size':3}
                 )
             ],
             justify='center'
         ),
         html.Br(),
-        # dbc.Row(
-        #     children=[
-        #         dbc.Col(
-        #             children=[
-        #                 html.Br(),
-        #                 html.H2("Results", className='text-center'),
-        #                 #html.Br(),
-        #             ]
-        #         )
-        #     ]
-        # ),
         dbc.Row(
             children=[
                 dbc.Col(
@@ -597,7 +487,6 @@ app.layout=html.Div(
                 dbc.Card(
                     dt.DataTable(
                         id='table',
-                        #columns=[{'name': 'temp', 'id': 'temp'}],
                         columns=[
                             {"name": "English Name", "id": "english_name"},
                             {"name": "Fold Average", "id": "fold_average"},
@@ -629,100 +518,6 @@ app.layout=html.Div(
             ],
             justify='center'
         ),
-        # dbc.Row(
-        #     children=[ 
-        #         dbc.Col(
-        #             children=[
-        #                 html.Br(),
-        #                 html.H2("Results - Compound Classes", className='text-center'),
-        #                 #html.Br(),
-        #                 dbc.Card(
-        #                     dbc.CardBody(
-        #                         children=[
-        #                             # dbc.Card(
-        #                             #     html.H4("Click to query backend", className='text-center')
-        #                             # ),
-        #                             dbc.Card(
-        #                                 html.Button(
-        #                                     'Get Results',
-        #                                     id='button_query_classyfire',
-        #                                 )
-        #                             )
-        #                         ]
-        #                     )
-        #                 )
-        #             ],
-        #             width={'size':6}#,
-        #             #align='center'
-        #         )
-        #     ],
-        #     justify='center'
-        # ),
-        # dbc.Row(
-        #     children=[
-        #         dbc.Col(
-        #             children=[
-        #                 dbc.Card(
-        #                     dbc.CardBody(
-        #                         children=[
-        #                             dbc.Card(
-        #                                 html.H4(
-        #                                     "Welch p-Value vs. Average Fold", className='text-center')
-        #                             ),
-        #                             dbc.Card(
-        #                                 dcc.Graph(
-        #                                     id='volcano_average_welch_classyfire',
-        #                                 )
-        #                             ),
-        #                         ]
-        #                     )
-        #                 )
-        #             ]
-        #         ),                
-        #         dbc.Col(
-        #             children=[
-        #                 dbc.Card(
-        #                     dbc.CardBody(
-        #                         children=[
-        #                             dbc.Card(
-        #                                 html.H4(
-        #                                     "Mann Whitney p-Value vs. Median Fold", className='text-center')
-        #                             ),
-        #                             dbc.Card(
-        #                                 dcc.Graph(
-        #                                     id='volcano_median_mw_classyfire',
-        #                                 )
-        #                             ),
-        #                         ]
-        #                     )
-        #                 )
-        #             ]
-        #         ),
-        #     ]
-        # ),
-        # dbc.Row(
-        #     children=[
-        #         dbc.Card(
-        #             dt.DataTable(
-        #                 id='table_classyfire',
-        #                 columns=[{'name': 'temp', 'id': 'temp'}],
-        #                 data=[],
-        #                 page_current=0,
-        #                 page_size=10,
-        #                 page_action='custom',
-        #                 style_header={
-        #                     'backgroundColor': 'rgb(30, 30, 30)',
-        #                     'color': 'white'
-        #                 },
-        #                 style_data={
-        #                     'backgroundColor': 'rgb(50, 50, 50)',
-        #                     'color': 'white'
-        #                 }
-        #             )
-        #         ),
-        #     ],
-        #     justify='center'
-        # )
     ]
 )
 ######################################################
@@ -787,8 +582,6 @@ def perform_metadata_query(
     query_summary_data_to = total_panda.to_dict(orient="records")
     for temp_key in query_summary_data_to[0]:
         query_summary_data_to[0][temp_key] = str(query_summary_data_to[0][temp_key])
-        #query_summary_data_to[0][temp_key] = "please\nfucking\nwork"
-    print(query_summary_data_from)
 
     query_summary_data_from[0]['unique_triplet_list_real_from']=query_summary_data_from[0]['unique_triplet_list_real_from'].replace('], [','],\n[')
     query_summary_data_from[0]['sample_count_list_from']=query_summary_data_from[0]['sample_count_list_from'].replace(', ',',\n')
@@ -799,14 +592,6 @@ def perform_metadata_query(
     query_summary_column_list_from = [
         {"name": new_names[i], "id": query_summary_column_list_from[i]['id']} for i in range(len(query_summary_column_list_from))
     ]
-    # query_summary_column_list_from[0]='Triplet List'
-    # query_summary_column_list_from[1]='Triplet Count'
-    # query_summary_column_list_from[2]='Sample Count List'
-    # query_summary_column_list_from[3]='Sample Count Min'
-    # query_summary_column_list_from[4]='Sample Count Sum'
-    print(query_summary_column_list_from)
-    print(query_summary_column_list_to)
-    print('-----------------------------------------')
 
     return query_summary_column_list_from,query_summary_data_from,query_summary_column_list_to,query_summary_data_to
         
@@ -815,20 +600,10 @@ def perform_metadata_query(
 
 @app.callback(
     [
-        # Output(component_id="table_query_summary", component_property="columns"),
-        # Output(component_id="table_query_summary", component_property="data"),
         Output(component_id="table", component_property="columns"),
         Output(component_id="table", component_property="data"),
-        # Output(component_id="table_classyfire", component_property="columns"),
-        # Output(component_id="table_classyfire", component_property="data"),
         Output(component_id="volcano_average_welch", component_property="figure"),
         Output(component_id="volcano_median_mw", component_property="figure"),
-        # Output(
-        #     component_id="volcano_average_welch_classyfire", component_property="figure"
-        # ),
-        # Output(
-        #     component_id="volcano_median_mw_classyfire", component_property="figure"
-        # ),
     ],
     [
         Input(component_id="button_query", component_property="n_clicks"),
@@ -836,10 +611,6 @@ def perform_metadata_query(
         Input(component_id="table", component_property="page_size"),
         Input(component_id="table", component_property="sort_by"),
         Input(component_id="table", component_property="filter_query"),
-        # Input(component_id="table_classyfire", component_property="page_current"),
-        # Input(component_id="table_classyfire", component_property="page_size"),
-        # Input(component_id="table_classyfire", component_property="sort_by"),
-        # Input(component_id="table_classyfire", component_property="filter_query"),
     ],
     [
         State(component_id="checklist_query",component_property="value"),
@@ -857,10 +628,6 @@ def perform_volcano_query(
     page_size,
     sort_by,
     filter_query,
-    # table_classyfire_page_current,
-    # table_classyfire_page_size,
-    # table_classyfire_sort_by,
-    # table_classyfire_filter_query,
     checklist_query,
     from_species_value,
     from_organ_value,
@@ -870,14 +637,6 @@ def perform_volcano_query(
     to_disease_value,
 ):
     """
-    The singular page callback
-    We take data from the 6 fields (both species, organs, and diseases)
-    We call the API twice
-    Once to obtain information about the query "metadata query"
-    Once to obtain the comparison results 
-    Once to obtain information from the tables for the volcano plot and for the datatables
-
-    all of this is bullshit
     """
     print(page_current)
     print(page_size)
@@ -932,31 +691,7 @@ def perform_volcano_query(
         {"name": "Fold Median", "id": "fold_median","type": "numeric","format": Format(group=Group.yes, precision=2, scheme=Scheme.exponent)},
         {"name": "Significance MWU", "id": "sig_mannwhit","type": "numeric","format": Format(group=Group.yes, precision=4, scheme=Scheme.exponent)}
     ]
-    data = total_panda.to_dict(orient='records')#.loc[
-    #     (~total_panda["compound"].str.contains("CHEMONTID")),
-    #     ["english_name", "fold_average", "sig_welch","fold_median","sig_mannwhit"],
-    # ].to_dict(orient="records")
-    # column_list = [
-    #     {"name": "english_name", "id": "english_name"},
-    #     {"name": "fold_average", "id": "fold_average","type": "numeric","format": Format(group=Group.yes, precision=2, scheme=Scheme.exponent)},
-    #     {"name": "sig_welch", "id": "sig_welch","type": "numeric","format": Format(group=Group.yes, precision=2, scheme=Scheme.exponent)},
-    #     {"name": "fold_median", "id": "fold_median","type": "numeric","format": Format(group=Group.yes, precision=2, scheme=Scheme.exponent)},
-    #     {"name": "sig_mannwhit", "id": "sig_mannwhit","type": "numeric","format": Format(group=Group.yes, precision=2, scheme=Scheme.exponent)}
-    # ]
-    # data_classyfire = total_panda.loc[
-    #     (total_panda["compound"].str.contains("CHEMONTID")),
-    #     ["english_name", "fold_average", "sig_welch","fold_median","sig_mannwhit"],
-    # ].to_dict(orient="records")
-
-    #these are prepared for the volcano plots
-    #panda = total_panda.copy(deep=True)#loc[
-    #    (~total_panda["compound"].str.contains("CHEMONTID"))
-    #].copy(deep=True)
-    # classyfire_panda = (
-    #     total_panda.loc[(total_panda["compound"].str.contains("CHEMONTID"))]
-    #     .copy(deep=True)
-    #     .reset_index()
-    # )
+    data = total_panda.to_dict(orient='records')
 
     #prepare figures for volcano plots
     volcano_average = dashbio.VolcanoPlot(
@@ -968,13 +703,6 @@ def perform_volcano_query(
         xlabel='log2 Fold Change',
         genomewideline_value=1e-2,
     )
-    # volcano_average_classyfire = dashbio.VolcanoPlot(
-    #     dataframe=total_panda,#classyfire_panda,
-    #     snp="english_name",
-    #     p="sig_welch",
-    #     effect_size="fold_average",
-    #     gene=None,
-    # )
     volcano_median = dashbio.VolcanoPlot(
         dataframe=total_panda,#bins_panda,
         snp="english_name",
@@ -984,13 +712,6 @@ def perform_volcano_query(
         xlabel='log2 Fold Change',
         genomewideline_value=1e-2,
     )
-    # volcano_median_classyfire = dashbio.VolcanoPlot(
-    #     dataframe=total_panda,#classyfire_panda,
-    #     snp="english_name",
-    #     p="sig_mannwhit",
-    #     effect_size="fold_median",
-    #     gene=None,
-    # )
     #################################################3
 
     return (
@@ -1012,28 +733,16 @@ def perform_volcano_query(
         Input(component_id="dropdown_from_organ", component_property="value"),
         Input(component_id="dropdown_from_disease", component_property="value"),
     ],
-    # [
-    #     input(component_id="dropdown_from_species", component_property="value"),
-    #     input(component_id="dropdown_from_organ", component_property="value"),
-    #     input(component_id="dropdown_from_disease", component_property="value"),
-    # ],
 )
 def update_input_options_from(
     from_species_value_input,
     from_organ_value_input,
     from_disease_value_input,
-    # from_species_value_input,
-    # from_organ_value_input,
-    # from_disease_value_input,
 ):
     '''
     this callback makes it so that if a user specifies a species, an organ, or a disease
     for "from", then the other options are filtered accordingly
     '''
-    # print(from_species_value_input)
-    # print(from_organ_value_input)
-    # print(from_disease_value_input)
-    # print(dash.callback_context.triggered)
 
     #determine valid species options
     temp_view=index_panda.copy()
@@ -1042,12 +751,10 @@ def update_input_options_from(
         #haveing multiple instances of things like "plasma"
         temp_species_choice=temp_view.loc[temp_view.species==from_species_value_input].index[0][1]
         temp_view=temp_view.loc[
-    
             slice(None),
             slice(temp_species_choice,temp_species_choice),
             slice(None)
         ]
-        #print(temp_view)
     if from_organ_value_input!=None:
         #we have to do some hoop jump through hoops because of the mesh hierarchies
         #haveing multiple instances of things like "plasma"
@@ -1057,46 +764,33 @@ def update_input_options_from(
             slice(None),
             slice(None)
         ]
-        #print(temp_view)
+
     if from_disease_value_input!=None:
         #we have to do some hoop jump through hoops because of the mesh hierarchies
         #haveing multiple instances of things like "plasma"
-        #print(temp_view)
         temp_disease_choice=temp_view.loc[temp_view.disease==from_disease_value_input].index[0][2]
         temp_view=temp_view.loc[
             slice(None),
             slice(None),
             slice(temp_disease_choice,temp_disease_choice)
         ]
-        #print(temp_view)
-    #print(temp_view)
-    # options=[
-    #     {'label': temp_node['data']['label'], 'value': temp_node['data']['id']} for temp_node in species_network_dict_from['elements']['nodes']
-    # ],
-    # for temp_node in species_network_dict_from['elements']['nodes']:
-    #     print({'label': temp_node['data']['label'], 'value': temp_node['data']['id']})
-    #     #print(temp_node)
-    # for temp_node in organ_network_dict_from['elements']['nodes']:
-    #     print({'label': temp_node['data']['label'], 'value': temp_node['data']['id']})
-    # print(temp_view.species)
-    # print(temp_view.species.values)
-    # print(temp_view.species.values.to_list())    
+  
     valid_species=set(temp_view.species.values)
-    #print(valid_species)
+    
     species_options=[
         {'label': temp_node['data']['label'], 'value': temp_node['data']['id']} \
             for temp_node in species_network_dict_from['elements']['nodes'] \
                 if temp_node['data']['id'] in valid_species
     ]
     valid_organ=set(temp_view.organ.values)
-    #print(valid_organ)
+
     organ_options=[
         {'label': temp_node['data']['label'], 'value': temp_node['data']['id']} \
             for temp_node in organ_network_dict_from['elements']['nodes'] \
                 if temp_node['data']['id'] in valid_organ
     ]
     valid_disease=set(temp_view.disease.values)
-    #print(valid_disease)
+
     disease_options=[
         {'label': temp_node['data']['label'], 'value': temp_node['data']['id']} \
             for temp_node in disease_network_dict_from['elements']['nodes'] \
@@ -1116,24 +810,16 @@ def update_input_options_from(
         Input(component_id="dropdown_to_organ", component_property="value"),
         Input(component_id="dropdown_to_disease", component_property="value"),
     ],
-    # [
-    #     input(component_id="dropdown_to_species", component_property="value"),
-    #     input(component_id="dropdown_to_organ", component_property="value"),
-    #     input(component_id="dropdown_to_disease", component_property="value"),
-    # ],
 )
 def update_input_options_to(
     to_species_value_input,
     to_organ_value_input,
     to_disease_value_input,
-    # to_species_value_input,
-    # to_organ_value_input,
-    # to_disease_value_input,
 ):
-    # print(to_species_value_input)
-    # print(to_organ_value_input)
-    # print(to_disease_value_input)
-    # print(dash.callback_context.triggered)
+    '''
+    this callback makes it so that if a user specifies a species, an organ, or a disease
+    for "to", then the other options are filtered accordingly
+    '''
 
     #determine valid species options
     temp_view=index_panda.copy()
@@ -1142,12 +828,10 @@ def update_input_options_to(
         #haveing multiple instances of things like "plasma"
         temp_species_choice=temp_view.loc[temp_view.species==to_species_value_input].index[0][1]
         temp_view=temp_view.loc[
-    
             slice(None),
             slice(temp_species_choice,temp_species_choice),
             slice(None)
         ]
-        #print(temp_view)
     if to_organ_value_input!=None:
         #we have to do some hoop jump through hoops because of the mesh hierarchies
         #haveing multiple instances of things like "plasma"
@@ -1157,46 +841,33 @@ def update_input_options_to(
             slice(None),
             slice(None)
         ]
-        #print(temp_view)
+
     if to_disease_value_input!=None:
         #we have to do some hoop jump through hoops because of the mesh hierarchies
         #haveing multiple instances of things like "plasma"
-        #print(temp_view)
         temp_disease_choice=temp_view.loc[temp_view.disease==to_disease_value_input].index[0][2]
         temp_view=temp_view.loc[
             slice(None),
             slice(None),
             slice(temp_disease_choice,temp_disease_choice)
         ]
-        #print(temp_view)
-    #print(temp_view)
-    # options=[
-    #     {'label': temp_node['data']['label'], 'value': temp_node['data']['id']} for temp_node in species_network_dict_to['elements']['nodes']
-    # ],
-    # for temp_node in species_network_dict_to['elements']['nodes']:
-    #     print({'label': temp_node['data']['label'], 'value': temp_node['data']['id']})
-    #     #print(temp_node)
-    # for temp_node in organ_network_dict_to['elements']['nodes']:
-    #     print({'label': temp_node['data']['label'], 'value': temp_node['data']['id']})
-    # print(temp_view.species)
-    # print(temp_view.species.values)
-    # print(temp_view.species.values.to_list())    
+  
     valid_species=set(temp_view.species.values)
-    #print(valid_species)
+    
     species_options=[
         {'label': temp_node['data']['label'], 'value': temp_node['data']['id']} \
             for temp_node in species_network_dict_to['elements']['nodes'] \
                 if temp_node['data']['id'] in valid_species
     ]
     valid_organ=set(temp_view.organ.values)
-    #print(valid_organ)
+
     organ_options=[
         {'label': temp_node['data']['label'], 'value': temp_node['data']['id']} \
             for temp_node in organ_network_dict_to['elements']['nodes'] \
                 if temp_node['data']['id'] in valid_organ
     ]
     valid_disease=set(temp_view.disease.values)
-    #print(valid_disease)
+
     disease_options=[
         {'label': temp_node['data']['label'], 'value': temp_node['data']['id']} \
             for temp_node in disease_network_dict_to['elements']['nodes'] \
@@ -1204,6 +875,7 @@ def update_input_options_to(
     ]
 
     return species_options,organ_options,disease_options
+
 
 if __name__ == "__main__":
 

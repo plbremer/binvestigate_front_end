@@ -41,8 +41,6 @@ for temp_element in species_network_dict_from["elements"]["nodes"]:
     # so we add it manually here
     # we do not know how we intend to name species
     temp_element["data"]["label"] = temp_element["data"]["scientific_name"]
-    # temp_element['classes']='not_selected'
-    # species_elements_starting_from.add(temp_element['data']['id'])
 temp_json_file = open(species_json_address, "r")
 species_network_dict_to = json.load(temp_json_file)
 temp_json_file.close()
@@ -53,9 +51,6 @@ for temp_element in species_network_dict_to["elements"]["nodes"]:
     # so we add it manually here
     # we do not know how we intend to name species
     temp_element["data"]["label"] = temp_element["data"]["scientific_name"]
-    # temp_element['classes']='not_selected'
-    # species_elements_starting_to.add(temp_element['data']['id'])
-
 
 organ_json_address = DATA_PATH.joinpath("cyto_format_organ.json")
 temp_json_file = open(organ_json_address, "r")
@@ -67,13 +62,7 @@ for temp_element in organ_network_dict_from["elements"]["nodes"]:
     # they are always expected. our conversion script makes the id but does not make the name
     # so we add it manually here
     # we do not know how we intend to name organ
-    # try:
     temp_element["data"]["label"] = temp_element["data"]["mesh_label"]
-    # except KeyError:
-    #    temp_element['data']['label']=temp_element['data']['name']
-    # temp_element['classes']='not_selected'
-    # print(temp_element)
-    # organ_elements_starting_from.add(temp_element['data']['id'])
 temp_json_file = open(organ_json_address, "r")
 organ_network_dict_to = json.load(temp_json_file)
 temp_json_file.close()
@@ -83,13 +72,7 @@ for temp_element in organ_network_dict_to["elements"]["nodes"]:
     # they are always expected. our conversion script makes the id but does not make the name
     # so we add it manually here
     # we do not know how we intend to name organ
-    # try:
     temp_element["data"]["label"] = temp_element["data"]["mesh_label"]
-    # except KeyError:
-    #    temp_element['data']['label']=temp_element['data']['name']
-    # temp_element['classes']='not_selected'
-    # organ_elements_starting_to.add(temp_element['data']['id'])
-
 
 disease_json_address = DATA_PATH.joinpath("cyto_format_disease.json")
 temp_json_file = open(disease_json_address, "r")
@@ -101,13 +84,7 @@ for temp_element in disease_network_dict_from["elements"]["nodes"]:
     # they are always expected. our conversion script makes the id but does not make the name
     # so we add it manually here
     # we do not know how we intend to name disease
-    # try:
     temp_element["data"]["label"] = temp_element["data"]["mesh_label"]
-    # except KeyError:
-    #    temp_element['data']['label']=temp_element['data']['name']
-    # temp_element['classes']='not_selected'
-    # print(temp_element)
-    # disease_elements_starting_from.add(temp_element['data']['id'])
 temp_json_file = open(disease_json_address, "r")
 disease_network_dict_to = json.load(temp_json_file)
 temp_json_file.close()
@@ -117,13 +94,7 @@ for temp_element in disease_network_dict_to["elements"]["nodes"]:
     # they are always expected. our conversion script makes the id but does not make the name
     # so we add it manually here
     # we do not know how we intend to name disease
-    # try:
     temp_element["data"]["label"] = temp_element["data"]["mesh_label"]
-    # except KeyError:
-    #    temp_element['data']['label']=temp_element['data']['name']
-    # temp_element['classes']='not_selected'
-    # disease_elements_starting_to.add(temp_element['data']['id'])
-
 
 def remove_unmapped_nodes(temp_network_dict, temp_mapped_to_dict):
     """
