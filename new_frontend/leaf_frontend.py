@@ -200,7 +200,7 @@ app.layout=html.Div(
                         #     ]
                         # )
                     ],
-                    width={'size':4}#,
+                    width={'size':6}#,
                     #align='center'
                 )
             ],
@@ -434,7 +434,14 @@ app.layout=html.Div(
                                                 dbc.Card(
                                                     dt.DataTable(
                                                         id='table_query_summary_from',
-                                                        columns=[{'name': 'temp', 'id': 'temp'}],
+                                                        #columns=[{'name': 'temp', 'id': 'temp'}],
+                                                        columns=[
+                                                            {'name': 'Triplet List', 'id': 'unique_triplet_list_real_from'}, 
+                                                            {'name': 'Triplet Count', 'id': 'triplet_count_from'}, 
+                                                            {'name': 'Sample Count List', 'id': 'sample_count_list_from'}, 
+                                                            {'name': 'Sample Count Min', 'id': 'min_sample_count_from'}, 
+                                                            {'name': 'Sample Count Sum', 'id': 'sum_sample_count_from'}
+                                                        ],
                                                         data=[],
                                                         # page_current=0,
                                                         # page_size=10,
@@ -457,7 +464,13 @@ app.layout=html.Div(
                                                 dbc.Card(
                                                     dt.DataTable(
                                                         id='table_query_summary_to',
-                                                        columns=[{'name': 'temp', 'id': 'temp'}],
+                                                        columns=[
+                                                            {'name': 'Triplet List', 'id': 'unique_triplet_list_real_to'}, 
+                                                            {'name': 'Triplet Count', 'id': 'triplet_count_to'}, 
+                                                            {'name': 'Sample Count List', 'id': 'sample_count_list_to'}, 
+                                                            {'name': 'Sample Count Min', 'id': 'min_sample_count_to'}, 
+                                                            {'name': 'Sample Count Sum', 'id': 'sum_sample_count_to'}
+                                                        ],
                                                         data=[],
                                                         # page_current=0,
                                                         # page_size=10,
@@ -524,6 +537,7 @@ app.layout=html.Div(
             ],
             justify='center'
         ),
+        html.Br(),
         # dbc.Row(
         #     children=[
         #         dbc.Col(
@@ -577,12 +591,20 @@ app.layout=html.Div(
                 ),
             ]
         ),
+        html.Br(),
         dbc.Row(
             children=[
                 dbc.Card(
                     dt.DataTable(
                         id='table',
-                        columns=[{'name': 'temp', 'id': 'temp'}],
+                        #columns=[{'name': 'temp', 'id': 'temp'}],
+                        columns=[
+                            {"name": "English Name", "id": "english_name"},
+                            {"name": "Fold Average", "id": "fold_average"},
+                            {"name": "Significance Welch", "id": "sig_welch"},
+                            {"name": "Fold Median", "id": "fold_median"},
+                            {"name": "Significance MWU", "id": "sig_mannwhit"}
+                        ],
                         data=[],
                         page_current=0,
                         page_size=10,
@@ -772,6 +794,20 @@ def perform_metadata_query(
     query_summary_data_from[0]['sample_count_list_from']=query_summary_data_from[0]['sample_count_list_from'].replace(', ',',\n')
     query_summary_data_to[0]['unique_triplet_list_real_to']=query_summary_data_to[0]['unique_triplet_list_real_to'].replace('], [','],\n[')
     query_summary_data_to[0]['sample_count_list_to']=query_summary_data_to[0]['sample_count_list_to'].replace(', ',',\n')
+    
+    new_names=['Triplet List','Triplet Count','Sample Count List','Sample Count Min','Sample Count Sum']
+    query_summary_column_list_from = [
+        {"name": new_names[i], "id": query_summary_column_list_from[i]['id']} for i in range(len(query_summary_column_list_from))
+    ]
+    # query_summary_column_list_from[0]='Triplet List'
+    # query_summary_column_list_from[1]='Triplet Count'
+    # query_summary_column_list_from[2]='Sample Count List'
+    # query_summary_column_list_from[3]='Sample Count Min'
+    # query_summary_column_list_from[4]='Sample Count Sum'
+    print(query_summary_column_list_from)
+    print(query_summary_column_list_to)
+    print('-----------------------------------------')
+
     return query_summary_column_list_from,query_summary_data_from,query_summary_column_list_to,query_summary_data_to
         
     #####################################################
@@ -890,11 +926,11 @@ def perform_volcano_query(
 
     #prepare columns and data for the table
     column_list = [
-        {"name": "english_name", "id": "english_name"},
-        {"name": "fold_average", "id": "fold_average","type": "numeric","format": Format(group=Group.yes, precision=2, scheme=Scheme.exponent)},
-        {"name": "sig_welch", "id": "sig_welch","type": "numeric","format": Format(group=Group.yes, precision=2, scheme=Scheme.exponent)},
-        {"name": "fold_median", "id": "fold_median","type": "numeric","format": Format(group=Group.yes, precision=2, scheme=Scheme.exponent)},
-        {"name": "sig_mannwhit", "id": "sig_mannwhit","type": "numeric","format": Format(group=Group.yes, precision=2, scheme=Scheme.exponent)}
+        {"name": "English Name", "id": "english_name"},
+        {"name": "Fold Average", "id": "fold_average","type": "numeric","format": Format(group=Group.yes, precision=2, scheme=Scheme.exponent)},
+        {"name": "Significance Welch", "id": "sig_welch","type": "numeric","format": Format(group=Group.yes, precision=4, scheme=Scheme.exponent)},
+        {"name": "Fold Median", "id": "fold_median","type": "numeric","format": Format(group=Group.yes, precision=2, scheme=Scheme.exponent)},
+        {"name": "Significance MWU", "id": "sig_mannwhit","type": "numeric","format": Format(group=Group.yes, precision=4, scheme=Scheme.exponent)}
     ]
     data = total_panda.to_dict(orient='records')#.loc[
     #     (~total_panda["compound"].str.contains("CHEMONTID")),
