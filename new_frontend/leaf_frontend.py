@@ -148,6 +148,13 @@ disease_map_dict = {
         zip(disease_map_panda.node_id.to_list(), disease_map_panda.we_map_to.to_list())
     )
 }
+
+#to swap species names on metadata query
+species_networkx_address=DATA_PATH.joinpath("species_networkx.bin")
+species_networkx=nx.readwrite.read_gpickle(species_networkx_address)
+swap_dict_species={
+    species_networkx.nodes[temp_node]['ncbi_number']:species_networkx.nodes[temp_node]['scientific_name'] for temp_node in species_networkx.nodes
+}
 ########################################
 
 
@@ -566,6 +573,17 @@ def perform_metadata_query(
     #obtain results from api
     response = requests.post(base_url + "/metadataresource/", json=metadata_json_output)
     total_panda = pd.read_json(response.json(), orient="records")
+
+    pre_swap_from=total_panda.at[0,'unique_triplet_list_real_from']
+    post_swap_from=[
+        [temp[0],swap_dict_species[temp[1]],temp[2]] for temp in pre_swap_from
+    ]
+    total_panda.at[0,'unique_triplet_list_real_from']=post_swap_from
+    pre_swap_to=total_panda.at[0,'unique_triplet_list_real_to']
+    post_swap_to=[
+        [temp[0],swap_dict_species[temp[1]],temp[2]] for temp in pre_swap_to
+    ]
+    total_panda.at[0,'unique_triplet_list_real_to']=post_swap_to 
 
     #prepare column list for table
     query_summary_column_list_from = [

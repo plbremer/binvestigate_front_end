@@ -1,12 +1,14 @@
-# for now this is the exact same thing as the leaf frontend
-# except that we dont remove the groups
-
+# 1
+# 20
+# [{'column_id': 'continent', 'direction': 'asc'}, {'column_id': 'lifeExp', 'direction': 'asc'}]
+# {continent} scontains Asia && {lifeExp} s> 50
 
 import json
 import networkx as nx
 from pprint import pprint
 import pandas as pd
 
+import dash
 from dash import Dash
 from dash import html
 import dash_core_components as dcc
@@ -15,8 +17,11 @@ from dash.dependencies import Input, Output, State
 import dash_table as dt
 import dash_bio as dashbio
 
+from dash_table.Format import Format, Scheme, Group
 
-base_url = "http://127.0.0.1:5000/"
+
+#set in accordance with overall flask app
+base_url = "http://127.0.0.1:4999/"
 import requests
 
 import pathlib
@@ -28,74 +33,57 @@ external_stylesheets = [dbc.themes.DARKLY]
 app = Dash(__name__, external_stylesheets=external_stylesheets)
 server = app.server
 
+operators = [
+    ['ge ', '>='],
+    ['le ', '<='],
+    ['lt ', '<'],
+    ['gt ', '>'],
+    ['ne ', '!='],
+    ['eq ', '='],
+    ['contains ']
+]
 
-# load the base species network
+############### LOAD HIERARCHIES ##############
 species_json_address = DATA_PATH.joinpath("cyto_format_species.json")
 temp_json_file = open(species_json_address, "r")
 species_network_dict_from = json.load(temp_json_file)
 temp_json_file.close()
-# species_elements_starting_from=set()
 for temp_element in species_network_dict_from["elements"]["nodes"]:
-    # id and label are special keys for cytoscape dicts
-    # they are always expected. our conversion script makes the id but does not make the name
-    # so we add it manually here
-    # we do not know how we intend to name species
     temp_element["data"]["label"] = temp_element["data"]["scientific_name"]
 temp_json_file = open(species_json_address, "r")
 species_network_dict_to = json.load(temp_json_file)
 temp_json_file.close()
-# species_elements_starting_to=set()
 for temp_element in species_network_dict_to["elements"]["nodes"]:
-    # id and label are special keys for cytoscape dicts
-    # they are always expected. our conversion script makes the id but does not make the name
-    # so we add it manually here
-    # we do not know how we intend to name species
     temp_element["data"]["label"] = temp_element["data"]["scientific_name"]
 
 organ_json_address = DATA_PATH.joinpath("cyto_format_organ.json")
 temp_json_file = open(organ_json_address, "r")
 organ_network_dict_from = json.load(temp_json_file)
 temp_json_file.close()
-# organ_elements_starting_from=set()
 for temp_element in organ_network_dict_from["elements"]["nodes"]:
-    # id and label are special keys for cytoscape dicts
-    # they are always expected. our conversion script makes the id but does not make the name
-    # so we add it manually here
-    # we do not know how we intend to name organ
     temp_element["data"]["label"] = temp_element["data"]["mesh_label"]
 temp_json_file = open(organ_json_address, "r")
 organ_network_dict_to = json.load(temp_json_file)
 temp_json_file.close()
-# organ_elements_starting_to=set()
 for temp_element in organ_network_dict_to["elements"]["nodes"]:
-    # id and label are special keys for cytoscape dicts
-    # they are always expected. our conversion script makes the id but does not make the name
-    # so we add it manually here
-    # we do not know how we intend to name organ
     temp_element["data"]["label"] = temp_element["data"]["mesh_label"]
 
 disease_json_address = DATA_PATH.joinpath("cyto_format_disease.json")
 temp_json_file = open(disease_json_address, "r")
 disease_network_dict_from = json.load(temp_json_file)
 temp_json_file.close()
-# disease_elements_starting_from=set()
 for temp_element in disease_network_dict_from["elements"]["nodes"]:
-    # id and label are special keys for cytoscape dicts
-    # they are always expected. our conversion script makes the id but does not make the name
-    # so we add it manually here
-    # we do not know how we intend to name disease
     temp_element["data"]["label"] = temp_element["data"]["mesh_label"]
 temp_json_file = open(disease_json_address, "r")
 disease_network_dict_to = json.load(temp_json_file)
 temp_json_file.close()
-# disease_elements_starting_to=set()
 for temp_element in disease_network_dict_to["elements"]["nodes"]:
-    # id and label are special keys for cytoscape dicts
-    # they are always expected. our conversion script makes the id but does not make the name
-    # so we add it manually here
-    # we do not know how we intend to name disease
     temp_element["data"]["label"] = temp_element["data"]["mesh_label"]
+###########################################
 
+# pprint(disease_network_dict_from)
+
+######### HELPER FUNCTIONS ################
 def remove_unmapped_nodes(temp_network_dict, temp_mapped_to_dict):
     """
     here we completely ignore the edges in the dict
@@ -132,30 +120,78 @@ def remove_redundant_options(temp_network_dict):
             only_appeared_once_mesh_label.append(temp_data)
     temp_network_dict["elements"]["nodes"] = only_appeared_once_mesh_label
     return temp_network_dict
+########################################
 
 
-# table_species_address=DATA_PATH.joinpath('table_species_dash.bin')
-# table_organ_address=DATA_PATH.joinpath('table_organ_dash.bin')
-# table_disease_address=DATA_PATH.joinpath('table_disease_dash.bin')
+# #############Load pandas for data selection options ##########
+# table_species_address = DATA_PATH.joinpath("table_species_dash.bin")
+# table_organ_address = DATA_PATH.joinpath("table_organ_dash.bin")
+# table_disease_address = DATA_PATH.joinpath("table_disease_dash.bin")
 
-# species_map_panda=pd.read_pickle(table_species_address)
-# species_map_dict={temp_tup[0]:temp_tup[1] for temp_tup in list(zip(species_map_panda.node_id.to_list(),species_map_panda.we_map_to.to_list()))}
-# organ_map_panda=pd.read_pickle(table_organ_address)
-# organ_map_dict={temp_tup[0]:temp_tup[1] for temp_tup in list(zip(organ_map_panda.node_id.to_list(),organ_map_panda.we_map_to.to_list()))}
-# disease_map_panda=pd.read_pickle(table_disease_address)
-# disease_map_dict={temp_tup[0]:temp_tup[1] for temp_tup in list(zip(disease_map_panda.node_id.to_list(),disease_map_panda.we_map_to.to_list()))}
+# species_map_panda = pd.read_pickle(table_species_address)
+# species_map_dict = {
+#     temp_tup[0]: temp_tup[1]
+#     for temp_tup in list(
+#         zip(species_map_panda.node_id.to_list(), species_map_panda.we_map_to.to_list())
+#     )
+# }
+# organ_map_panda = pd.read_pickle(table_organ_address)
+# organ_map_dict = {
+#     temp_tup[0]: temp_tup[1]
+#     for temp_tup in list(
+#         zip(organ_map_panda.node_id.to_list(), organ_map_panda.we_map_to.to_list())
+#     )
+# }
+# disease_map_panda = pd.read_pickle(table_disease_address)
+# disease_map_dict = {
+#     temp_tup[0]: temp_tup[1]
+#     for temp_tup in list(
+#         zip(disease_map_panda.node_id.to_list(), disease_map_panda.we_map_to.to_list())
+#     )
+# }
+# ########################################
 
-# species_network_dict_from=remove_unmapped_nodes(species_network_dict_from,species_map_dict)
-# organ_network_dict_from=remove_unmapped_nodes(organ_network_dict_from,organ_map_dict)
-# organ_network_dict_from=remove_redundant_options(organ_network_dict_from)
-# disease_network_dict_from=remove_unmapped_nodes(disease_network_dict_from,disease_map_dict)
-# disease_network_dict_from=remove_redundant_options(disease_network_dict_from)
 
-# species_network_dict_to=remove_unmapped_nodes(species_network_dict_to,species_map_dict)
-# organ_network_dict_to=remove_unmapped_nodes(organ_network_dict_to,organ_map_dict)
-# organ_network_dict_to=remove_redundant_options(organ_network_dict_to)
-# disease_network_dict_to=remove_unmapped_nodes(disease_network_dict_to,disease_map_dict)
-# disease_network_dict_to=remove_redundant_options(disease_network_dict_to)
+# #####Read in panda  and networkx for filtering options after one is selected######
+index_panda_address=DATA_PATH.joinpath("index_panda.bin")
+index_panda=pd.read_pickle(index_panda_address)
+index_panda=index_panda.sort_index()
+
+species_networkx_address=DATA_PATH.joinpath("species_networkx.bin")
+species_networkx=nx.readwrite.read_gpickle(species_networkx_address)
+organ_networkx_address=DATA_PATH.joinpath("organ_networkx.bin")
+organ_networkx=nx.readwrite.read_gpickle(organ_networkx_address)
+disease_networkx_address=DATA_PATH.joinpath("disease_networkx.bin")
+disease_networkx=nx.readwrite.read_gpickle(disease_networkx_address)
+
+#to swap out ncbi numbers with scientific names
+swap_dict_species={
+    species_networkx.nodes[temp_node]['ncbi_number']:species_networkx.nodes[temp_node]['scientific_name'] for temp_node in species_networkx.nodes
+}
+# ####################################################################
+
+
+# ############Update pandas for data selection#################
+# species_network_dict_from = remove_unmapped_nodes(
+#     species_network_dict_from, species_map_dict
+# )
+# organ_network_dict_from = remove_unmapped_nodes(organ_network_dict_from, organ_map_dict)
+# organ_network_dict_from = remove_redundant_options(organ_network_dict_from)
+# disease_network_dict_from = remove_unmapped_nodes(
+#     disease_network_dict_from, disease_map_dict
+# )
+# disease_network_dict_from = remove_redundant_options(disease_network_dict_from)
+
+# species_network_dict_to = remove_unmapped_nodes(
+#     species_network_dict_to, species_map_dict
+# )
+# organ_network_dict_to = remove_unmapped_nodes(organ_network_dict_to, organ_map_dict)
+# organ_network_dict_to = remove_redundant_options(organ_network_dict_to)
+# disease_network_dict_to = remove_unmapped_nodes(
+#     disease_network_dict_to, disease_map_dict
+# )
+# disease_network_dict_to = remove_redundant_options(disease_network_dict_to)
+# #############################################
 
 
 #####################Structure of app#################
@@ -167,17 +203,8 @@ app.layout=html.Div(
                     children=[
                         html.H2("Metadata Group Comparator", className='text-center'),
                         html.Br(),
-                        dbc.Card(
-                            children=[
-                                dbc.CardBody(
-                                    html.H4(
-                                        "Select metadata and observe volcano plots below", className='text-center')
-                                )
-                            ]
-                        )
                     ],
-                    width={'size':4}#,
-                    #align='center'
+                    width={'size':6}
                 )
             ],
             justify='center'
@@ -187,21 +214,7 @@ app.layout=html.Div(
             children=[
                 dbc.Col(
                     children=[
-                        html.H2("Selections here", className='text-center'),
                         html.Br(),
-                        #dbc.Card(
-                            #dbc.CardBody(
-                            #    children=[
-                            #        dbc.Card(html.H4("Blah")),
-                            #        dbc.Card(
-                            #            html.Button(
-                            #                'Reset selections',
-                            #                id='button_from_species',
-                            #            )
-                            #        ),
-                            #    ]
-                            #)
-                        #),
                         html.Br(),
                         dbc.Card(
                             dbc.CardBody(
@@ -225,7 +238,7 @@ app.layout=html.Div(
                                         dcc.Dropdown(
                                             id='dropdown_from_organ',
                                             options=[
-                                                {'label': temp_node['data']['label'], 'value': temp_node['data']['id']} for temp_node in organ_network_dict_from['elements']['nodes']
+                                                {'label': temp_node['data']['label']+' - MeSH ID: '+temp_node['data']['name'], 'value': temp_node['data']['id']} for temp_node in organ_network_dict_from['elements']['nodes']
                                             ],
                                             multi=False,
                                             style={
@@ -239,7 +252,7 @@ app.layout=html.Div(
                                         dcc.Dropdown(
                                             id='dropdown_from_disease',
                                             options=[
-                                                {'label': temp_node['data']['label'], 'value': temp_node['data']['id']} for temp_node in disease_network_dict_from['elements']['nodes']
+                                                {'label': temp_node['data']['label']+' - MeSH ID: '+temp_node['data']['name'], 'value': temp_node['data']['id']} for temp_node in disease_network_dict_from['elements']['nodes']
                                             ],
                                             multi=False,
                                             style={
@@ -252,57 +265,19 @@ app.layout=html.Div(
                             )
                         ),
                         html.Br(),
-                        dbc.Card(
-                            dbc.CardBody(
-                                # children=[                    
-                                #     dbc.Card(html.H4("Use these checkboxes to select multiple species at once. Selecting multiple species will compare each individually. Choosing their parent will aggregate them.")),
-                                #     dbc.Card(
-                                #         dcc.Checklist(
-                                #             id='checklist_from_species',
-                                #             options=[
-                                #                 {'label': i, 'value': i} for i in checklist_hashmap_species_from.keys()
-                                #             ],
-                                #             labelStyle={'display':'block'}
-                                #         )
-                                #     ),
-
-                                # ]
-                            )
-                        ),
                         html.Br(),
-
                     ],
                     width={'size':4}
                 ),
                 dbc.Col(
                     children=[
-                        #dbc.Card(
-                        #    html.H4("lorem ipsum")
-                        #)
-                        html.H2('get compared to', className='text-center')
+
                     ],
                     width={'size':2}
                 ),
                 dbc.Col(
                     children=[
-                        
-                        html.H2("Selections here", className='text-center'),
                         html.Br(),
-                        #dbc.Card(
-                        #    dbc.CardBody(
-                        #        children=[
-                        #            dbc.Card(html.H4("Blah")),
-                        #            dbc.Card(
-                        #                html.Button(
-                        #                    'Reset selections',
-                        #                    id='button_to_species2',
-                        #                )
-                        #            ),3#
-                        #  
-                        # 
-                        #        ]
-                        #    )
-                        #),
                         html.Br(),
                         dbc.Card(
                             dbc.CardBody(
@@ -326,7 +301,7 @@ app.layout=html.Div(
                                         dcc.Dropdown(
                                             id='dropdown_to_organ',
                                             options=[
-                                                {'label': temp_node['data']['label'], 'value': temp_node['data']['id']} for temp_node in organ_network_dict_to['elements']['nodes']
+                                                {'label': temp_node['data']['label']+' - MeSH ID: '+temp_node['data']['name'], 'value': temp_node['data']['id']} for temp_node in organ_network_dict_to['elements']['nodes']
                                             ],
                                             multi=False,
                                             style={
@@ -340,7 +315,7 @@ app.layout=html.Div(
                                         dcc.Dropdown(
                                             id='dropdown_to_disease',
                                             options=[
-                                                {'label': temp_node['data']['label'], 'value': temp_node['data']['id']} for temp_node in disease_network_dict_to['elements']['nodes']
+                                                {'label': temp_node['data']['label']+' - MeSH ID: '+temp_node['data']['name'], 'value': temp_node['data']['id']} for temp_node in disease_network_dict_to['elements']['nodes']
                                             ],
                                             multi=False,
                                             style={
@@ -353,24 +328,7 @@ app.layout=html.Div(
                             )
                         ),
                         html.Br(),
-                        dbc.Card(
-                            dbc.CardBody(
-                                # children=[                    
-                                #     dbc.Card(html.H4("Use these checkboxes to select multiple species at once. Selecting multiple species will compare each individually. Choosing their parent will aggregate them.")),
-                                #     dbc.Card(
-                                #         dcc.Checklist(
-                                #             id='checklist_to_species',
-                                #             options=[
-                                #                 {'label': i, 'value': i} for i in checklist_hashmap_species_to.keys()
-                                #             ],
-                                #             labelStyle={'display':'block'}
-                                #         )
-                                #     ),
-                                # ]
-                            )
-                        ),
                         html.Br(),
-
                     ],
                     width={'size':4}
                 ),
@@ -381,19 +339,83 @@ app.layout=html.Div(
             children=[
                 dbc.Col(
                     children=[
-                        html.H2("Other options", className='text-center'),
                         html.Br(),
+                        html.H2("Describe Comparison", className='text-center'),
                         dbc.Card(
-                            children=[
-                                dbc.CardBody(
-                                    html.H4(
-                                        "Node distance, count filters coming soon", className='text-center')
-                                )
-                            ]
+                            dbc.CardBody(
+                                children=[
+                                    dbc.Row(
+                                        children=[
+                                            dbc.Col(
+                                                html.Button(
+                                                    'Describe Groups',
+                                                    id='query_metadata',
+                                                ),
+                                                width={'size':2}
+                                            ),
+                                        ],
+                                        justify='center'
+                                    ),
+                                    dbc.Row(
+                                        children=[
+                                            dbc.Col(
+                                                dbc.Card(
+                                                    dt.DataTable(
+                                                        id='table_query_summary_from',
+                                                        columns=[
+                                                            {'name': 'Triplet List', 'id': 'unique_triplet_list_real_from'}, 
+                                                            {'name': 'Triplet Count', 'id': 'triplet_count_from'}, 
+                                                            {'name': 'Sample Count List', 'id': 'sample_count_list_from'}, 
+                                                            {'name': 'Sample Count Min', 'id': 'min_sample_count_from'}, 
+                                                            {'name': 'Sample Count Sum', 'id': 'sum_sample_count_from'}
+                                                        ],
+                                                        data=[],
+                                                        style_header={
+                                                            'backgroundColor': 'rgb(30, 30, 30)',
+                                                            'color': 'white'
+                                                        },
+                                                        style_data={
+                                                            'backgroundColor': 'rgb(50, 50, 50)',
+                                                            'color': 'white',
+                                                        },
+                                                        style_cell={"whiteSpace": "pre-line"},
+                                                    )
+                                                ),
+                                                width={'size':6}
+                                            ),
+                                            dbc.Col(
+                                                dbc.Card(
+                                                    dt.DataTable(
+                                                        id='table_query_summary_to',
+                                                        columns=[
+                                                            {'name': 'Triplet List', 'id': 'unique_triplet_list_real_to'}, 
+                                                            {'name': 'Triplet Count', 'id': 'triplet_count_to'}, 
+                                                            {'name': 'Sample Count List', 'id': 'sample_count_list_to'}, 
+                                                            {'name': 'Sample Count Min', 'id': 'min_sample_count_to'}, 
+                                                            {'name': 'Sample Count Sum', 'id': 'sum_sample_count_to'}
+                                                        ],
+                                                        data=[],
+                                                        style_header={
+                                                            'backgroundColor': 'rgb(30, 30, 30)',
+                                                            'color': 'white'
+                                                        },
+                                                        style_data={
+                                                            'backgroundColor': 'rgb(50, 50, 50)',
+                                                            'color': 'white'
+                                                        },
+                                                        style_cell={"whiteSpace": "pre-line"},
+                                                    )
+                                                ),
+                                                width={'size':6}
+                                            )
+                                        ],
+                                        justify='around'
+                                    )
+                                ],
+                            )
                         )
                     ],
-                    width={'size':4}#,
-                    #align='center'
+                    width={'size':12}
                 )
             ],
             justify='center'
@@ -403,70 +425,32 @@ app.layout=html.Div(
                 dbc.Col(
                     children=[
                         html.Br(),
-                        html.H2("Execute query", className='text-center'),
-                        #html.Br(),
+                        html.H2("Results - Individual Compounds", className='text-center'),
                         dbc.Card(
                             dbc.CardBody(
                                 children=[
-                                    dbc.Card(
-                                        html.H4("Click to query backend", className='text-center')
+                                    dcc.Checklist(
+                                        id='checklist_query',
+                                        options={
+                                            'Classes':'Classes',
+                                            'Knowns':'Knowns',
+                                            'Unknowns':'Unknowns'
+                                        }
                                     ),
-                                    dbc.Card(
-                                        html.Button(
-                                            'Execute Query',
-                                            id='button_query',
-                                        )
+                                    html.Button(
+                                        'Get Results',
+                                        id='button_query',
                                     )
                                 ]
                             )
                         )
                     ],
-                    width={'size':4}#,
-                    #align='center'
+                    width={'size':3}
                 )
             ],
             justify='center'
         ),
-
-        dbc.Row(
-            children=[
-                dbc.Col(
-                    children=[
-                        html.Br(),
-                        html.H2("Results", className='text-center'),
-                        #html.Br(),
-                        dbc.Card(
-                            dbc.CardBody(
-                                children=[
-                                    dbc.Card(
-                                        html.H4(
-                                            "Query Summary - reformat coming soon", className='text-center')
-                                    ),
-                                    dbc.Card(
-                                        dt.DataTable(
-                                            id='table_query_summary',
-                                            columns=[{'name': 'temp', 'id': 'temp'}],
-                                            data=[],
-                                            page_current=0,
-                                            page_size=10,
-                                            page_action='custom',
-                                                style_header={
-                                                    'backgroundColor': 'rgb(30, 30, 30)',
-                                                    'color': 'white'
-                                                },
-                                                style_data={
-                                                    'backgroundColor': 'rgb(50, 50, 50)',
-                                                    'color': 'white'
-                                                }
-                                        )
-                                    )
-                                ]
-                            )
-                        )
-                    ]
-                )
-            ]
-        ),
+        html.Br(),
         dbc.Row(
             children=[
                 dbc.Col(
@@ -480,61 +464,14 @@ app.layout=html.Div(
                                     ),
                                     dbc.Card(
                                         dcc.Graph(
-                                            id='volcano_average_welch_bins',
+                                            id='volcano_average_welch'
                                         )
                                     ),
-                                    dbc.Card(
-                                        dt.DataTable(
-                                            id='table_average_welch_bins',
-                                            columns=[{'name': 'temp', 'id': 'temp'}],
-                                            data=[],
-                                            page_current=0,
-                                            page_size=10,
-                                            page_action='custom',
-                                                style_header={
-                                                    'backgroundColor': 'rgb(30, 30, 30)',
-                                                    'color': 'white'
-                                                },
-                                                style_data={
-                                                    'backgroundColor': 'rgb(50, 50, 50)',
-                                                    'color': 'white'
-                                                }
-                                        )
-                                    ),
-                                    dbc.Card(
-                                        dcc.Graph(
-                                            id='volcano_average_welch_classyfire',
-                                        )
-                                    ),
-                                    dbc.Card(
-                                        dt.DataTable(
-                                            id='table_average_welch_classyfire',
-                                            columns=[{'name': 'temp', 'id': 'temp'}],
-                                            data=[],
-                                            page_current=0,
-                                            page_size=10,
-                                            page_action='custom',
-                                                style_header={
-                                                    'backgroundColor': 'rgb(30, 30, 30)',
-                                                    'color': 'white'
-                                                },
-                                                style_data={
-                                                    'backgroundColor': 'rgb(50, 50, 50)',
-                                                    'color': 'white'
-                                                }
-                                        )
-                                    )
                                 ]
                             )
                         )
-                    ],
-                    width={'size':4}
-                ),
-                dbc.Col(
-                    children=[
-                    ],
-                    width={'size':2}
-                ),
+                    ]
+                ),                
                 dbc.Col(
                     children=[
                         dbc.Card(
@@ -546,90 +483,163 @@ app.layout=html.Div(
                                     ),
                                     dbc.Card(
                                         dcc.Graph(
-                                            id='volcano_median_mw_bins',
+                                            id='volcano_median_mw',
                                         )
                                     ),
-                                    dbc.Card(
-                                        dt.DataTable(
-                                            id='table_median_mw_bins',
-                                            columns=[{'name': 'temp', 'id': 'temp'}],
-                                            data=[],
-                                            page_current=0,
-                                            page_size=10,
-                                            page_action='custom',
-                                                style_header={
-                                                    'backgroundColor': 'rgb(30, 30, 30)',
-                                                    'color': 'white'
-                                                },
-                                                style_data={
-                                                    'backgroundColor': 'rgb(50, 50, 50)',
-                                                    'color': 'white'
-                                                }
-                                        )
-                                    ),
-                                    dbc.Card(
-                                        dcc.Graph(
-                                            id='volcano_median_mw_classyfire',
-                                        )
-                                    ),
-                                    dbc.Card(
-                                        dt.DataTable(
-                                            id='table_median_mw_classyfire',
-                                            columns=[{'name': 'temp', 'id': 'temp'}],
-                                            data=[],
-                                            page_current=0,
-                                            page_size=10,
-                                            page_action='custom',
-                                                style_header={
-                                                    'backgroundColor': 'rgb(30, 30, 30)',
-                                                    'color': 'white'
-                                                },
-                                                style_data={
-                                                    'backgroundColor': 'rgb(50, 50, 50)',
-                                                    'color': 'white'
-                                                }
-                                        )
-                                    )
                                 ]
                             )
                         )
-                    ],
-                    width={'size':4}
-                )
+                    ]
+                ),
             ]
-        )
+        ),
+        html.Br(),
+        dbc.Row(
+            children=[
+                dbc.Card(
+                    dt.DataTable(
+                        id='table',
+                        columns=[
+                            {"name": "English Name", "id": "english_name"},
+                            {"name": "Fold Average", "id": "fold_average"},
+                            {"name": "Significance Welch", "id": "sig_welch"},
+                            {"name": "Fold Median", "id": "fold_median"},
+                            {"name": "Significance MWU", "id": "sig_mannwhit"}
+                        ],
+                        data=[],
+                        page_current=0,
+                        page_size=50,
+                        page_action='custom',
+                        style_header={
+                            'backgroundColor': 'rgb(30, 30, 30)',
+                            'color': 'white'
+                        },
+                        style_data={
+                            'backgroundColor': 'rgb(50, 50, 50)',
+                            'color': 'white'
+                        },
+
+                        sort_action='custom',
+                        sort_mode='multi',
+                        sort_by=[],
+
+                        filter_action='custom',
+                        filter_query=''
+                    )
+                ),
+            ],
+            justify='center'
+        ),
     ]
 )
 ######################################################
 
+@app.callback(
+    [
+        Output(component_id="table_query_summary_from", component_property="columns"),
+        Output(component_id="table_query_summary_from", component_property="data"),
+        Output(component_id="table_query_summary_to", component_property="columns"),
+        Output(component_id="table_query_summary_to", component_property="data"),
+    ],
+    [
+        Input(component_id="query_metadata", component_property="n_clicks"),
+    ],
+    [
+        State(component_id="dropdown_from_species", component_property="value"),
+        State(component_id="dropdown_from_organ", component_property="value"),
+        State(component_id="dropdown_from_disease", component_property="value"),
+        State(component_id="dropdown_to_species", component_property="value"),
+        State(component_id="dropdown_to_organ", component_property="value"),
+        State(component_id="dropdown_to_disease", component_property="value"),
+    ],
+)
+def perform_metadata_query(
+    query,
+    from_species_value,
+    from_organ_value,
+    from_disease_value,
+    to_species_value,
+    to_organ_value,
+    to_disease_value,
+):
+    '''
+    describes the query that the user makes
+    '''
+    ################metadata query######################
+    #prepare json for api
+    metadata_json_output = {
+        "from_species": from_species_value,
+        "from_organ": from_organ_value,
+        "from_disease": from_disease_value,
+        "to_species": to_species_value,
+        "to_organ": to_organ_value,
+        "to_disease": to_disease_value,
+    }
+    #obtain results from api
+    response = requests.post(base_url + "/metadataresource/", json=metadata_json_output)
+    total_panda = pd.read_json(response.json(), orient="records")
+
+    pre_swap_from=total_panda.at[0,'unique_triplet_list_real_from']
+    post_swap_from=[
+        [temp[0],swap_dict_species[temp[1]],temp[2]] for temp in pre_swap_from
+    ]
+    total_panda.at[0,'unique_triplet_list_real_from']=post_swap_from
+
+    pre_swap_to=total_panda.at[0,'unique_triplet_list_real_to']
+    post_swap_to=[
+        [temp[0],swap_dict_species[temp[1]],temp[2]] for temp in pre_swap_to
+    ]
+    total_panda.at[0,'unique_triplet_list_real_to']=post_swap_to    
+
+    #prepare column list for table
+    query_summary_column_list_from = [
+        {"name": temp_col, "id": temp_col} for temp_col in total_panda.columns if "from" in temp_col
+    ]
+    query_summary_column_list_to = [
+        {"name": temp_col, "id": temp_col} for temp_col in total_panda.columns if "from" not in temp_col
+    ]
+
+    #prepare data for table
+    query_summary_data_from = total_panda.to_dict(orient="records")
+    
+    
+    for temp_key in query_summary_data_from[0]:
+        query_summary_data_from[0][temp_key] = str(query_summary_data_from[0][temp_key])
+    query_summary_data_to = total_panda.to_dict(orient="records")
+    for temp_key in query_summary_data_to[0]:
+        query_summary_data_to[0][temp_key] = str(query_summary_data_to[0][temp_key])
+
+    query_summary_data_from[0]['unique_triplet_list_real_from']=query_summary_data_from[0]['unique_triplet_list_real_from'].replace('], [','],\n[')
+    query_summary_data_from[0]['sample_count_list_from']=query_summary_data_from[0]['sample_count_list_from'].replace(', ',',\n')
+    query_summary_data_to[0]['unique_triplet_list_real_to']=query_summary_data_to[0]['unique_triplet_list_real_to'].replace('], [','],\n[')
+    query_summary_data_to[0]['sample_count_list_to']=query_summary_data_to[0]['sample_count_list_to'].replace(', ',',\n')
+    
+    new_names=['Triplet List','Triplet Count','Sample Count List','Sample Count Min','Sample Count Sum']
+    query_summary_column_list_from = [
+        {"name": new_names[i], "id": query_summary_column_list_from[i]['id']} for i in range(len(query_summary_column_list_from))
+    ]
+
+    return query_summary_column_list_from,query_summary_data_from,query_summary_column_list_to,query_summary_data_to
+        
+    #####################################################
+
 
 @app.callback(
     [
-        Output(component_id="table_query_summary", component_property="columns"),
-        Output(component_id="table_query_summary", component_property="data"),
-        Output(component_id="table_average_welch_bins", component_property="columns"),
-        Output(component_id="table_average_welch_bins", component_property="data"),
-        Output(component_id="table_median_mw_bins", component_property="columns"),
-        Output(component_id="table_median_mw_bins", component_property="data"),
-        Output(
-            component_id="table_average_welch_classyfire", component_property="columns"
-        ),
-        Output(
-            component_id="table_average_welch_classyfire", component_property="data"
-        ),
-        Output(component_id="table_median_mw_classyfire", component_property="columns"),
-        Output(component_id="table_median_mw_classyfire", component_property="data"),
-        Output(component_id="volcano_average_welch_bins", component_property="figure"),
-        Output(component_id="volcano_median_mw_bins", component_property="figure"),
-        Output(
-            component_id="volcano_average_welch_classyfire", component_property="figure"
-        ),
-        Output(
-            component_id="volcano_median_mw_classyfire", component_property="figure"
-        ),
+        Output(component_id="table", component_property="columns"),
+        Output(component_id="table", component_property="data"),
+        Output(component_id="volcano_average_welch", component_property="figure"),
+        Output(component_id="volcano_median_mw", component_property="figure"),
     ],
-    [Input(component_id="button_query", component_property="n_clicks")],
     [
+        Input(component_id="button_query", component_property="n_clicks"),
+        Input(component_id="table", component_property="page_current"),
+        Input(component_id="table", component_property="page_size"),
+        Input(component_id="table", component_property="sort_by"),
+        Input(component_id="table", component_property="filter_query"),
+    ],
+    [
+        State(component_id="checklist_query",component_property="value"),
         State(component_id="dropdown_from_species", component_property="value"),
         State(component_id="dropdown_from_organ", component_property="value"),
         State(component_id="dropdown_from_disease", component_property="value"),
@@ -640,6 +650,11 @@ app.layout=html.Div(
 )
 def perform_volcano_query(
     query,
+    page_current,
+    page_size,
+    sort_by,
+    filter_query,
+    checklist_query,
     from_species_value,
     from_organ_value,
     from_disease_value,
@@ -648,52 +663,30 @@ def perform_volcano_query(
     to_disease_value,
 ):
     """
-    we perform the query information post as well as the
     """
+    print(page_current)
+    print(page_size)
+    print(sort_by)
+    print(filter_query)
 
-    ########metadata query########
-    metadata_json_output = {
-        "from_species": from_species_value,
-        "from_organ": from_organ_value,
-        "from_disease": from_disease_value,
-        "to_species": to_species_value,
-        "to_organ": to_organ_value,
-        "to_disease": to_disease_value,
-    }
-    response = requests.post(base_url + "/metadataresource/", json=metadata_json_output)
-    total_panda = pd.read_json(response.json(), orient="records")
-    print(total_panda)
 
-    query_summary_column_list = [
-        {"name": temp_col, "id": temp_col} for temp_col in total_panda.columns
-    ]
-    print(query_summary_column_list)
-    query_summary_data = total_panda.to_dict(orient="records")
-    # query_summary_data=[
-    #     {temp_key]:str(query_summary_data[temp_key]) for temp_key in query_summary_data}
-    # ]
-    for temp_key in query_summary_data[0]:
-        query_summary_data[0][temp_key] = str(query_summary_data[0][temp_key])
-    print(query_summary_data)
-    # query_summary_data=[
-    #     {
-    #         'triplet_count_to': 1,
-    #         'sample_count_list_to': 3160,
-    #         'min_sample_count_to': 3160,
-    #         'sum_sample_count_to': 3160,
-    #         'unique_triplet_list_real_to': 234,#[['Plasma', '10090', 'No']],
-    #         'triplet_count_from': 1,
-    #         'sample_count_list_from': 234,#[3160],
-    #         'min_sample_count_from': 3160,
-    #         'sum_sample_count_from': 3160,
-    #         'unique_triplet_list_real_from': 234# [['Plasma', '10090', 'No']]
-    #     }
-    # ]
+    print('before json')
 
-    #############################
+    if "Classes" in checklist_query:
+        include_classes='Yes'
+    else:
+        include_classes='No'
+    if "Knowns" in checklist_query:
+        include_knowns='Yes'
+    else:
+        include_knowns='No'
+    if "Unknowns" in checklist_query:
+        include_unknowns='Yes'
+    else:
+        include_unknowns='No'
 
-    #################volcano query#######3
-
+    ##################volcano query######################
+    #prepare json for api
     volcano_json_output = {
         "from_species": from_species_value,
         "from_organ": from_organ_value,
@@ -701,101 +694,216 @@ def perform_volcano_query(
         "to_species": to_species_value,
         "to_organ": to_organ_value,
         "to_disease": to_disease_value,
-        "include_known": "Yes",
-        "include_unknown": "Yes",
-        "fold_median_min": 0,
-        "fold_average_min": 0,
-        "p_welch_max": 1,
-        "p_mann_max": 1,
+        "include_classes": include_classes,
+        "include_knowns": include_knowns,
+        "include_unknowns": include_unknowns,
+        "page_current":page_current,
+        "page_size":page_size,
+        "sort_by":sort_by,
+        "filter_query":filter_query,
     }
 
+    print('after json before api')
+    #call api
     response = requests.post(base_url + "/volcanoresource/", json=volcano_json_output)
     total_panda = pd.read_json(response.json(), orient="records")
-    # pd.set_option('display.max_rows',200)
     print(total_panda)
 
-    average_welch_column_list = [
-        {"name": "english_name", "id": "english_name"},
-        {"name": "fold_average", "id": "fold_average"},
-        {"name": "sig_welch", "id": "sig_welch"},
+    #prepare columns and data for the table
+    column_list = [
+        {"name": "English Name", "id": "english_name"},
+        {"name": "Fold Average", "id": "fold_average","type": "numeric","format": Format(group=Group.yes, precision=2, scheme=Scheme.exponent)},
+        {"name": "Significance Welch", "id": "sig_welch","type": "numeric","format": Format(group=Group.yes, precision=4, scheme=Scheme.exponent)},
+        {"name": "Fold Median", "id": "fold_median","type": "numeric","format": Format(group=Group.yes, precision=2, scheme=Scheme.exponent)},
+        {"name": "Significance MWU", "id": "sig_mannwhit","type": "numeric","format": Format(group=Group.yes, precision=4, scheme=Scheme.exponent)}
     ]
-    average_welch_data_bin = total_panda.loc[
-        (~total_panda["compound"].str.contains("CHEMONTID")),
-        ["english_name", "fold_average", "sig_welch"],
-    ].to_dict(orient="records")
-    average_welch_data_classyfire = total_panda.loc[
-        (total_panda["compound"].str.contains("CHEMONTID")),
-        ["english_name", "fold_average", "sig_welch"],
-    ].to_dict(orient="records")
-    median_mw_column_list = [
-        {"name": "english_name", "id": "english_name"},
-        {"name": "fold_median", "id": "fold_median"},
-        {"name": "sig_mannwhit", "id": "sig_mannwhit"},
-    ]
-    median_mw_data_bin = total_panda.loc[
-        (~total_panda["compound"].str.contains("CHEMONTID")),
-        ["english_name", "fold_median", "sig_mannwhit"],
-    ].to_dict(orient="records")
-    median_mw_data_classyfire = total_panda.loc[
-        (total_panda["compound"].str.contains("CHEMONTID")),
-        ["english_name", "fold_median", "sig_mannwhit"],
-    ].to_dict(orient="records")
-    bins_panda = total_panda.loc[
-        (~total_panda["compound"].str.contains("CHEMONTID"))
-    ].copy(deep=True)
-    classyfire_panda = (
-        total_panda.loc[(total_panda["compound"].str.contains("CHEMONTID"))]
-        .copy(deep=True)
-        .reset_index()
-    )
+    data = total_panda.to_dict(orient='records')
 
     #prepare figures for volcano plots
-    volcano_average_bin = dashbio.VolcanoPlot(
-        dataframe=bins_panda,
+    volcano_average = dashbio.VolcanoPlot(
+        dataframe=total_panda,#bins_panda,
         snp="english_name",
         p="sig_welch",
         effect_size="fold_average",
         gene=None,
+        xlabel='log2 Fold Change',
+        genomewideline_value=1e-2,
     )
-    volcano_average_classyfire = dashbio.VolcanoPlot(
-        dataframe=classyfire_panda,
-        snp="english_name",
-        p="sig_welch",
-        effect_size="fold_average",
-        gene=None,
-    )
-    volcano_median_bin = dashbio.VolcanoPlot(
-        dataframe=bins_panda,
+    volcano_median = dashbio.VolcanoPlot(
+        dataframe=total_panda,#bins_panda,
         snp="english_name",
         p="sig_mannwhit",
         effect_size="fold_median",
         gene=None,
-    )
-    volcano_median_classyfire = dashbio.VolcanoPlot(
-        dataframe=classyfire_panda,
-        snp="english_name",
-        p="sig_mannwhit",
-        effect_size="fold_median",
-        gene=None,
+        xlabel='log2 Fold Change',
+        genomewideline_value=1e-2,
     )
     #################################################3
 
     return (
-        query_summary_column_list,
-        query_summary_data,
-        average_welch_column_list,
-        average_welch_data_bin,
-        median_mw_column_list,
-        median_mw_data_bin,
-        average_welch_column_list,
-        average_welch_data_classyfire,
-        median_mw_column_list,
-        median_mw_data_classyfire,
-        volcano_average_bin,
-        volcano_median_bin,
-        volcano_average_classyfire,
-        volcano_median_classyfire,
+        column_list,
+        data,
+        volcano_average,
+        volcano_median,
     )
+
+
+@app.callback(
+    [
+        Output(component_id="dropdown_from_species", component_property="options"),
+        Output(component_id="dropdown_from_organ", component_property="options"),
+        Output(component_id="dropdown_from_disease", component_property="options"),
+    ],
+    [
+        Input(component_id="dropdown_from_species", component_property="value"),
+        Input(component_id="dropdown_from_organ", component_property="value"),
+        Input(component_id="dropdown_from_disease", component_property="value"),
+    ],
+    prevent_initial_call=True
+)
+def update_input_options_from(
+    from_species_value_input,
+    from_organ_value_input,
+    from_disease_value_input,
+):
+    '''
+    this callback makes it so that if a user specifies a species, an organ, or a disease
+    for "from", then the other options are filtered accordingly
+    '''
+    
+    #determine valid species options
+    temp_view=index_panda.copy()
+    if from_species_value_input!=None:
+        temp_set=nx.algorithms.dag.descendants(species_networkx,from_species_value_input)
+        temp_set.add(from_species_value_input)
+        temp_view=temp_view.loc[
+            temp_view.species.isin(temp_set)
+        ]
+
+    if from_organ_value_input!=None:
+        temp_set=nx.algorithms.dag.descendants(organ_networkx,from_organ_value_input)
+        temp_set.add(from_organ_value_input)
+        temp_view=temp_view.loc[
+            temp_view.organ.isin(temp_set)
+        ]
+
+    if from_disease_value_input!=None:
+        temp_set=nx.algorithms.dag.descendants(disease_networkx,from_disease_value_input)
+        temp_set.add(from_disease_value_input)
+        temp_view=temp_view.loc[
+            temp_view.disease.isin(temp_set)
+        ]
+
+    all_basic_species_options=set(temp_view.species.values)
+    all_valid_species_options=all_basic_species_options
+    [all_valid_species_options:=all_valid_species_options.union(nx.ancestors(species_networkx,temp_option)) for temp_option in all_basic_species_options]
+
+    all_basic_organ_options=set(temp_view.organ.values)
+    all_valid_organ_options=all_basic_organ_options
+    [all_valid_organ_options:=all_valid_organ_options.union(nx.ancestors(organ_networkx,temp_option)) for temp_option in all_basic_organ_options]
+
+    all_basic_disease_options=set(temp_view.disease.values)
+    all_valid_disease_options=all_basic_disease_options
+    [all_valid_disease_options:=all_valid_disease_options.union(nx.ancestors(disease_networkx,temp_option)) for temp_option in all_basic_disease_options]
+
+    species_options=[
+        {'label': temp_node['data']['label'], 'value': temp_node['data']['id']} \
+            for temp_node in species_network_dict_from['elements']['nodes'] \
+                if temp_node['data']['id'] in all_valid_species_options
+    ]
+
+    organ_options=[
+        {'label': temp_node['data']['label']+' - MeSH ID: '+temp_node['data']['name'], 'value': temp_node['data']['id']} \
+            for temp_node in organ_network_dict_from['elements']['nodes'] \
+                if temp_node['data']['id'] in all_valid_organ_options
+    ]
+
+    disease_options=[
+        {'label': temp_node['data']['label']+' - MeSH ID: '+temp_node['data']['name'], 'value': temp_node['data']['id']} \
+            for temp_node in disease_network_dict_from['elements']['nodes'] \
+                if temp_node['data']['id'] in all_valid_disease_options
+    ]
+
+    return species_options,organ_options,disease_options
+
+
+@app.callback(
+    [
+        Output(component_id="dropdown_to_species", component_property="options"),
+        Output(component_id="dropdown_to_organ", component_property="options"),
+        Output(component_id="dropdown_to_disease", component_property="options"),
+    ],
+    [
+        Input(component_id="dropdown_to_species", component_property="value"),
+        Input(component_id="dropdown_to_organ", component_property="value"),
+        Input(component_id="dropdown_to_disease", component_property="value"),
+    ],
+    prevent_initial_call=True
+)
+def update_input_options_to(
+    to_species_value_input,
+    to_organ_value_input,
+    to_disease_value_input,
+):
+    '''
+    this callback makes it so that if a user specifies a species, an organ, or a disease
+    for "to", then the other options are filtered accordingly
+    '''
+    
+    #determine valid species options
+    temp_view=index_panda.copy()
+    if to_species_value_input!=None:
+        temp_set=nx.algorithms.dag.descendants(species_networkx,to_species_value_input)
+        temp_set.add(to_species_value_input)
+        temp_view=temp_view.loc[
+            temp_view.species.isin(temp_set)
+        ]
+
+    if to_organ_value_input!=None:
+        temp_set=nx.algorithms.dag.descendants(organ_networkx,to_organ_value_input)
+        temp_set.add(to_organ_value_input)
+        temp_view=temp_view.loc[
+            temp_view.organ.isin(temp_set)
+        ]
+
+    if to_disease_value_input!=None:
+        temp_set=nx.algorithms.dag.descendants(disease_networkx,to_disease_value_input)
+        temp_set.add(to_disease_value_input)
+        temp_view=temp_view.loc[
+            temp_view.disease.isin(temp_set)
+        ]
+
+    all_basic_species_options=set(temp_view.species.values)
+    all_valid_species_options=all_basic_species_options
+    [all_valid_species_options:=all_valid_species_options.union(nx.ancestors(species_networkx,temp_option)) for temp_option in all_basic_species_options]
+
+    all_basic_organ_options=set(temp_view.organ.values)
+    all_valid_organ_options=all_basic_organ_options
+    [all_valid_organ_options:=all_valid_organ_options.union(nx.ancestors(organ_networkx,temp_option)) for temp_option in all_basic_organ_options]
+
+    all_basic_disease_options=set(temp_view.disease.values)
+    all_valid_disease_options=all_basic_disease_options
+    [all_valid_disease_options:=all_valid_disease_options.union(nx.ancestors(disease_networkx,temp_option)) for temp_option in all_basic_disease_options]
+
+    species_options=[
+        {'label': temp_node['data']['label'], 'value': temp_node['data']['id']} \
+            for temp_node in species_network_dict_to['elements']['nodes'] \
+                if temp_node['data']['id'] in all_valid_species_options
+    ]
+
+    organ_options=[
+        {'label': temp_node['data']['label']+' - MeSH ID: '+temp_node['data']['name'], 'value': temp_node['data']['id']} \
+            for temp_node in organ_network_dict_to['elements']['nodes'] \
+                if temp_node['data']['id'] in all_valid_organ_options
+    ]
+
+    disease_options=[
+        {'label': temp_node['data']['label']+' - MeSH ID: '+temp_node['data']['name'], 'value': temp_node['data']['id']} \
+            for temp_node in disease_network_dict_to['elements']['nodes'] \
+                if temp_node['data']['id'] in all_valid_disease_options
+    ]
+
+    return species_options,organ_options,disease_options
 
 
 if __name__ == "__main__":
