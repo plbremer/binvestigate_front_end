@@ -22,13 +22,13 @@ def create_app(config_class=Config):
         app.register_blueprint(bp_dashapps)
 
         # process dash apps
-        # # dash app 1
+        # dash app 1
         # from app.dashapps.dash_app_1 import add_dash as ad1
         # app = ad1(app)
-        # # dash app 2
+        # # # dash app 2
         # from app.dashapps.dash_app_2 import add_dash as ad2
         # app = ad2(app)
-        #leaf frontend
+        # #leaf frontend
         from app.dashapps.leaf_frontend import add_dash as ad3
         #this is the third "add dash" function, independent of the dash apps name
         app = ad3(app)
@@ -41,7 +41,7 @@ def create_app(config_class=Config):
         #this is the third "add dash" function, independent of the dash apps name
         app = ad5(app)
 
-        from app.dashapps.root_distance_frontend import add_dash as ad6
+        from app.dashapps.rootdistance_frontend import add_dash as ad6
         #this is the third "add dash" function, independent of the dash apps name
         app = ad6(app)
 

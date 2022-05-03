@@ -24,7 +24,7 @@ from dash_table.Format import Format, Scheme, Group
 #flask app adjustment
 APP_ID='compound_frontend'
 URL_BASE='/dash/compound_frontend/'
-MIN_HEIGHT=600
+MIN_HEIGHT=2000
 # external_stylesheets = [dbc.themes.DARKLY]
 # app = Dash(__name__, external_stylesheets=external_stylesheets)
 # server = app.server
@@ -568,7 +568,19 @@ def add_dash(server):
                             #     {"name": "Fold Median", "id": "fold_median"},
                             #     {"name": "Significance MWU", "id": "sig_mannwhit"}
                             # ],
-                            columns=[{'name': 'temp', 'id': 'temp'}],
+                            columns= [
+                                {"name": "From Species", "id": "species_from"},
+                                {"name": "From Organ", "id": "organ_from"},
+                                {"name": "From Disease", "id": "disease_from"},
+                                {"name": "To Species", "id": "species_to"},
+                                {"name": "To Organ", "id": "organ_to"},
+                                {"name": "To Disease", "id": "disease_to"},    
+                                {"name": "Compound", "id": "compound"},
+                                {"name": "Fold Average", "id": "fold_average"},
+                                {"name": "Sig. Welch", "id": "sig_welch"},
+                                {"name": "Fold Median", "id": "fold_median"},
+                                {"name": "Sig. MWU", "id": "sig_mannwhit"}
+                            ],
                             data=[],
                             page_current=0,
                             page_size=50,

@@ -19,7 +19,7 @@ from dash_table.Format import Format, Scheme, Group
 #flask app adjustment
 APP_ID='group_or_parent_frontend'
 URL_BASE='/dash/group_or_parent_frontend/'
-MIN_HEIGHT=600
+MIN_HEIGHT=2000
 # external_stylesheets = [dbc.themes.DARKLY]
 # app = Dash(__name__, external_stylesheets=external_stylesheets)
 # server = app.server

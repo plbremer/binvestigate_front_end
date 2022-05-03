@@ -29,9 +29,9 @@ import dash_bio as dashbio
 from dash_table.Format import Format, Scheme, Group
 
 #flask app adjustment
-APP_ID='root_distance_frontend'
-URL_BASE='/dash/root_distance_frontend/'
-MIN_HEIGHT=600
+APP_ID='rootdistance_frontend'
+URL_BASE='/dash/rootdistance_frontend/'
+MIN_HEIGHT=2000
 # external_stylesheets = [dbc.themes.DARKLY]
 # app = Dash(__name__, external_stylesheets=external_stylesheets)
 # server = app.server
@@ -329,7 +329,7 @@ def add_dash(server):
                 children=[
                     dbc.Col(
                         children=[
-                            html.H2("Single Compound Explorer", className='text-center'),
+                            html.H2("Taxonomical Tree Explorer", className='text-center'),
                             html.Br(),
                             html.Br(),
                             # dbc.Card(
@@ -377,6 +377,9 @@ def add_dash(server):
                                     style={
                                         'color': '#212121',
                                         'background-color': '#3EB489',
+                                        'optionHeight':'200px'
+                                        #'display': 'inline-block'
+                                        #'optionHeight':'200px'
                                     }
                                 )
                             ),
@@ -684,7 +687,33 @@ def add_dash(server):
                             #     {"name": "Fold Median", "id": "fold_median"},
                             #     {"name": "Significance MWU", "id": "sig_mannwhit"}
                             # ],
-                            columns=[{'name': 'temp', 'id': 'temp'}],
+                            columns=[
+                                {"name": "From Species", "id": "species_from"},
+                                {"name": "Root. Dist.", "id": "root_dist_species_from"},
+                                {"name": "Leaf. Dist.", "id": "leaf_dist_species_from"},
+                                {"name": "From Organ", "id": "organ_from"},
+                                {"name": "Root. Dist.", "id": "root_dist_organ_from"},
+                                {"name": "Leaf. Dist.", "id": "leaf_dist_organ_from"},
+                                {"name": "From Disease", "id": "disease_from"},
+                                {"name": "Root. Dist.", "id": "root_dist_disease_from"},
+                                {"name": "Leaf. Dist.", "id": "leaf_dist_disease_from"},
+                                {"name": "To Species", "id": "species_to"},
+                                {"name": "Root. Dist.", "id": "root_dist_species_to"},
+                                {"name": "Leaf. Dist.", "id": "leaf_dist_species_to"},
+                                {"name": "To Organ", "id": "organ_to"},
+                                {"name": "Root. Dist.", "id": "root_dist_organ_to"},
+                                {"name": "Leaf. Dist.", "id": "leaf_dist_organ_to"},
+                                {"name": "To Disease", "id": "disease_to"},
+                                {"name": "Root. Dist.", "id": "root_dist_disease_to"},
+                                {"name": "Leaf. Dist.", "id": "leaf_dist_disease_to"},   
+                                {"name": "Compound", "id": "compound"},
+                                {"name": "Root. Dist.", "id": "root_dist_compound"},
+                                {"name": "Leaf. Dist.", "id": "leaf_dist_compound"}, 
+                                {"name": "Fold Average", "id": "fold_average","type": "numeric","format": Format(group=Group.yes, precision=2, scheme=Scheme.exponent)},
+                                {"name": "Sig. Welch", "id": "sig_welch","type": "numeric","format": Format(group=Group.yes, precision=4, scheme=Scheme.exponent)},
+                                {"name": "Fold Median", "id": "fold_median","type": "numeric","format": Format(group=Group.yes, precision=2, scheme=Scheme.exponent)},
+                                {"name": "Sig. MWU", "id": "sig_mannwhit","type": "numeric","format": Format(group=Group.yes, precision=4, scheme=Scheme.exponent)}   
+                            ],
                             data=[],
                             page_current=0,
                             page_size=50,
