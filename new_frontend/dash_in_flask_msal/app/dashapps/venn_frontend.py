@@ -145,6 +145,15 @@ def add_dash(server):
                                             id='toggle_average_true',
                                             value=True,
                                             #label='Median - Average'
+                                        ),
+                                        html.H6("Bin Filters"),
+                                        dcc.RadioItems(
+                                            id='radio_items_filter',
+                                            options=[
+                                                {'label': 'No Filter', 'value': 'no_filter'},
+                                                {'label': 'Common', 'value': 'common'},
+                                                #{'label': 'Unique', 'value': 'unique'},
+                                            ],                                            
                                         )
                                     ]
                                 )
@@ -271,6 +280,7 @@ def add_dash(server):
             State(component_id="dropdown_triplet_selection",component_property="value"),
             State(component_id="slider_percent_present", component_property="value"),
             State(component_id="toggle_average_true", component_property="value"),
+            State(component_id="radio_items_filter",component_property="value")
             # State(component_id="dropdown_from_disease", component_property="value"),
             # State(component_id="dropdown_to_species", component_property="value"),
             # State(component_id="dropdown_to_organ", component_property="value"),
@@ -285,7 +295,8 @@ def add_dash(server):
         filter_query,
         dropdown_triplet_selection_value,
         slider_percent_present_value,
-        toggle_average_true_value
+        toggle_average_true_value,
+        radio_items_filter_value
     #     checklist_query,
     #     from_species_value,
     #     from_organ_value,
@@ -326,7 +337,8 @@ def add_dash(server):
                 "filter_query":filter_query,
                 "dropdown_triplet_selection_value":dropdown_triplet_selection_value,
                 "slider_percent_present_value":slider_percent_present_value,
-                "toggle_average_true_value":toggle_average_true_value
+                "toggle_average_true_value":toggle_average_true_value,
+                "radio_items_filter_value":radio_items_filter_value
             }
 
             pprint(venn_data_table_output)
@@ -349,18 +361,26 @@ def add_dash(server):
         #     print('after json before api')
         #     #call api
             response = requests.post(base_url_api + "/venntableresource/", json=venn_data_table_output)
-        #     total_panda = pd.read_json(response.json(), orient="records")
-        #     print(total_panda)
+            print(response)
+            total_panda = pd.read_json(response.json(), orient="records")
+            print(total_panda)
 
         #     #prepare columns and data for the table
-        #     column_list = [
-        #         {"name": "English Name", "id": "english_name"},
-        #         {"name": "Fold Average", "id": "fold_average","type": "numeric","format": Format(group=Group.yes, precision=2, scheme=Scheme.exponent)},
-        #         {"name": "Significance Welch", "id": "sig_welch","type": "numeric","format": Format(group=Group.yes, precision=4, scheme=Scheme.exponent)},
-        #         {"name": "Fold Median", "id": "fold_median","type": "numeric","format": Format(group=Group.yes, precision=2, scheme=Scheme.exponent)},
-        #         {"name": "Significance MWU", "id": "sig_mannwhit","type": "numeric","format": Format(group=Group.yes, precision=4, scheme=Scheme.exponent)}
-        #     ]
-        #     data = total_panda.to_dict(orient='records')
+            column_list = [
+                {"name": "bin", "id": "bin"},
+                {"name": "English Name", "id":"compound"}
+            ]
+            sod_column_list=[
+                {"name": temp_column, "id": temp_column,"type": "numeric","format": Format(group=Group.yes, precision=2, scheme=Scheme.exponent)} for temp_column in total_panda.columns 
+                if (temp_column != "bin" and temp_column!="compound")
+            ]
+            #     {"name": "Fold Average", "id": "fold_average","type": "numeric","format": Format(group=Group.yes, precision=2, scheme=Scheme.exponent)},
+            #     {"name": "Significance Welch", "id": "sig_welch","type": "numeric","format": Format(group=Group.yes, precision=4, scheme=Scheme.exponent)},
+            #     {"name": "Fold Median", "id": "fold_median","type": "numeric","format": Format(group=Group.yes, precision=2, scheme=Scheme.exponent)},
+            #     {"name": "Significance MWU", "id": "sig_mannwhit","type": "numeric","format": Format(group=Group.yes, precision=4, scheme=Scheme.exponent)}
+            # ]
+            column_list+=sod_column_list
+            data = total_panda.to_dict(orient='records')
 
         #     #prepare figures for volcano plots
         #     volcano_average = dashbio.VolcanoPlot(
@@ -383,12 +403,12 @@ def add_dash(server):
         #     )
         #     #################################################3
 
-        #     return (
-        #         column_list,
-        #         data,
+            return (
+                column_list,
+                data
         #         volcano_average,
         #         volcano_median,
-        #     )
+            )
 
 
 
