@@ -9,6 +9,7 @@ import networkx as nx
 from pprint import pprint
 import pandas as pd
 import venn
+import numpy as np
 
 import dash
 from dash import Dash
@@ -24,6 +25,9 @@ import dash_daq as daq
 from matplotlib import pyplot as plt
 import io
 import base64
+
+from plotly.tools import mpl_to_plotly
+from matplotlib import pyplot as plt
 
 from dash_table.Format import Format, Scheme, Group
 
@@ -46,7 +50,38 @@ DATA_PATH = PATH.joinpath("../datasets").resolve()
 
 
 ######### HELPER FUNCTIONS ################
+def make_venn_figure_from_panda(temp_panda):
+    '''
+    for each column make a set of items, up to 6
+    '''
+    print('~~~~~~~~~~~~~~~~~~~~~~~~~')
+    print(temp_panda)
+    column_membership_list=list()
+    column_name_list=list()
+    for i,temp_column in enumerate(temp_panda.columns):
+        if temp_column=='bin' or i>7:
+            continue
+        else:
+            temp_set={x for x in temp_panda[temp_column].to_list() if x==x}
+            column_membership_list.append(temp_set)
+            column_name_list.append(temp_column)
 
+
+    pprint(column_membership_list)
+    labels = venn.get_labels(column_membership_list, fill=['number', 'logic'])
+    fig, ax = eval('venn.venn'+str(len(column_membership_list))+'(labels, names=column_name_list)')
+    #plotly_fig = mpl_to_plotly(fig)
+    buf = io.BytesIO() # in-memory files
+    #plt.scatter(x, y)
+    plt.savefig(buf, format = "png") # save to the above file object
+    plt.close()
+    data = base64.b64encode(buf.getbuffer()).decode("utf8") # encode to html elements
+    plotly_fig="data:image/png;base64,{}".format(data)
+
+    return plotly_fig
+
+    #for i,temp_column in enumerate(temp_panda.columns):
+    
 ########################################
 
 
@@ -71,17 +106,16 @@ pprint(unique_sod_combinations_dict)
 #############################################
 
 ################create temp mpl fig####################
-from plotly.tools import mpl_to_plotly
-from matplotlib import pyplot as plt
-labels = venn.get_labels([range(10), range(5, 15), range(3, 8), range(8, 17)], fill=['number', 'logic'])
-fig, ax = venn.venn4(labels, names=['list 1', 'list 2', 'list 3', 'list 4'])
-#plotly_fig = mpl_to_plotly(fig)
-buf = io.BytesIO() # in-memory files
-#plt.scatter(x, y)
-plt.savefig(buf, format = "png") # save to the above file object
-plt.close()
-data = base64.b64encode(buf.getbuffer()).decode("utf8") # encode to html elements
-plotly_fig="data:image/png;base64,{}".format(data)
+
+# labels = venn.get_labels([range(20), range(5, 15), range(3, 8)], fill=['number', 'logic'])
+# fig, ax = venn.venn3(labels, names=['Human Plasma No', 'a;lskdjfa;lskjdfafs', 'b'])
+# #plotly_fig = mpl_to_plotly(fig)
+# buf = io.BytesIO() # in-memory files
+# #plt.scatter(x, y)
+# plt.savefig(buf, format = "png") # save to the above file object
+# plt.close()
+# data = base64.b64encode(buf.getbuffer()).decode("utf8") # encode to html elements
+# plotly_fig="data:image/png;base64,{}".format(data)
 ######################################################
 
 def add_dash(server):
@@ -95,7 +129,7 @@ def add_dash(server):
     )
 
     #####################Structure of app#################
-    app.layout=html.Div(
+    app.layout=dbc.Container(#html.Div(
         children=[
             dbc.Row(
                 children=[
@@ -153,7 +187,8 @@ def add_dash(server):
                                                 {'label': 'No Filter', 'value': 'no_filter'},
                                                 {'label': 'Common', 'value': 'common'},
                                                 #{'label': 'Unique', 'value': 'unique'},
-                                            ],                                            
+                                            ],         
+                                            value='no_filter'                                   
                                         )
                                     ]
                                 )
@@ -189,10 +224,10 @@ def add_dash(server):
                                     #     figure=plotly_fig
                                     # )
                                     html.Img(
-                                        id='figure_venn',
+                                        id='Img_venn',
                                         #src=plotly_fig,
-                                        height=500,
-                                        width=500
+                                        height=200,
+                                        width=200
                                     )
                                 )
                             ),
@@ -258,10 +293,23 @@ def add_dash(server):
                 ],
                 justify='center'
             ),
+            dbc.Modal(
+                dbc.ModalBody(
+                    html.Img(
+                        id='modal_Img_venn',
+                        #src=plotly_fig,
+                        height=700,
+                        width=700
+                    )
+                ),
+                id='modal',
+                is_open=False
+            )
         ]
     )
     ######################################################
 
+    # #generates the datatable
     @app.callback(
         [
             Output(component_id="table", component_property="columns"),
@@ -286,8 +334,9 @@ def add_dash(server):
             # State(component_id="dropdown_to_organ", component_property="value"),
             # State(component_id="dropdown_to_disease", component_property="value"),
         ],
+        prevent_initial_call=True
     )
-    def perform_volcano_query(
+    def perform_query_table(
         query,
         page_current,
         page_size,
@@ -410,6 +459,190 @@ def add_dash(server):
         #         volcano_median,
             )
 
+
+
+    #generates the venn diagram
+    @app.callback(
+        [
+            Output(component_id="Img_venn", component_property="src"),
+            Output(component_id='modal_Img_venn',component_property="src")
+            #Output(component_id="table", component_property="columns"),
+            #Output(component_id="table", component_property="data"),
+            #Output(component_id="volcano_average_welch", component_property="figure"),
+            #Output(component_id="volcano_median_mw", component_property="figure"),
+        ],
+        [
+            Input(component_id="button_query", component_property="n_clicks"),
+            #Input(component_id="table", component_property="page_current"),
+            #Input(component_id="table", component_property="page_size"),
+            #Input(component_id="table", component_property="sort_by"),
+            #Input(component_id="table", component_property="filter_query"),
+        ],
+        [
+            State(component_id="dropdown_triplet_selection",component_property="value"),
+            State(component_id="slider_percent_present", component_property="value"),
+            #State(component_id="toggle_average_true", component_property="value"),
+            #State(component_id="radio_items_filter",component_property="value")
+            # State(component_id="dropdown_from_disease", component_property="value"),
+            # State(component_id="dropdown_to_species", component_property="value"),
+            # State(component_id="dropdown_to_organ", component_property="value"),
+            # State(component_id="dropdown_to_disease", component_property="value"),
+        ],
+        prevent_initial_call=True
+    )
+    def perform_query_diagram(
+        query,
+        #page_current,
+        #page_size,
+        #sort_by,
+        #filter_query,
+        dropdown_triplet_selection_value,
+        slider_percent_present_value,
+        #toggle_average_true_value,
+        #radio_items_filter_value
+        #     checklist_query,
+        #     from_species_value,
+        #     from_organ_value,
+        #     from_disease_value,
+        #     to_species_value,
+        #     to_organ_value,
+        #     to_disease_value,
+        ):
+            """
+            """
+            # print(page_current)
+            # print(page_size)
+            # print(sort_by)
+            # print(filter_query)
+
+
+        #     print('before json')
+
+        #     if "Classes" in checklist_query:
+        #         include_classes='Yes'
+        #     else:
+        #         include_classes='No'
+        #     if "Knowns" in checklist_query:
+        #         include_knowns='Yes'
+        #     else:
+        #         include_knowns='No'
+        #     if "Unknowns" in checklist_query:
+        #         include_unknowns='Yes'
+        #     else:
+        #         include_unknowns='No'
+
+        #     ##################volcano query######################
+            #prepare json for api
+            venn_diagram_output={
+                #"page_current":page_current,
+                #"page_size":page_size,
+                #"sort_by":sort_by,
+                #"filter_query":filter_query,
+                "dropdown_triplet_selection_value":dropdown_triplet_selection_value,
+                "slider_percent_present_value":slider_percent_present_value,
+                #"toggle_average_true_value":toggle_average_true_value,
+                #"radio_items_filter_value":radio_items_filter_value
+            }
+
+            #pprint(venn_data_table_output)
+        #     volcano_json_output = {
+        #         "from_species": from_species_value,
+        #         "from_organ": from_organ_value,
+        #         "from_disease": from_disease_value,
+        #         "to_species": to_species_value,
+        #         "to_organ": to_organ_value,
+        #         "to_disease": to_disease_value,
+        #         "include_classes": include_classes,
+        #         "include_knowns": include_knowns,
+        #         "include_unknowns": include_unknowns,
+        #         "page_current":page_current,
+        #         "page_size":page_size,
+        #         "sort_by":sort_by,
+        #         "filter_query":filter_query,
+        #     }
+
+        #     print('after json before api')
+        #     #call api
+            response = requests.post(base_url_api + "/venndiagramresource/", json=venn_diagram_output)
+            print(response)
+            total_panda = pd.read_json(response.json(), orient="records")
+            print(total_panda)
+
+            temp_img=make_venn_figure_from_panda(total_panda)
+
+
+
+
+        #     #prepare columns and data for the table
+            # column_list = [
+            #     {"name": "bin", "id": "bin"},
+            #     {"name": "English Name", "id":"compound"}
+            # ]
+            # sod_column_list=[
+            #     {"name": temp_column, "id": temp_column,"type": "numeric","format": Format(group=Group.yes, precision=2, scheme=Scheme.exponent)} for temp_column in total_panda.columns 
+            #     if (temp_column != "bin" and temp_column!="compound")
+            # ]
+            #     {"name": "Fold Average", "id": "fold_average","type": "numeric","format": Format(group=Group.yes, precision=2, scheme=Scheme.exponent)},
+            #     {"name": "Significance Welch", "id": "sig_welch","type": "numeric","format": Format(group=Group.yes, precision=4, scheme=Scheme.exponent)},
+            #     {"name": "Fold Median", "id": "fold_median","type": "numeric","format": Format(group=Group.yes, precision=2, scheme=Scheme.exponent)},
+            #     {"name": "Significance MWU", "id": "sig_mannwhit","type": "numeric","format": Format(group=Group.yes, precision=4, scheme=Scheme.exponent)}
+            # ]
+            # column_list+=sod_column_list
+            # data = total_panda.to_dict(orient='records')
+
+        #     #prepare figures for volcano plots
+        #     volcano_average = dashbio.VolcanoPlot(
+        #         dataframe=total_panda,#bins_panda,
+        #         snp="english_name",
+        #         p="sig_welch",
+        #         effect_size="fold_average",
+        #         gene=None,
+        #         xlabel='log2 Fold Change',
+        #         genomewideline_value=1e-2,
+        #     )
+        #     volcano_median = dashbio.VolcanoPlot(
+        #         dataframe=total_panda,#bins_panda,
+        #         snp="english_name",
+        #         p="sig_mannwhit",
+        #         effect_size="fold_median",
+        #         gene=None,
+        #         xlabel='log2 Fold Change',
+        #         genomewideline_value=1e-2,
+        #     )
+        #     #################################################3
+
+            return [temp_img,temp_img]
+                # column_list,
+                # data
+        #         volcano_average,
+        #         volcano_median,
+            #)
+
+    @app.callback(
+        [
+            Output(component_id='modal', component_property='is_open'),
+        ],
+        [
+            Input(component_id='Img_venn', component_property='n_clicks'),
+        ],
+        prevent_initial_call=True
+    )
+    def open_modal(Img_venn_n_clicks):
+        # if n % 2 == 0:
+        #     return {'display': 'none'}
+        # else:
+        #     return {
+        #         'display': 'block',
+        #         'z-index': '1',
+        #         'padding-top': '100',
+        #         'left': '0',
+        #         'top': '0',
+        #         'width': '100%',
+        #         'height': '100%',
+        #         'overflow': 'auto'
+        #         }
+        print('hi')
+        return [True]
 
 
     return server

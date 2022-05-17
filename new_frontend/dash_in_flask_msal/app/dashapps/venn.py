@@ -125,6 +125,36 @@ def get_labels(data, fill=["number"]):
 
     return labels
 
+def venn1(labels, names=['A'], **options):
+  '''
+  cant believe this wasnt already written
+  '''
+  colors = options.get('colors', [default_colors[i] for i in range(2)])
+  figsize = options.get('figsize', (9, 7))
+  dpi = options.get('dpi', 96)
+  fontsize = options.get('fontsize', 14)
+
+  fig = plt.figure(0, figsize=figsize, dpi=dpi)
+  ax = fig.add_subplot(111, aspect='equal')
+  ax.set_axis_off()
+  ax.set_ylim(bottom=0.0, top=0.7)
+  ax.set_xlim(left=0.0, right=1.0)
+
+  # body
+  draw_ellipse(fig, ax, 0.4, 0.4, 0.5, 0.5, 0.0, colors[0])
+  #draw_ellipse(fig, ax, 0.625, 0.3, 0.5, 0.5, 0.0, colors[1])
+  draw_text(fig, ax, 0.4, 0.4, labels.get('1', ''), fontsize=fontsize)
+  #draw_text(fig, ax, 0.26, 0.30, labels.get('10', ''), fontsize=fontsize)
+  #draw_text(fig, ax, 0.50, 0.30, labels.get('11', ''), fontsize=fontsize)
+
+  # legend
+  draw_text(fig, ax, 0.40, 0.7, names[0], colors[0], fontsize=fontsize, ha="center", va="bottom")
+  #draw_text(fig, ax, 0.80, 0.56, names[1], colors[1], fontsize=fontsize, ha="left", va="bottom")
+  leg = ax.legend(names, loc='center left', bbox_to_anchor=(0.8, 0.55), fancybox=True)
+  leg.get_frame().set_alpha(0.5)
+
+  return fig, ax
+
 def venn2(labels, names=['A', 'B'], **options):
     """
     plots a 2-set Venn diagram
