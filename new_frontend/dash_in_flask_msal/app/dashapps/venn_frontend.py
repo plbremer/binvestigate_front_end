@@ -135,7 +135,7 @@ def add_dash(server):
                 children=[
                     dbc.Col(
                         children=[
-                            html.H2("Metadata Group Comparator", className='text-center'),
+                            html.H2("Venn Comparator", className='text-center'),
                             html.Br(),
                         ],
                         width={'size':6}
@@ -151,6 +151,7 @@ def add_dash(server):
                             dbc.Card(
                                 dbc.CardBody(
                                     children=[
+                                        html.H6('Select one or more groups')
                                         dcc.Dropdown(
                                             id='dropdown_triplet_selection',
                                             options=[
@@ -162,7 +163,8 @@ def add_dash(server):
                                                 'color': '#212121',
                                                 'background-color': '#3EB489',
                                             }
-                                        ),                                        
+                                        ),         
+                                        html.Br(),                               
                                         html.H6("Minimum Percent Present", className='text-center'),
                                         dcc.Slider(
                                             id='slider_percent_present',
@@ -174,12 +176,14 @@ def add_dash(server):
                                             marks=None,
                                             tooltip={"placement": "bottom", "always_visible": True}       
                                         ),
+                                        html.Br(),
                                         html.H6("Median or Average", className='text-center'),
                                         daq.ToggleSwitch(
                                             id='toggle_average_true',
                                             value=True,
                                             #label='Median - Average'
                                         ),
+                                        html.Br(),
                                         html.H6("Bin Filters"),
                                         dcc.RadioItems(
                                             id='radio_items_filter',
@@ -242,7 +246,7 @@ def add_dash(server):
                     dbc.Col(
                         children=[
                             html.Br(),
-                            html.H2("Results - Individual Compounds", className='text-center'),
+                            html.H2("Results, className='text-center'),
                             dbc.Card(
                                 dbc.CardBody(
                                     children=[
