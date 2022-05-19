@@ -1,0 +1,37 @@
+@binvestigate@species@organ@disease@intensity_median
+0@binvestigate@Bos Taurus@Plasma@No@0.001437141483894
+1@binvestigate@Bos Taurus@Serum@No@0.06435038159487501
+2@binvestigate@Bos Taurus@Urine@No@7.638878177594445e-05
+3@binvestigate@Canis lupus familiaris@Plasma@No@3.099999125057824e-05
+4@binvestigate@Canis lupus familiaris@Serum@No@3.921026610481146e-05
+5@binvestigate@Escherichia coli@Culture Media@No@0.00021880272454500002
+6@binvestigate@felis catus@Serum@No@3.766936384413185e-05
+7@binvestigate@Homo Sapiens@Cells@No@0.014462677923376
+8@binvestigate@Homo Sapiens@Endothelium, Lymphatic@No@0.0019596672666000003
+9@binvestigate@Homo Sapiens@Liver@No@0.010835613147885
+10@binvestigate@Homo Sapiens@Muscle, Skeletal@No@4.7857921393182806e-05
+11@binvestigate@Homo Sapiens@Plasma@No@0.00022507538348300003
+12@binvestigate@Homo Sapiens@Serum@No@0.000352075526935
+13@binvestigate@Homo Sapiens@Urine@No@5.6484413925152776e-05
+14@binvestigate@Mus Musculus@Cells@Neoplasms@0.00015024995833400002
+15@binvestigate@Mus Musculus@Cells@No@0.0034695448152030003
+16@binvestigate@Mus Musculus@Epithelial Cells@No@0.003449737780104
+17@binvestigate@Mus Musculus@Heart Ventricles@No@4.440497093032967e-05
+18@binvestigate@Mus Musculus@Hypothalamus@No@4.497629905334817e-05
+19@binvestigate@Mus Musculus@Liver@No@9.397826922254309e-05
+20@binvestigate@Mus Musculus@Muscle, Skeletal@No@0.008762162308573001
+21@binvestigate@Mus Musculus@Plasma@No@0.000214065249913
+22@binvestigate@Mus Musculus@Serum@No@0.000155689596752
+23@binvestigate@Mus Musculus@Spinal Cord@No@0.001332815352414
+24@binvestigate@Mus Musculus@Urine@No@0.0013490383228250001
+25@binvestigate@Ovis aries@Carotid Arteries@No@0.00066436830264
+26@binvestigate@Ovis aries@Plasma@No@0.038992634363378006
+27@binvestigate@Ovis aries@Urine@No@0.000185078666587
+28@binvestigate@Ovis aries@Uterine Artery@No@0.00015438328514500002
+29@binvestigate@Rattus@Esophagus@No@2.1921821221227013e-05
+30@binvestigate@Rattus@Ileum@No@0.6236846195612991
+31@binvestigate@Rattus@Liver@No@0.00470529489405
+32@binvestigate@Rattus@Plasma@No@0.015138975095201
+33@binvestigate@Rattus@Serum@No@0.000192112865486
+34@binvestigate@Rattus@Urine@No@0.000148036447454
+35@binvestigate@Sus domesticus@Plasma@No@4.4257658542925486e-05

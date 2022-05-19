@@ -29,6 +29,15 @@ def create_app(config_class=Config):
         # from app.dashapps.dash_app_2 import add_dash as ad2
         # app = ad2(app)
         # #leaf frontend
+
+        from app.dashapps.sunburst_frontend import add_dash as ad1
+        #this is the third "add dash" function, independent of the dash apps name
+        app = ad1(app)
+
+        from app.dashapps.venn_frontend import add_dash as ad2
+        #this is the third "add dash" function, independent of the dash apps name
+        app = ad2(app)
+
         from app.dashapps.leaf_frontend import add_dash as ad3
         #this is the third "add dash" function, independent of the dash apps name
         app = ad3(app)

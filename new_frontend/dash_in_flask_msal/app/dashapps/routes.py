@@ -7,6 +7,8 @@ from app.dashapps import leaf_frontend as leaf_frontend_obj
 from app.dashapps import group_or_parent_frontend as group_or_parent_frontend_obj
 from app.dashapps import compound_frontend as compound_frontend_obj
 from app.dashapps import rootdistance_frontend as rootdistance_frontend_obj
+from app.dashapps import venn_frontend as venn_frontend_obj
+from app.dashapps import sunburst_frontend as sunburst_frontend_obj
 # @bp.route("/dash_app_1")
 # def dash_app_1():
 #     return render_template('dashapps/dash_app.html', dash_url=dash_app_1_obj.URL_BASE, min_height=dash_app_1_obj.MIN_HEIGHT)
@@ -27,3 +29,10 @@ def compound_frontend():
 @bp.route("/rootdistance_frontend")
 def rootdistance_frontend():
     return render_template('dashapps/dash_app.html', dash_url=rootdistance_frontend_obj.URL_BASE, min_height=rootdistance_frontend_obj.MIN_HEIGHT)
+@bp.route("/venn_frontend")
+def venn_frontend():
+    return render_template('dashapps/dash_app.html', dash_url=venn_frontend_obj.URL_BASE, min_height=venn_frontend_obj.MIN_HEIGHT)
+@bp.route("/sunburst_frontend")
+def sunburst_frontend():
+    return render_template('dashapps/dash_app.html', dash_url=sunburst_frontend_obj.URL_BASE, min_height=sunburst_frontend_obj.MIN_HEIGHT)
+

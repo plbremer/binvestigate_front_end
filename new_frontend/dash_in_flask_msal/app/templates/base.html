@@ -35,9 +35,11 @@
                         Select Comparison Tool
                     </a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink2">
-                        <a class="dropdown-item" href="{{ url_for('dashapps.leaf_frontend') }}">Compare Two Basic Metatdata Groups</a>
-                        <a class="dropdown-item" href="{{ url_for('dashapps.group_or_parent_frontend') }}">Compare Sophisticated :) Metadata Groupings</a>
-                        <a class="dropdown-item" href="{{ url_for('dashapps.compound_frontend') }}">Explore a Compound (Grouping) Across Metadata Groups</a>
+                        <a class="dropdown-item" href="{{ url_for('dashapps.sunburst_frontend') }}"> Sunburst - Explore a Compound</a>
+                        <a class="dropdown-item" href="{{ url_for('dashapps.venn_frontend') }}">Venn - Explore Metadata Groups</a>
+                        <a class="dropdown-item" href="{{ url_for('dashapps.leaf_frontend') }}">Volcano - Statistically Compare Two Metadata Groups Across Compounds</a>
+                        <a class="dropdown-item" href="{{ url_for('dashapps.group_or_parent_frontend') }}">Volcano - Statistically Compare Metadata Taxonomies Across Compounds</a>
+                        <a class="dropdown-item" href="{{ url_for('dashapps.compound_frontend') }}">Volcano - Statistically Explore a Compound Across Metadata Groups</a>
                         <a class="dropdown-item" href="{{ url_for('dashapps.rootdistance_frontend') }}">Advanced Exploration - Incorporate Hierarchical Locations</a>
                     </div>
                 </li>
