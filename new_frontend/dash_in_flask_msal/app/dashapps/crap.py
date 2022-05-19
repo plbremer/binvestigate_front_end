@@ -1,4 +1,6 @@
 import pandas as pd
+pd.set_option('display.max_rows', 500)
+#pd.option_context( 'display.max_rows', 500)
 
 df = pd.read_csv('https://raw.githubusercontent.com/plotly/datasets/master/sales_success.csv')
 print(df)
@@ -35,4 +37,5 @@ def build_hierarchical_dataframe(df, levels, value_column, color_columns=None):
 
 
 df_all_trees = build_hierarchical_dataframe(df, levels, value_column, color_columns)
+#pd.option_context( 'display.max_rows', 500)
 print(df_all_trees)

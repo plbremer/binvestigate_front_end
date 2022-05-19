@@ -178,31 +178,64 @@ def construct_filter_where(filter_string):
     #where_clause_string=where_clause_string[:-5]
     return where_clause_string
 
-def build_hierarchical_dataframe(df, levels, value_column, color_columns=None):
-    """
-    Build a hierarchy of levels for Sunburst or Treemap charts.
+def coerce_full_panda(df,value_column,column_list):
+    #df=df.round({value_column:6})
+    pandas_list=list()
+    for i in range(len(column_list),0,-1):
+        pandas_list.append(
+            pd.DataFrame(
+                data={
+                    'count':df.groupby(by=column_list[0:i]).size().to_list(),
+                    'sum':df.groupby(by=column_list[0:i])[value_column].sum().to_list(),
+                    'parent':['/'.join(group[0][:i-1]) for group in df.groupby(by=column_list[0:i])],
+                    'id':df[column_list[0:i]].T.agg('/'.join).unique(),
+                    'name':df.groupby(by=column_list[0:i])[column_list[i-1]].unique().map(lambda x: x[0]).values
+                }
+            )
+        )
+    tree_panda=pd.concat(pandas_list,axis='index')
+    tree_panda.reset_index(inplace=True,drop=True)
+    tree_panda['average']=tree_panda['sum']/tree_panda['count']
+    ###########################################################
+    #there is a known bug in the way that branch totals works
+    #https://community.plotly.com/t/plotly-sunburst-returning-empty-chart-with-branchvalues-total/26582/8
+    #no matter what i tried, i could not get the branch total thing to work for me
+    #so we use a hack workaround for now - everything except for the lowest levels is set to 0 for valeus
+    #now we can use remainder and it should work as intended
+    first_parent_index=len(df.index)
+    tree_panda.loc[first_parent_index:,'sum']=0
+    return tree_panda
+# def build_hierarchical_dataframe(df, levels, value_column):#, color_columns=None):
+#     """
+#     asdf
+#    """
+    #tree_df=pd.DataFrame(columns=['labels','ids','parents','values','averages'])
 
-    Levels are given starting from the bottom to the top of the hierarchy,
-    ie the last level corresponds to the root.
-    """
-    tree_df = pd.DataFrame(columns=['id', 'parent', 'value', 'color'])
-    for i, level in enumerate(levels):
-        df_tree = pd.DataFrame(columns=['id', 'parent', 'value', 'color'])
-        dfg = df.groupby(levels[i:]).sum()
-        dfg = dfg.reset_index()
-        df_tree['id'] = dfg[level].copy()
-        if i < len(levels) - 1:
-            df_tree['parent'] = dfg[levels[i+1]].copy()
-        else:
-            df_tree['parent'] = 'total'
-        df_tree['value'] = dfg[value_column]
-        #df_tree['color'] = dfg[color_columns[0]] / dfg[color_columns[1]]
-        tree_df = tree_df.append(df_tree, ignore_index=True)
-    total = pd.Series(dict(id='total', parent='',
-                              value=df[value_column].sum()))#,
-                              #color=df[color_columns[0]].sum() / df[color_columns[1]].sum()))
-    tree_df = tree_df.append(total, ignore_index=True)
-    return tree_df
+    # tree_df
+    # lowest_level=pd.DataFrame(
+    #     data={
+    #         'labels'=df[levels[-1]],
+    #         'ids':[]
+    #     }
+    # )
+
+    # for i, level in enumerate(levels):
+    #     df_tree = pd.DataFrame(columns=['id', 'parent', 'value', 'color'])
+    #     dfg = df.groupby(levels[i:]).sum()
+    #     dfg = dfg.reset_index()
+    #     df_tree['id'] = dfg[level].copy()
+    #     if i < len(levels) - 1:
+    #         df_tree['parent'] = dfg[levels[i+1]].copy()
+    #     else:
+    #         df_tree['parent'] = 'total'
+    #     df_tree['value'] = dfg[value_column]
+    #     #df_tree['color'] = dfg[color_columns[0]] / dfg[color_columns[1]]
+    #     tree_df = tree_df.append(df_tree, ignore_index=True)
+    # total = pd.Series(dict(id='total', parent='',
+    #                           value=df[value_column].sum()))#,
+    #                           #color=df[color_columns[0]].sum() / df[color_columns[1]].sum()))
+    # tree_df = tree_df.append(total, ignore_index=True)
+    # return tree_df
 # def construct_pandas_query_string(filter_query_list):
 #     my_string='('
 #     for column in filter_query_list:
@@ -299,7 +332,7 @@ def add_dash(server):
                 children=[
                     dbc.Col(
                         children=[
-                            html.H2("Metadata Group Comparator", className='text-center'),
+                            html.H2("Sunburst Comparator", className='text-center'),
                             html.Br(),
                         ],
                         width={'size':6}
@@ -429,17 +462,17 @@ def add_dash(server):
                     dbc.Col(
                         children=[
                             html.Br(),
-                            html.H2("Results - Individual Compounds", className='text-center'),
-                            dbc.Card(
-                                dbc.CardBody(
-                                    children=[
-                                        # html.Button(
-                                        #     'Get Results',
-                                        #     id='button_query',
-                                        # )
-                                    ]
-                                )
-                            )
+                            html.H2("Results", className='text-center'),
+                            # dbc.Card(
+                            #     dbc.CardBody(
+                            #         children=[
+                            #             # html.Button(
+                            #             #     'Get Results',
+                            #             #     id='button_query',
+                            #             # )
+                            #         ]
+                            #     )
+                            # )
                         ],
                         width={'size':3}
                     )
@@ -707,33 +740,60 @@ def add_dash(server):
 
         elif (dash.callback_context.triggered[0]['prop_id']!='figure_sunburst.clickData'):
             
-            tree_df=build_hierarchical_dataframe(full_panda,radio_items_sod_order_value.split(',')[::-1],radio_items_sunburst_value_value)
-            tree_df['color']=0.2
+            full_panda.to_csv('./sunburst_panda.csv',sep='@')
+            print(radio_items_sunburst_value_value)
+            print(radio_items_sod_order_value)
+            print('jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj')
+            #tree_df=build_hierarchical_dataframe(full_panda,radio_items_sod_order_value.split(',')[::-1],radio_items_sunburst_value_value)
+            tree_df=coerce_full_panda(full_panda,radio_items_sunburst_value_value,radio_items_sod_order_value.split(','))
+            #count sum parent id name average
+            
+            # tree_df['color']=0.2
+            #print(tree_df)
+            # current_figure=px.sunburst(
+            #     #data_frame=tree_df,
+            #     parents=tree_df['parent'],
+            #     names=tree_df['id'],
+            #     values=tree_df['value']
+            # )
+            # current_figure =go.Figure(go.Sunburst(
+            #     labels=["Eve", "Cain", "Seth", "Enos", "Noam", "Abel", "Awan", "Enoch", "Azura"],
+            #     parents=["", "Eve", "Eve", "Seth", "Seth", "Eve", "Eve", "Awan", "Eve" ],
+            #     values=[10, 14, 12, 10, 2, 6, 6, 4, 4],
+            # ))
+            #f#or ir range(len(tree_df.parent.values)):
+            # for i,series in tree_df.iterrows():
+            #     print(series['parent']+' '+series['id']+' '+str(series['value']))
+            #print(tree_df.parent)
+            #print(tree_df.id)
+            #print(tree_df.value)
+            #print(full_panda.intensity_average.sum())
             print(tree_df)
-            current_figure=px.sunburst(
-                # data,
-                # names='character',
-                # parents='parent',
-                # values='value',
-                data_frame=tree_df,
-
-                # labels=tree_df['id'],
-                # parents=tree_df['parent'],
-                # values=tree_df['value'],
-                names='id',
-                parents='parent',
-                values='value',                
-
-                #color=tree_df['parent']
-                #path=['binvestigate','species','organ','disease'],
-                #path=eval(radio_items_sunburst_value_value),
-                # path=radio_items_sod_order_value.split(','),
-                #values=np.average(radio_items_sunburst_value_value),
-                # values=radio_items_sunburst_value_value,
-                #labels=
-                #hover_data=['id',last_column['id']]
-                #hovertemplate='<b>%{label} </b>'
-            )            
+            current_figure=go.Figure(
+                go.Sunburst(
+                    #data_frame=tree_df,
+                    parents=tree_df['parent'].to_list(),
+                    labels=tree_df['name'].to_list(),
+                    values=tree_df['sum'].to_list(),
+                    ids=tree_df['id'].to_list(),
+                    hovertext=tree_df['average'].to_list(),
+                    hoverinfo='text'
+                    #branchvalues='total'
+                )
+            )
+            #print(current_figure.to_dict())
+            # current_figure=px.sunburst(
+            #     data_frame=tree_df,
+            #     names='id',
+            #     parents='parent',
+            #     values='value',                
+            # )       
+            # current_figure=px.sunburst(
+            #     data_frame=full_panda,
+            #     path=radio_items_sod_order_value.split(','),
+            #     values=radio_items_sunburst_value_value
+            # )   
+              
             # current_figure=go.Figure(
             #     go.Sunburst(
             #         # data,
