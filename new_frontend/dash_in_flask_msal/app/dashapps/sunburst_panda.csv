@@ -1,37 +1,37 @@
-@binvestigate@species@organ@disease@intensity_average
-0@binvestigate@Bos Taurus@Plasma@No@0.080795116244968
-1@binvestigate@Bos Taurus@Serum@No@0.10172286375241901
-2@binvestigate@Bos Taurus@Urine@No@4.247249519145503e-05
-3@binvestigate@Canis lupus familiaris@Plasma@No@0.048346350599442006
-4@binvestigate@Canis lupus familiaris@Serum@No@0.09307053130307201
-5@binvestigate@Escherichia coli@Culture Media@No@0.371000918174793
-6@binvestigate@felis catus@Serum@No@0.10059184107920201
-7@binvestigate@Homo Sapiens@Cells@No@0.44008003035415205
-8@binvestigate@Homo Sapiens@Endothelium, Lymphatic@No@0.00021165745609200002
-9@binvestigate@Homo Sapiens@Liver@No@0.028062745743573002
-10@binvestigate@Homo Sapiens@Muscle, Skeletal@No@0.037495941322115006
-11@binvestigate@Homo Sapiens@Plasma@No@0.094866599653898
-12@binvestigate@Homo Sapiens@Serum@No@0.10001284586058101
-13@binvestigate@Homo Sapiens@Urine@No@0.011817508799742001
-14@binvestigate@Mus Musculus@Cells@Neoplasms@0.46492982378162506
-15@binvestigate@Mus Musculus@Cells@No@0.902155282747593
-16@binvestigate@Mus Musculus@Epithelial Cells@No@0.019405095541358
-17@binvestigate@Mus Musculus@Heart Ventricles@No@0.012432273974589
-18@binvestigate@Mus Musculus@Hypothalamus@No@0.014648798898195
-19@binvestigate@Mus Musculus@Liver@No@0.051839239018305006
-20@binvestigate@Mus Musculus@Muscle, Skeletal@No@0.034539452538780005
-21@binvestigate@Mus Musculus@Plasma@No@0.07151492370160001
-22@binvestigate@Mus Musculus@Serum@No@0.08455416655981901
-23@binvestigate@Mus Musculus@Spinal Cord@No@0.013759151042881002
-24@binvestigate@Mus Musculus@Urine@No@0.008240237618288
-25@binvestigate@Ovis aries@Carotid Arteries@No@0.040769797565915006
-26@binvestigate@Ovis aries@Plasma@No@0.094077164095598
-27@binvestigate@Ovis aries@Urine@No@0.002303168852396
-28@binvestigate@Ovis aries@Uterine Artery@No@0.0036267401118560004
-29@binvestigate@Rattus@Esophagus@No@0.046749704141982006
-30@binvestigate@Rattus@Ileum@No@0.20317649940562402
-31@binvestigate@Rattus@Liver@No@0.034893778509849004
-32@binvestigate@Rattus@Plasma@No@0.08562162197659601
-33@binvestigate@Rattus@Serum@No@0.11711769199922001
-34@binvestigate@Rattus@Urine@No@0.011619785523150001
-35@binvestigate@Sus domesticus@Plasma@No@0.022600938883380002
+@binvestigate@species@organ@disease@intensity_median
+0@binvestigate@Bos Taurus@Plasma@No@0.143175751604701
+1@binvestigate@Bos Taurus@Serum@No@0.018933607822543
+2@binvestigate@Bos Taurus@Urine@No@0.00017939204398200001
+3@binvestigate@Canis lupus familiaris@Plasma@No@0.06705041881571601
+4@binvestigate@Canis lupus familiaris@Serum@No@0.015448140001455002
+5@binvestigate@Escherichia coli@Culture Media@No@0.005511246261065
+6@binvestigate@felis catus@Serum@No@0.002866792511318
+7@binvestigate@Homo Sapiens@Cells@No@0.13846334691275902
+8@binvestigate@Homo Sapiens@Endothelium, Lymphatic@No@0.005818274649386001
+9@binvestigate@Homo Sapiens@Liver@No@0.062443768878522
+10@binvestigate@Homo Sapiens@Muscle, Skeletal@No@0.097855273695038
+11@binvestigate@Homo Sapiens@Plasma@No@0.025815305057779
+12@binvestigate@Homo Sapiens@Serum@No@0.012404954160253001
+13@binvestigate@Homo Sapiens@Urine@No@7.929488605894738e-05
+14@binvestigate@Mus Musculus@Cells@Neoplasms@0.016918043573621002
+15@binvestigate@Mus Musculus@Cells@No@0.004671961572768
+16@binvestigate@Mus Musculus@Epithelial Cells@No@0.000184170031551
+17@binvestigate@Mus Musculus@Heart Ventricles@No@0.19724916422663702
+18@binvestigate@Mus Musculus@Hypothalamus@No@0.17946212338210002
+19@binvestigate@Mus Musculus@Liver@No@0.079612091429846
+20@binvestigate@Mus Musculus@Muscle, Skeletal@No@0.104458445561945
+21@binvestigate@Mus Musculus@Plasma@No@0.031779358383965
+22@binvestigate@Mus Musculus@Serum@No@0.008269007515428
+23@binvestigate@Mus Musculus@Spinal Cord@No@0.08425339866081101
+24@binvestigate@Mus Musculus@Urine@No@1.152588157219196e-06
+25@binvestigate@Ovis aries@Carotid Arteries@No@0.013744977195361002
+26@binvestigate@Ovis aries@Plasma@No@0.022666905362308
+27@binvestigate@Ovis aries@Urine@No@0.0008683397258230001
+28@binvestigate@Ovis aries@Uterine Artery@No@0.010598958085271
+29@binvestigate@Rattus@Esophagus@No@0.040256994761623005
+30@binvestigate@Rattus@Ileum@No@0.040812524753776
+31@binvestigate@Rattus@Liver@No@0.08742671593798901
+32@binvestigate@Rattus@Plasma@No@0.061157734045198
+33@binvestigate@Rattus@Serum@No@0.010733539230393
+34@binvestigate@Rattus@Urine@No@7.356753668115001e-05
+35@binvestigate@Sus domesticus@Plasma@No@0.0007859250661350001

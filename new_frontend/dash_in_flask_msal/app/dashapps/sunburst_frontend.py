@@ -11,7 +11,7 @@ import pandas as pd
 #import venn
 import numpy as np
 import re
-
+pd.set_option('display.max_rows', 500)
 import dash
 #from dash import Dash
 from dash import html
@@ -24,10 +24,10 @@ import dash_daq as daq
 
 #from plotly.tools import mpl_to_plotly
 from matplotlib import pyplot as plt
-import io
-import base64
+# import io
+# import base64
 
-from plotly.tools import mpl_to_plotly
+# from plotly.tools import mpl_to_plotly
 from matplotlib import pyplot as plt
 import plotly.express as px
 import plotly.graph_objects as go
@@ -103,7 +103,10 @@ def construct_one_clause(one_specification):
         temp_loc_clause='('+temp_list[0][1:-1]+' '+temp_list[1][1:]+' '+temp_list[2]+')'
         return temp_loc_clause#[temp_list[0][1:-1],temp_list[1][1:],temp_list[2]]#
     elif (temp_list[1]=='scontains'):
-        temp_loc_clause='("'+temp_list[2]+'" in '+temp_list[0][1:-1]+')'
+        #temp_loc_clause='("'+temp_list[2]+'" in '+temp_list[0][1:-1]+')'
+        temp_loc_clause='('+temp_list[0][1:-1]+'.str.contains("'+temp_list[2]+'"))'
+        print(temp_loc_clause)
+        print('************************************************')
         return temp_loc_clause#[temp_list[0][1:-1],'contains',temp_list[2]]#
 
 def construct_filter_where(filter_string):
@@ -188,13 +191,15 @@ def coerce_full_panda(df,value_column,column_list):
                     'count':df.groupby(by=column_list[0:i]).size().to_list(),
                     'sum':df.groupby(by=column_list[0:i])[value_column].sum().to_list(),
                     'parent':['/'.join(group[0][:i-1]) for group in df.groupby(by=column_list[0:i])],
-                    'id':df[column_list[0:i]].T.agg('/'.join).unique(),
+                    #'id':df[column_list[0:i]].T.agg('/'.join).unique(),
+                    'id':['/'.join(group[0][:i]) for group in df.groupby(by=column_list[0:i])],
                     'name':df.groupby(by=column_list[0:i])[column_list[i-1]].unique().map(lambda x: x[0]).values
                 }
             )
         )
     tree_panda=pd.concat(pandas_list,axis='index')
     tree_panda.reset_index(inplace=True,drop=True)
+    tree_panda.at[len(tree_panda.index)-1,'id']='binvestigate'
     tree_panda['average']=tree_panda['sum']/tree_panda['count']
     ###########################################################
     #there is a known bug in the way that branch totals works
@@ -719,14 +724,15 @@ def add_dash(server):
             print(filter_query_string)
             #pandas_query_string=construct_pandas_query_string(filter_query_list)
             #exec(f'full_panda=full_panda.loc[{filter_query_string}]')
-            full_panda=full_panda.query(filter_query_string)
+            print(full_panda)
+            full_panda=full_panda.query(filter_query_string,engine='python')
             print(full_panda)
             print('**************************************8')
 
 
         if (dash.callback_context.triggered[0]['prop_id']=='figure_sunburst.clickData'):
             print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
-            print(dash.callback_context.triggered[0])
+            pprint(dash.callback_context.triggered[0])
             sod_order=radio_items_sod_order_value.split(',')
             print(sod_order)
             row_subset_list=sunburst_clickdata['points'][0]['id'].split('/')
@@ -768,7 +774,7 @@ def add_dash(server):
             #print(tree_df.id)
             #print(tree_df.value)
             #print(full_panda.intensity_average.sum())
-            print(tree_df)
+            print(tree_df[50:])
             current_figure=go.Figure(
                 go.Sunburst(
                     #data_frame=tree_df,
