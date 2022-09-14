@@ -4,10 +4,13 @@ import dash_bootstrap_components as dbc
 
 from pprint import pprint
 
-app = dash.Dash(__name__, use_pages=True, external_stylesheets=[dbc.themes.BOOTSTRAP])
+local_stylesheet = {
+    "href": "https://fonts.googleapis.com/css2?"
+            "family=Lato:wght@400;700&display=swap",
+    "rel": "stylesheet"
+}
 
-
-pprint(dash.page_registry)
+app = dash.Dash(__name__, use_pages=True, external_stylesheets=[local_stylesheet, dbc.themes.BOOTSTRAP])
 
 app.layout = html.Div([
         # this stuff appears on every page
@@ -41,22 +44,6 @@ app.layout = html.Div([
             #links_left=True
         ),
 
-
-        # dbc.NavbarSimple(
-        #     [dbc.NavItem(dbc.NavLink(page['name'], href=page['path'])) for page in dash.page_registry.values()],
-        #     #dbc.NavItem(dbc.NavLink("Page 1", href="#")),
-            
-        #     brand=[html.Img(src='https://avatars.githubusercontent.com/u/45467465?s=200&v=4')],
-        #     #brand_href="#",
-        #     #color="primary",
-        #     color='dark',
-        #     dark=True
-        # ),
-
-        # html.Div([
-        #     dcc.Link(page['name']+"  |  ", href=page['path'])
-        #     for page in dash.page_registry.values()
-        # ]),
         html.Hr(),
 
         # content of each page
