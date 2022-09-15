@@ -46,6 +46,8 @@ app.layout = html.Div([
 
         html.Hr(),
 
+
+
         # content of each page
         dash.page_container
     ]
