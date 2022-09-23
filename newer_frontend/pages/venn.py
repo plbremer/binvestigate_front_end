@@ -1,20 +1,21 @@
 import dash
-from dash import dcc, html, dash_table
+from dash import dcc, html, dash_table, callback
 import plotly.express as px
 import dash_bootstrap_components as dbc
-#import dash_table as dt
-#from dash import dash_table as dt
-#from dash import dash_table
-
+import requests
 from . import venn_helper
+import pandas as pd
+from dash.dependencies import Input, Output, State
+from pprint import pprint
+from dash_table.Format import Format, Scheme, Group
+
+base_url_api = "http://127.0.0.1:4999/"
 
 dash.register_page(__name__)
 
 ########get things from helper script########
 unique_sod_combinations_dict=venn_helper.get_unique_sod_combinations()
 #############################################
-
-
 
 #df = px.data.gapminder()
 
@@ -24,7 +25,7 @@ layout=dbc.Container(
                 children=[
                     dbc.Col(
                         children=[
-                            html.H2("Venn Comparator", className='text-center'),
+                            #html.H2("Venn Comparator", className='text-center'),
                             html.Br(),
                         ],
                         width={'size':6}
@@ -43,10 +44,10 @@ layout=dbc.Container(
                                     {'label': temp.title(), 'value':unique_sod_combinations_dict[temp]} for temp in unique_sod_combinations_dict
                                 ],key=lambda x:x['label']),
                                 multi=True,
-                                style={
-                                    'color': '#212121',
-                                    'background-color': '#3EB489',
-                                }
+                                # style={
+                                #     'color': '#212121',
+                                #     'background-color': '#3EB489',
+                                # }
                             ),  
                             html.Br(),
                         ],
@@ -183,9 +184,7 @@ layout=dbc.Container(
                                 #sort_by=[],
                                 #filter_action='custom',
                                 filter_action='native',
-                                #filter_query=''
-                                
-
+                                #filter_query='',
                                 style_header={
                                     'backgroundColor': 'rgb(30, 30, 30)',
                                     'color': 'white'
@@ -194,13 +193,128 @@ layout=dbc.Container(
                                     'backgroundColor': 'rgb(50, 50, 50)',
                                     'color': 'white'
                                 },
-
+                                style_cell={
+                                    'font-family':'sans-serif'
+                                }
                             )
                         ],
-                        width={'size':6}
+                        #width={'size':6}
                     )
                 ],
                 justify='center'
             ),
         ]
     )
+
+
+@callback(
+    [
+        Output(component_id="table", component_property="columns"),
+        Output(component_id="table", component_property="data"),
+    ],
+    [
+        Input(component_id="button_query", component_property="n_clicks"),
+    ],
+    [
+        State(component_id="dropdown_triplet_selection",component_property="value"),
+        State(component_id="slider_percent_present", component_property="value"),
+        State(component_id="toggle_average_true", component_property="value"),
+        State(component_id="radio_items_filter",component_property="value")
+    ],
+    prevent_initial_call=True
+)
+def perform_query_table(
+    button_query,
+    dropdown_triplet_selection_value,
+    slider_percent_present_value,
+    toggle_average_true_value,
+    radio_items_filter_value
+    ):
+
+        ##################volcano query######################
+        #prepare json for api
+        venn_data_table_output={
+            "dropdown_triplet_selection_value":dropdown_triplet_selection_value,
+            "slider_percent_present_value":slider_percent_present_value,
+            "toggle_average_true_value":toggle_average_true_value,
+            "radio_items_filter_value":radio_items_filter_value
+        }
+
+        pprint(venn_data_table_output)
+
+        response = requests.post(base_url_api + "/venntableresource/", json=venn_data_table_output)
+        total_panda = pd.read_json(response.json(), orient="records")
+
+
+
+        #prepare columns and data for the table
+        column_list = [
+            {"name": "bin", "id": "bin"},
+            {"name": "English Name", "id":"compound"}
+        ]
+        sod_column_list=[
+            {"name": temp_column, "id": temp_column,"type": "numeric","format": Format(group=Group.yes, precision=2, scheme=Scheme.exponent)} for temp_column in total_panda.columns 
+            if (temp_column != "bin" and temp_column!="compound")
+        ]
+
+        column_list+=sod_column_list
+        data = total_panda.to_dict(orient='records')
+
+        return (
+            column_list,
+            data
+        )
+
+
+#generates the venn diagram
+@callback(
+    [
+        Output(component_id="Img_venn", component_property="src"),
+        Output(component_id='modal_Img_venn',component_property="src")
+    ],
+    [
+        #Input(component_id="button_query", component_property="n_clicks"),
+        Input(component_id="table",component_property="derived_virtual_data")
+    ],
+    # [
+    #     State(component_id="dropdown_triplet_selection",component_property="value"),
+    #     State(component_id="slider_percent_present", component_property="value"),
+    # ],
+    prevent_initial_call=True
+)
+def perform_query_diagram(
+    table_derived_virtual_data
+    ):
+        """
+        """
+        print(pd.DataFrame.from_records(table_derived_virtual_data).drop(['compound','bin'],axis='columns'))
+
+        temp_img=venn_helper.make_venn_figure_from_panda(pd.DataFrame.from_records(table_derived_virtual_data).drop(['compound','bin'],axis='columns'))
+
+        return [temp_img,temp_img]
+
+@callback(
+    [
+        Output(component_id='modal', component_property='is_open'),
+    ],
+    [
+        Input(component_id='Img_venn', component_property='n_clicks'),
+    ],
+    prevent_initial_call=True
+)
+def open_modal(Img_venn_n_clicks):
+    # if n % 2 == 0:
+    #     return {'display': 'none'}
+    # else:
+    #     return {
+    #         'display': 'block',
+    #         'z-index': '1',
+    #         'padding-top': '100',
+    #         'left': '0',
+    #         'top': '0',
+    #         'width': '100%',
+    #         'height': '100%',
+    #         'overflow': 'auto'
+    #         }
+    print('hi')
+    return [True]
