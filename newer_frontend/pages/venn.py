@@ -108,6 +108,7 @@ layout=dbc.Container(
                                     ),
                                 ])
                             ]),
+                            html.Br(),
                             html.H6("Display All Compounds or Only Compounds In-common", className='text-center'),
                             html.Div(className="radio-group-container add-margin-top-1", children=[
                                 html.Div(className="radio-group", children=[
@@ -126,6 +127,7 @@ layout=dbc.Container(
                                     ),
                                 ])
                             ]),
+                            html.Br(),
                             html.H6("What Percent Observed Constitutes Present", className='text-center'),
                             dcc.Slider(
                                 id='slider_percent_present',
