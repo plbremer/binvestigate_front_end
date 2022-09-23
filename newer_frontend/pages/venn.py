@@ -8,6 +8,7 @@ import pandas as pd
 from dash.dependencies import Input, Output, State
 from pprint import pprint
 from dash_table.Format import Format, Scheme, Group
+import xlsxwriter
 
 base_url_api = "http://127.0.0.1:4999/"
 
@@ -68,14 +69,19 @@ layout=dbc.Container(
                             ),
                             dbc.Modal(
                                 dbc.ModalBody(
-                                    html.Img(
-                                        id='modal_Img_venn',
-                                        #src=plotly_fig,
-                                        height=700,
-                                        width=700
+                                    html.Div(className="modal-body-container",children=[
+                                            html.Img(
+                                                id='modal_Img_venn',
+                                                #src=plotly_fig,
+                                                height=800,
+                                                width=800,
+                                            )
+                                        ]
                                     )
                                 ),
+                                className="modal-body",
                                 id='modal',
+                                size='xl',
                                 is_open=False
                             ),
                             html.Br(),
@@ -160,12 +166,21 @@ layout=dbc.Container(
                 ],
                 justify='center'
             ),
+            html.Br(),
+            html.Br(),
             dbc.Row(
                 children=[
                     dbc.Col(
                         children=[
                             html.H2("Result Datatable", className='text-center'),
-                            html.Br(),
+                            html.Div(
+                                dbc.Button(
+                                    'Download Datatable as .xlsx',
+                                    id='button_download',
+                                ),
+                                className="d-grid gap-2 col-3 mx-auto",
+                            ),
+                            dcc.Download(id="download_datatable"),
                             dash_table.DataTable(
                                 id='table',
                                 columns=[
@@ -303,18 +318,31 @@ def perform_query_diagram(
     prevent_initial_call=True
 )
 def open_modal(Img_venn_n_clicks):
-    # if n % 2 == 0:
-    #     return {'display': 'none'}
-    # else:
-    #     return {
-    #         'display': 'block',
-    #         'z-index': '1',
-    #         'padding-top': '100',
-    #         'left': '0',
-    #         'top': '0',
-    #         'width': '100%',
-    #         'height': '100%',
-    #         'overflow': 'auto'
-    #         }
-    print('hi')
     return [True]
+
+@callback(
+    [
+        Output(component_id="download_datatable", component_property="data"),
+    ],
+    [
+        Input(component_id="button_download", component_property="n_clicks"),
+    ],
+    [
+        State(component_id="table",component_property="data")
+    ],
+    prevent_initial_call=True
+)
+def download_datatable(
+    download_click,
+    table_data
+    ):
+        """
+        """
+        #print(pd.DataFrame.from_records(table_derived_virtual_data).drop(['compound','bin'],axis='columns'))
+
+        #temp_img=venn_helper.make_venn_figure_from_panda(pd.DataFrame.from_records(table_derived_virtual_data).drop(['compound','bin'],axis='columns'))
+        print(pd.DataFrame.from_records(table_data).to_excel)
+
+        return [dcc.send_data_frame(
+            pd.DataFrame.from_records(table_data).to_excel, "binvestigate_venn_datatable.xlsx", sheet_name="sheet_1"
+        )]

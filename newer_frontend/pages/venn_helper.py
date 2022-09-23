@@ -38,9 +38,15 @@ def make_venn_figure_from_panda(temp_panda):
 
 
     #pprint(column_membership_list)
-    labels = get_labels(column_membership_list, fill=['number', 'logic'])
+    labels = get_labels(column_membership_list, fill=['number'])
+    print(labels)
+    print('************')
+    # labels=dict()
+    # for element in labels2.keys():
+    #     labels[element]=labels2[element].split(': ')[1]
     fig, ax = eval('venn'+str(len(column_membership_list))+'(labels, names=column_name_list)')
     #plotly_fig = mpl_to_plotly(fig)
+    #plt.show()
     buf = io.BytesIO() # in-memory files
     #plt.scatter(x, y)
     plt.savefig(buf, format = "png") # save to the above file object
@@ -186,7 +192,7 @@ def venn1(labels, names=['A'], **options):
   cant believe this wasnt already written
   '''
   colors = options.get('colors', [default_colors[i] for i in range(2)])
-  figsize = options.get('figsize', (9, 7))
+  figsize = options.get('figsize', (9, 9))
   dpi = options.get('dpi', 96)
   fontsize = options.get('fontsize', 14)
 
@@ -199,7 +205,7 @@ def venn1(labels, names=['A'], **options):
   # body
   draw_ellipse(fig, ax, 0.4, 0.4, 0.5, 0.5, 0.0, colors[0])
   #draw_ellipse(fig, ax, 0.625, 0.3, 0.5, 0.5, 0.0, colors[1])
-  draw_text(fig, ax, 0.4, 0.4, labels.get('1', ''), fontsize=fontsize)
+  draw_text(fig, ax, 0.4, 0.4, labels.get('', ''), fontsize=fontsize)
   #draw_text(fig, ax, 0.26, 0.30, labels.get('10', ''), fontsize=fontsize)
   #draw_text(fig, ax, 0.50, 0.30, labels.get('11', ''), fontsize=fontsize)
 
@@ -230,7 +236,7 @@ def venn2(labels, names=['A', 'B'], **options):
       pyplot Figure and AxesSubplot object
     """
     colors = options.get('colors', [default_colors[i] for i in range(2)])
-    figsize = options.get('figsize', (9, 7))
+    figsize = options.get('figsize', (15, 15))
     dpi = options.get('dpi', 96)
     fontsize = options.get('fontsize', 14)
 
@@ -274,9 +280,9 @@ def venn3(labels, names=['A', 'B', 'C'], **options):
       pyplot Figure and AxesSubplot object
     """
     colors = options.get('colors', [default_colors[i] for i in range(3)])
-    figsize = options.get('figsize', (9, 9))
+    figsize = options.get('figsize', (15, 15))
     dpi = options.get('dpi', 96)
-    fontsize = options.get('fontsize', 14)
+    fontsize = options.get('fontsize', 20)
 
     fig = plt.figure(0, figsize=figsize, dpi=dpi)
     ax = fig.add_subplot(111, aspect='equal')
@@ -297,11 +303,11 @@ def venn3(labels, names=['A', 'B', 'C'], **options):
     draw_text(fig, ax, 0.50, 0.51, labels.get('111', ''), fontsize=fontsize)
 
     # legend
-    draw_text(fig, ax, 0.15, 0.87, names[0], colors[0], fontsize=fontsize, ha="right", va="bottom")
-    draw_text(fig, ax, 0.85, 0.87, names[1], colors[1], fontsize=fontsize, ha="left", va="bottom")
-    draw_text(fig, ax, 0.50, 0.02, names[2], colors[2], fontsize=fontsize, va="top")
-    leg = ax.legend(names, loc='center left', bbox_to_anchor=(1.0, 0.5), fancybox=True)
-    leg.get_frame().set_alpha(0.5)
+    draw_text(fig, ax, 0.35, 0.87, names[0], colors[0], fontsize=fontsize, ha="right", va="bottom")
+    draw_text(fig, ax, 0.65, 0.87, names[1], colors[1], fontsize=fontsize, ha="left", va="bottom")
+    draw_text(fig, ax, 0.50, 0.1, names[2], colors[2], fontsize=fontsize, va="top")
+    #leg = ax.legend(names, loc='center left', bbox_to_anchor=(1.0, 0.5), fancybox=True,fontsize= 20)
+    #leg.get_frame().set_alpha(0.5)
 
     return fig, ax
 
@@ -324,7 +330,7 @@ def venn4(labels, names=['A', 'B', 'C', 'D'], **options):
       pyplot Figure and AxesSubplot object
     """
     colors = options.get('colors', [default_colors[i] for i in range(4)])
-    figsize = options.get('figsize', (12, 12))
+    figsize = options.get('figsize', (15, 15))
     dpi = options.get('dpi', 96)
     fontsize = options.get('fontsize', 14)
 
@@ -384,7 +390,7 @@ def venn5(labels, names=['A', 'B', 'C', 'D', 'E'], **options):
       pyplot Figure and AxesSubplot object
     """
     colors = options.get('colors', [default_colors[i] for i in range(5)])
-    figsize = options.get('figsize', (13, 13))
+    figsize = options.get('figsize', (15, 15))
     dpi = options.get('dpi', 96)
     fontsize = options.get('fontsize', 14)
 
