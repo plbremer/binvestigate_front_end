@@ -118,3 +118,11 @@ tr, th, td {
     margin-right: auto;
     width: 90%;
 }
+
+.sunburst-container {
+    display: block;
+    margin-left: 145px;
+    margin-right: auto;    
+    height:1000px;
+    width:100%;
+}

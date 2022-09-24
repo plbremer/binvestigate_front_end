@@ -9,6 +9,8 @@ from dash.dependencies import Input, Output, State
 from pprint import pprint
 from dash_table.Format import Format, Scheme, Group
 import xlsxwriter
+import plotly.express as px
+import plotly.graph_objects as go
 
 base_url_api = "http://127.0.0.1:4999/"
 
@@ -39,21 +41,6 @@ layout=dbc.Container(
                                 id='compound_selection',
                                 options=compound_dropdown_options,
                                 multi=False,
-                            ),
-                            html.Br(),
-                        ],
-                        width={'size':2}
-                    ),
-                    dbc.Col(
-                        children=[
-                            html.H2("Sunburst Diagram", className='text-center'),
-                            html.Div(#className="venn-thumbnail-container",
-                                children=[
-                                    dcc.Graph(
-                                        id='figure_sunburst',
-                                        #figure=plotly_fig
-                                    )
-                                ]
                             ),
                             html.Br(),
                         ],
@@ -105,14 +92,10 @@ layout=dbc.Container(
                             ]),
                             html.Br(),
                         ],
-                        width={'size':4}
+                        width={'size':6}
                     ),
                 ],
             ),
-            html.Br(),
-            html.Br(),
-            html.Br(),
-            html.Br(),
             dbc.Row(
                 children=[
                     dbc.Col(
@@ -132,8 +115,27 @@ layout=dbc.Container(
                 ],
                 justify='center'
             ),
+            dbc.Row(
+                children=[
+                #dbc.Col(
+                    #children=[
+                    #html.H2("Sunburst Diagram", className='text-center'),
+                    html.Div(className="sunburst-container",
+                        children=[
+                            dcc.Graph(
+                                id='sunburst_figure'
+                            )
+                        ]
+                    ),
+                    html.Br(),
+                    #],
+                    #width={'size':12}
+                #),
+                ],
+            ),
             html.Br(),
             html.Br(),
+
             dbc.Row(
                 children=[
                     dbc.Col(
@@ -148,7 +150,7 @@ layout=dbc.Container(
                             ),
                             dcc.Download(id="download_datatable"),
                             dash_table.DataTable(
-                                id='table',
+                                id='sunburst_table',
                                 columns=[
                                     #the id were copied and pasted from the previous version...
                                     #surely an error.... but makes no difference?
@@ -189,3 +191,93 @@ layout=dbc.Container(
             ),
         ]
     )
+
+@callback(
+    [
+        Output(component_id="sunburst_table", component_property="columns"),
+        Output(component_id="sunburst_table", component_property="data")
+    ],
+    [
+        Input(component_id='button_query', component_property='n_clicks'),
+    ],
+    [
+        State(component_id='compound_selection',component_property='value'),
+        State(component_id='radio_items_sunburst_value',component_property='value')
+    ],
+    prevent_initial_call=True
+)
+def query_table(button_query_n_clicks,compound_selection_value,radio_items_sunburst_value_value):
+
+    sunburst_output={
+        "compound":compound_selection_value
+    }
+
+    response = requests.post(base_url_api + "/sunburstresource/", json=sunburst_output)
+    total_panda = pd.read_json(response.json(), orient="records")
+    total_panda['binvestigate']='binvestigate'
+
+    if radio_items_sunburst_value_value=='intensity_average':
+        last_column={'name': 'Average Intensity','id':'intensity_average',"type": "numeric","format": Format(group=Group.yes, precision=2, scheme=Scheme.exponent)}
+    elif radio_items_sunburst_value_value=='intensity_median':
+        last_column={'name': 'Median Intensity','id':'intensity_median',"type": "numeric","format": Format(group=Group.yes, precision=2, scheme=Scheme.exponent)}
+    elif radio_items_sunburst_value_value=='percent_present':
+        last_column={'name': 'Percent Present','id':'percent_present',"type": "numeric","format": Format(group=Group.yes, precision=2, scheme=Scheme.exponent)}
+    column_list=[
+        {'name':'Species','id':'species'},
+        {'name':'Organ','id':'organ'},
+        {'name':'Disease','id':'disease'},
+        #{'name':'Species','id':'species'},
+        last_column
+    ]
+    total_panda=total_panda[['binvestigate','species','organ','disease',last_column['id']]]
+
+    data = total_panda.to_dict(orient='records')
+
+    return [column_list,data]
+
+@callback(
+    [
+        Output(component_id='sunburst_figure', component_property='figure'),
+    ],
+    [
+        Input(component_id='sunburst_table', component_property='derived_virtual_data'),
+        Input(component_id='radio_items_sod_order',component_property='value')
+    ],
+    [
+        State(component_id='radio_items_sunburst_value',component_property='value')
+    ],
+    prevent_initial_call=True
+)
+def query_table(sunburst_table_derived_virtual_data,radio_items_sod_order_value,radio_items_sunburst_value_value):
+
+    #get dataframe from derived data
+    temp=pd.DataFrame.from_records(sunburst_table_derived_virtual_data)
+    print(temp)
+    print(temp.columns[-1])
+    #coerce it into sunburst form with helper function
+    temp_in_sunburst_form=sunburst_helper.coerce_full_panda(temp,radio_items_sunburst_value_value,radio_items_sod_order_value.split(','))
+    print('----------------------')
+    print(temp_in_sunburst_form)
+
+    #my_hovertext_values=(temp_in_sunburst_form['id'].str.split('/').str[1])+' - '+(temp_in_sunburst_form['id'].str.split('/').str[2])+' - '+(temp_in_sunburst_form['id'].str.split('/').str[3])+': '+(temp_in_sunburst_form['sum'].astype(str))
+    #my_hovertext_values=' - '.join((temp_in_sunburst_form['id'].str.split('/'))[1:])
+    my_hovertext_values=(temp_in_sunburst_form['id'].str.split('/').str[1:].str.join(' - '))+': '+(temp_in_sunburst_form['average'].astype(str))
+    current_figure=go.Figure(
+        go.Sunburst(
+            #data_frame=temp_in_sunburst_form,
+            parents=temp_in_sunburst_form['parent'].to_list(),
+            labels=temp_in_sunburst_form['name'].to_list(),
+            values=temp_in_sunburst_form['sum'].to_list(),
+            ids=temp_in_sunburst_form['id'].to_list(),
+            hovertext=my_hovertext_values,#temp_in_sunburst_form['id'].to_list(),
+            hoverinfo='text',
+            #branchvalues='total',
+            
+        ),
+        layout=go.Layout(height=1000,width=1000)
+    )
+    current_figure.update_layout(
+        margin = dict(t=0, l=0, r=0, b=0),
+        hoverlabel=dict(font_size=24)
+    )
+    return [current_figure]
