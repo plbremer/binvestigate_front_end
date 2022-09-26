@@ -32,7 +32,7 @@ layout=dbc.Container(
                         width={'size':6}
                     )
                 ],
-                justify='center'
+                #justify='center'
             ),
             dbc.Row(
                 children=[
@@ -166,7 +166,7 @@ layout=dbc.Container(
                         width={'size':6}
                     )
                 ],
-                justify='center'
+                #justify='center'
             ),
             html.Br(),
             html.Br(),
@@ -218,7 +218,7 @@ layout=dbc.Container(
                         #width={'size':6}
                     )
                 ],
-                justify='center'
+                #justify='center'
             ),
         ]
     )
