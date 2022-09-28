@@ -148,7 +148,7 @@ layout=dbc.Container(
                                 ),
                                 className="d-grid gap-2 col-3 mx-auto",
                             ),
-                            dcc.Download(id="download_datatable"),
+                            dcc.Download(id="download_sunburst_datatable"),
                             dash_table.DataTable(
                                 id='sunburst_table',
                                 columns=[
@@ -248,7 +248,7 @@ def query_table(button_query_n_clicks,compound_selection_value,radio_items_sunbu
     ],
     prevent_initial_call=True
 )
-def query_table(sunburst_table_derived_virtual_data,radio_items_sod_order_value,radio_items_sunburst_value_value):
+def query_figure(sunburst_table_derived_virtual_data,radio_items_sod_order_value,radio_items_sunburst_value_value):
 
     #get dataframe from derived data
     temp=pd.DataFrame.from_records(sunburst_table_derived_virtual_data)
@@ -281,3 +281,30 @@ def query_table(sunburst_table_derived_virtual_data,radio_items_sod_order_value,
         hoverlabel=dict(font_size=24)
     )
     return [current_figure]
+
+@callback(
+    [
+        Output(component_id="download_sunburst_datatable", component_property="data"),
+    ],
+    [
+        Input(component_id="button_download", component_property="n_clicks"),
+    ],
+    [
+        State(component_id="sunburst_table",component_property="data")
+    ],
+    prevent_initial_call=True
+)
+def download_sunburst_datatable(
+    download_click,
+    table_data
+    ):
+        """
+        """
+        #print(pd.DataFrame.from_records(table_derived_virtual_data).drop(['compound','bin'],axis='columns'))
+
+        #temp_img=venn_helper.make_venn_figure_from_panda(pd.DataFrame.from_records(table_derived_virtual_data).drop(['compound','bin'],axis='columns'))
+        print(pd.DataFrame.from_records(table_data).to_excel)
+
+        return [dcc.send_data_frame(
+            pd.DataFrame.from_records(table_data).to_excel, "binvestigate_sunburst_datatable.xlsx", sheet_name="sheet_1"
+        )]
