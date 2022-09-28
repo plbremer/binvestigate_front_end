@@ -180,7 +180,7 @@ layout = dbc.Container(children=[
                     html.Div(
                         dbc.Button(
                             'Get Results',
-                            id='metadata_query',
+                            id='hgda_metadata_query',
                         ),
                         className="d-grid gap-2 col-6 mx-auto",
                     ),
@@ -205,7 +205,7 @@ layout = dbc.Container(children=[
                 children=[
                     #html.H2("Venn Comparator", className='text-center'),
                     dash_table.DataTable(
-                        id='table_metadata',
+                        id='hgda_table_metadata',
                         columns=[
                             {'name': 'From or To', 'id': 'from_or_to'},
                             {'name': 'Triplet ID', 'id': 'triplet_id'}, 
@@ -390,6 +390,7 @@ def update_input_options_to(
     to_organ_value_input,
     to_disease_value_input,
 ):
+
     '''
     this callback makes it so that if a user specifies a species, an organ, or a disease
     for "to", then the other options are filtered accordingly
@@ -443,3 +444,93 @@ def update_input_options_to(
     ],key=lambda x:x['label'])
 
     return species_options,organ_options,disease_options
+
+
+
+
+@callback(
+    [
+        #Output(component_id="leaf_table", component_property="columns"),
+        Output(component_id="hgda_table_metadata", component_property="data")
+    ],
+    [
+        Input(component_id="hgda_metadata_query", component_property="n_clicks"),
+    ],
+    [
+        State(component_id="dropdown_from_species", component_property="value"),
+        State(component_id="dropdown_from_organ", component_property="value"),
+        State(component_id="dropdown_from_disease", component_property="value"),
+        State(component_id="dropdown_to_species", component_property="value"),
+        State(component_id="dropdown_to_organ", component_property="value"),
+        State(component_id="dropdown_to_disease", component_property="value"),
+    ],
+    prevent_initial_call=True
+)
+def perform_metadata_query(
+    query,
+    from_species_value,
+    from_organ_value,
+    from_disease_value,
+    to_species_value,
+    to_organ_value,
+    to_disease_value,
+):
+    '''
+    describes the query that the user makes
+    '''
+    ################metadata query######################
+    #prepare json for api
+    metadata_json_output = {
+        "from_species": from_species_value,
+        "from_organ": from_organ_value,
+        "from_disease": from_disease_value,
+        "to_species": to_species_value,
+        "to_organ": to_organ_value,
+        "to_disease": to_disease_value,
+    }
+    #obtain results from api
+    response = requests.post(base_url_api + "/hgdametadataresource/", json=metadata_json_output)
+    total_panda = pd.read_json(response.json(), orient="records")
+
+    print(total_panda)
+    # pre_swap_from=total_panda.at[0,'unique_triplet_list_real_from']
+    # post_swap_from=[
+    #     [temp[0],swap_dict_species[temp[1]],temp[2]] for temp in pre_swap_from
+    # ]
+    # total_panda.at[0,'unique_triplet_list_real_from']=post_swap_from
+
+    # pre_swap_to=total_panda.at[0,'unique_triplet_list_real_to']
+    # post_swap_to=[
+    #     [temp[0],swap_dict_species[temp[1]],temp[2]] for temp in pre_swap_to
+    # ]
+    # total_panda.at[0,'unique_triplet_list_real_to']=post_swap_to    
+
+    # #prepare column list for table
+    # query_summary_column_list_from = [
+    #     {"name": temp_col, "id": temp_col} for temp_col in total_panda.columns if "from" in temp_col
+    # ]
+    # query_summary_column_list_to = [
+    #     {"name": temp_col, "id": temp_col} for temp_col in total_panda.columns if "from" not in temp_col
+    # ]
+
+    # #prepare data for table
+    # query_summary_data_from = total_panda.to_dict(orient="records")
+    
+    
+    # for temp_key in query_summary_data_from[0]:
+    #     query_summary_data_from[0][temp_key] = str(query_summary_data_from[0][temp_key])
+    # query_summary_data_to = total_panda.to_dict(orient="records")
+    # for temp_key in query_summary_data_to[0]:
+    #     query_summary_data_to[0][temp_key] = str(query_summary_data_to[0][temp_key])
+
+    # query_summary_data_from[0]['unique_triplet_list_real_from']=query_summary_data_from[0]['unique_triplet_list_real_from'].replace('], [','],\n[')
+    # query_summary_data_from[0]['sample_count_list_from']=query_summary_data_from[0]['sample_count_list_from'].replace(', ',',\n')
+    # query_summary_data_to[0]['unique_triplet_list_real_to']=query_summary_data_to[0]['unique_triplet_list_real_to'].replace('], [','],\n[')
+    # query_summary_data_to[0]['sample_count_list_to']=query_summary_data_to[0]['sample_count_list_to'].replace(', ',',\n')
+    
+    # new_names=['Triplet List','Triplet Count','Sample Count List','Sample Count Min','Sample Count Sum']
+    # query_summary_column_list_from = [
+    #     {"name": new_names[i], "id": query_summary_column_list_from[i]['id']} for i in range(len(query_summary_column_list_from))
+    # ]
+
+    # return query_summary_column_list_from,query_summary_data_from,query_summary_column_list_to,query_summary_data_to
