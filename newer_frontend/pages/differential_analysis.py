@@ -41,7 +41,7 @@ layout = dbc.Container(children=[
                         options=sorted([
                             {'label': temp.title(), 'value':unique_sod_combinations_dict[temp]} for temp in unique_sod_combinations_dict
                         ],key=lambda x:x['label']),
-                        multi=False,
+                        multi=True,
                         # style={
                         #     'color': '#212121',
                         #     'background-color': '#3EB489',
@@ -68,7 +68,7 @@ layout = dbc.Container(children=[
                         options=sorted([
                             {'label': temp.title(), 'value':unique_sod_combinations_dict[temp]} for temp in unique_sod_combinations_dict
                         ],key=lambda x:x['label']),
-                        multi=False,
+                        multi=True,
                         # style={
                         #     'color': '#212121',
                         #     'background-color': '#3EB489',
