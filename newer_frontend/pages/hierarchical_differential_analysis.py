@@ -196,7 +196,7 @@ layout = dbc.Container(children=[
                 children=[
                     #html.H2("Venn Comparator", className='text-center'),
                     dcc.Graph(
-                        id='leaf_figure'
+                        id='hgda_figure'
                     )
                 ],
                 width={'size':9}
@@ -545,3 +545,68 @@ def query_table(
     data = total_panda.to_dict(orient='records')
 
     return [data]
+
+@callback(
+    [
+        Output(component_id='hgda_figure', component_property='figure'),
+    ],
+    [
+        Input(component_id='hgda_table', component_property='derived_virtual_data'),
+        Input(component_id='radio_items_fold_type',component_property='value')
+    ],
+    prevent_initial_call=True
+)
+def query_figure(hgda_table_derived_virtual_data,radio_items_fold_type_value):
+
+    #get dataframe from derived data
+    temp=pd.DataFrame.from_records(hgda_table_derived_virtual_data)
+    print(temp)
+    print(temp.columns[-1])
+
+    if radio_items_fold_type_value=='average_welch':
+        p='significance_welch'
+        effect_size='fold_change_average'
+    elif radio_items_fold_type_value=='median_mwu':
+        p='significance_mwu'
+        effect_size='fold_change_median'
+        
+
+    volcano = dashbio.VolcanoPlot(
+        dataframe=temp,#bins_panda,
+        snp="english_name",
+        p=p,
+        effect_size=effect_size,
+        gene=None,
+        xlabel='log2 Fold Change',
+        genomewideline_value=1e-2,
+    )
+
+    return [volcano]
+
+
+@callback(
+    [
+        Output(component_id="download_hgda_datatable", component_property="data"),
+    ],
+    [
+        Input(component_id="button_download", component_property="n_clicks"),
+    ],
+    [
+        State(component_id="hgda_table",component_property="data")
+    ],
+    prevent_initial_call=True
+)
+def download_hgda_datatable(
+    download_click,
+    table_data
+    ):
+        """
+        """
+        #print(pd.DataFrame.from_records(table_derived_virtual_data).drop(['compound','bin'],axis='columns'))
+
+        #temp_img=venn_helper.make_venn_figure_from_panda(pd.DataFrame.from_records(table_derived_virtual_data).drop(['compound','bin'],axis='columns'))
+        print(pd.DataFrame.from_records(table_data).to_excel)
+
+        return [dcc.send_data_frame(
+            pd.DataFrame.from_records(table_data).to_excel, "binvestigate_differential_datatable.xlsx", sheet_name="sheet_1"
+        )]

@@ -39,8 +39,8 @@ app.layout = html.Div([
                 
                 style={"height": "50px"}, 
             ), 
-            color="dark", 
-            dark=True,
+            #color="dark", 
+            #dark=True,
             #links_left=True
         ),
 
