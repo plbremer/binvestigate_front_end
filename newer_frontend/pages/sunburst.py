@@ -18,179 +18,196 @@ dash.register_page(__name__)
 
 compound_dropdown_options=sunburst_helper.create_compound_selection_labels("../newer_datasets/compounds_networkx.bin")
 
-layout=dbc.Container(
-        children=[
-            dbc.Row(
-                children=[
-                    dbc.Col(
-                        children=[
-                            #html.H2("Venn Comparator", className='text-center'),
-                            html.Br(),
-                        ],
-                        width={'size':6}
-                    )
-                ],
-                justify='center'
-            ),
-            dbc.Row(
-                children=[
-                    dbc.Col(
-                        children=[
-                            html.H2("Compounds", className='text-center'),
-                            dcc.Dropdown(
-                                id='compound_selection',
-                                options=compound_dropdown_options,
-                                multi=False,
-                            ),
-                            html.Br(),
-                        ],
-                        width={'size':6}
-                    ),
-                    dbc.Col(
-                        children=[
-                            html.H2("Options", className='text-center'),
-                            html.H6("Choose Metric for Sunburst", className='text-center'),
-                            html.Div(className="radio-group-container add-margin-top-1", children=[
-                                html.Div(className="radio-group", children=[
-                                    dbc.RadioItems(
-                                        id='radio_items_sunburst_value',
-                                        options=[
-                                            {'label': 'Average', 'value': 'intensity_average'},
-                                            {'label': 'Median', 'value': 'intensity_median'},
-                                            {'label': 'Percent Present', 'value':'percent_present'}
-                                            #{'label': 'Unique', 'value': 'unique'},
-                                        ],         
-                                        value='intensity_average',
-                                        className="btn-group",
-                                        inputClassName="btn-check",
-                                        labelClassName="btn btn-outline-primary",
-                                        inputCheckedClassName="active"                               
-                                    ),
-                                ])
-                            ]),
-                            html.Br(),
-                            html.H6("Choose Order for Sunburst", className='text-center'),
-                            html.Div(className="radio-group-container add-margin-top-1", children=[
-                                html.Div(className="radio-group", children=[
-                                    dbc.RadioItems(
-                                        id='radio_items_sod_order',
-                                        options=[
-                                            {'label': 'Species, Organ, Disease', 'value': 'binvestigate,species,organ,disease'},
-                                            {'label': 'Species, Disease, Organ', 'value': 'binvestigate,species,disease,organ'},
-                                            {'label': 'Organ, Species, Disease', 'value': 'binvestigate,organ,species,disease'},
-                                            {'label': 'Organ, Disease, Species', 'value': 'binvestigate,organ,disease,species'},
-                                            {'label': 'Disease, Species, Organ', 'value': 'binvestigate,disease,species,organ'},
-                                            {'label': 'Disease, Organ, Species', 'value': 'binvestigate,disease,organ,species'},
-                                        ],         
-                                        value='binvestigate,species,organ,disease',
-                                        className="btn-group",
-                                        inputClassName="btn-check",
-                                        labelClassName="btn btn-outline-primary",
-                                        inputCheckedClassName="active"                               
-                                    ),
-                                ])
-                            ]),
-                            html.Br(),
-                        ],
-                        width={'size':6}
-                    ),
-                ],
-            ),
-            dbc.Row(
-                children=[
-                    dbc.Col(
-                        children=[
-                            html.H2("Execute or Update Query", className='text-center'),
-                            html.Div(
-                                dbc.Button(
-                                    'Get Results',
-                                    id='button_query',
+#layout=dbc.Container(
+layout=html.Div(
+    children=[
+        dbc.Col(width=3),
+        dbc.Row(
+            children=[
+                dbc.Col(
+                    children=[
+                        #html.H2("Venn Comparator", className='text-center'),
+                        html.Br(),
+                    ],
+                    width={'size':6}
+                )
+            ],
+            justify='center'
+        ),
+        dbc.Row(
+            children=[
+                dbc.Col(width=3),
+                dbc.Col(
+                    children=[
+                        html.H2("Compounds", className='text-center'),
+                        dcc.Dropdown(
+                            id='compound_selection',
+                            options=compound_dropdown_options,
+                            multi=False,
+                        ),
+                        html.Br(),
+                    ],
+                    width={'size':3}
+                ),
+                dbc.Col(
+                    children=[
+                        html.H2("Options", className='text-center'),
+                        html.H6("Choose Metric for Sunburst", className='text-center'),
+                        html.Div(className="radio-group-container add-margin-top-1", children=[
+                            html.Div(className="radio-group", children=[
+                                dbc.RadioItems(
+                                    id='radio_items_sunburst_value',
+                                    options=[
+                                        {'label': 'Average', 'value': 'intensity_average'},
+                                        {'label': 'Median', 'value': 'intensity_median'},
+                                        {'label': 'Percent Present', 'value':'percent_present'}
+                                        #{'label': 'Unique', 'value': 'unique'},
+                                    ],         
+                                    value='intensity_average',
+                                    className="btn-group",
+                                    inputClassName="btn-check",
+                                    labelClassName="btn btn-outline-primary",
+                                    inputCheckedClassName="active"                               
                                 ),
-                                className="d-grid gap-2 col-6 mx-auto",
+                            ])
+                        ]),
+                        html.Br(),
+                        html.H6("Choose Order for Sunburst", className='text-center'),
+                        html.Div(className="radio-group-container add-margin-top-1", children=[
+                            html.Div(className="radio-group", children=[
+                                dbc.RadioItems(
+                                    id='radio_items_sod_order',
+                                    options=[
+                                        {'label': 'Species, Organ, Disease', 'value': 'binvestigate,species,organ,disease'},
+                                        {'label': 'Species, Disease, Organ', 'value': 'binvestigate,species,disease,organ'},
+                                        {'label': 'Organ, Species, Disease', 'value': 'binvestigate,organ,species,disease'},
+                                        {'label': 'Organ, Disease, Species', 'value': 'binvestigate,organ,disease,species'},
+                                        {'label': 'Disease, Species, Organ', 'value': 'binvestigate,disease,species,organ'},
+                                        {'label': 'Disease, Organ, Species', 'value': 'binvestigate,disease,organ,species'},
+                                    ],         
+                                    value='binvestigate,species,organ,disease',
+                                    className="btn-group",
+                                    inputClassName="btn-check",
+                                    labelClassName="btn btn-outline-primary",
+                                    inputCheckedClassName="active"                               
+                                ),
+                            ])
+                        ]),
+                        html.Br(),
+                    ],
+                    width={'size':3}
+                ),
+                dbc.Col(width=3),
+            ],
+        ),
+        html.Br(),
+        html.Br(),
+        html.Br(),
+        dbc.Row(
+            children=[
+                dbc.Col(
+                    children=[
+                        html.H2("Execute or Update Query", className='text-center'),
+                        html.Div(
+                            dbc.Button(
+                                'Get Results',
+                                id='button_query',
                             ),
-                            html.Br(),
-                        ],
-                        width={'size':6}
-                    )
-                ],
-                justify='center'
-            ),
-            dbc.Row(
-                children=[
-                #dbc.Col(
-                    #children=[
-                    #html.H2("Sunburst Diagram", className='text-center'),
-                    html.Div(className="sunburst-container",
-                        children=[
-                            dcc.Graph(
-                                id='sunburst_figure'
-                            )
-                        ]
-                    ),
-                    html.Br(),
-                    #],
-                    #width={'size':12}
-                #),
-                ],
-            ),
-            html.Br(),
-            html.Br(),
+                            className="d-grid gap-2 col-6 mx-auto",
+                        ),
+                        html.Br(),
+                    ],
+                    width={'size':6}
+                )
+            ],
+            justify='center'
+        ),
+        dbc.Row(
+            children=[
+                dbc.Col(width=2),
+            #dbc.Col(
+                #children=[
+                #html.H2("Sunburst Diagram", className='text-center'),
+                dbc.Col(
+                    children=[
+                        html.Div(className="sunburst-container",
+                            children=[
+                                dcc.Graph(
+                                    id='sunburst_figure'
+                                )
+                            ]
+                        ),
+                    ],
+                    width=8
+                ),
+                dbc.Col(width=2)
+                #html.Br(),
+                #],
+                #width={'size':12}
+            #),
+            ],
+        ),
+        html.Br(),
+        html.Br(),
 
-            dbc.Row(
-                children=[
-                    dbc.Col(
-                        children=[
-                            html.H2("Result Datatable", className='text-center'),
-                            html.Div(
-                                dbc.Button(
-                                    'Download Datatable as .xlsx',
-                                    id='button_download',
-                                ),
-                                className="d-grid gap-2 col-3 mx-auto",
+        dbc.Row(
+            children=[
+                dbc.Col(width=2),
+                dbc.Col(
+                    children=[
+                        html.H2("Result Datatable", className='text-center'),
+                        html.Div(
+                            dbc.Button(
+                                'Download Datatable as .xlsx',
+                                id='button_download',
                             ),
-                            dcc.Download(id="download_sunburst_datatable"),
-                            dash_table.DataTable(
-                                id='sunburst_table',
-                                columns=[
-                                    #the id were copied and pasted from the previous version...
-                                    #surely an error.... but makes no difference?
-                                    {"name": "Species", "id": "bin_id"},
-                                    {"name": "Organ", "id": "compound_name"},
-                                    {"name": "Disease", "id": "group_1"},
-                                    {"name": "Metric", "id": "metric"}
-                                ],
-                                data=[],
-                                page_current=0,
-                                page_size=50,
-                                #page_action='custom',
-                                page_action='native',
-                                #sort_action='custom',
-                                sort_action='native',
-                                sort_mode='multi',
-                                #sort_by=[],
-                                #filter_action='custom',
-                                filter_action='native',
-                                #filter_query='',
-                                style_header={
-                                    'backgroundColor': 'rgb(30, 30, 30)',
-                                    'color': 'white'
-                                },
-                                style_data={
-                                    'backgroundColor': 'rgb(50, 50, 50)',
-                                    'color': 'white'
-                                },
-                                style_cell={
-                                    'font-family':'sans-serif'
-                                }
-                            )
-                        ],
-                        #width={'size':6}
-                    )
-                ],
-                justify='center'
-            ),
-        ]
-    )
+                            className="d-grid gap-2 col-3 mx-auto",
+                        ),
+                        dcc.Download(id="download_sunburst_datatable"),
+                        dash_table.DataTable(
+                            id='sunburst_table',
+                            columns=[
+                                #the id were copied and pasted from the previous version...
+                                #surely an error.... but makes no difference?
+                                {"name": "Species", "id": "bin_id"},
+                                {"name": "Organ", "id": "compound_name"},
+                                {"name": "Disease", "id": "group_1"},
+                                {"name": "Metric", "id": "metric"}
+                            ],
+                            data=[],
+                            page_current=0,
+                            page_size=50,
+                            #page_action='custom',
+                            page_action='native',
+                            #sort_action='custom',
+                            sort_action='native',
+                            sort_mode='multi',
+                            #sort_by=[],
+                            #filter_action='custom',
+                            filter_action='native',
+                            #filter_query='',
+                            style_header={
+                                'backgroundColor': 'rgb(30, 30, 30)',
+                                'color': 'white'
+                            },
+                            style_data={
+                                'backgroundColor': 'rgb(50, 50, 50)',
+                                'color': 'white'
+                            },
+                            style_cell={
+                                'font-family':'sans-serif'
+                            }
+                        )
+                    ],
+                    width=8
+                ),
+                dbc.Col(width=2),
+            ],
+            
+            #justify='center'
+        ),
+    ]
+)
 
 @callback(
     [

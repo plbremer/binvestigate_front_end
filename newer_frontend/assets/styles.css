@@ -109,7 +109,8 @@ tr, th, td {
     display: block;
     margin-left: auto;
     margin-right: auto;
-    width: 50%;
+    height:100px;
+    width:100px;
 }
 
 .modal-body-container {
@@ -121,8 +122,8 @@ tr, th, td {
 
 .sunburst-container {
     display: block;
-    margin-left: 145px;
+    margin-left: auto;
     margin-right: auto;    
     height:1000px;
-    width:100%;
+    width:1000px;
 }

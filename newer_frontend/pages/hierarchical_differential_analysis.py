@@ -25,8 +25,9 @@ print(index_panda)
 print(index_panda.dtypes)
 #############################################
 
-#layout = html.Div(children=[
-layout = dbc.Container(children=[
+#layout=dbc.Container(
+layout=html.Div(
+    children=[
     # dbc.Row(
     #     children=[
     #         dbc.Col(
@@ -39,264 +40,294 @@ layout = dbc.Container(children=[
     #     ],
     #     #justify='center'
     # ),
-    dbc.Row(
-        children=[
-            dbc.Col(
-                children=[
-                    html.H2("From Triplet", className='text-center'),
-                    dcc.Dropdown(
-                        id='dropdown_from_species',
-                        options=sorted([
-                            {'label':species_node_dict[temp], 'value':temp.title()} for temp in species_node_dict
-                        ],key=lambda x:x['label']),
-                        multi=False,
-                    ),  
-                    dcc.Dropdown(
-                        id='dropdown_from_organ',
-                        options=sorted([
-                            {'label':organ_node_dict[temp], 'value':temp.title()} for temp in organ_node_dict
-                        ],key=lambda x:x['label']),
-                        multi=False,
-                    ), 
-                    dcc.Dropdown(
-                        id='dropdown_from_disease',
-                        options=sorted([
-                            {'label':disease_node_dict[temp], 'value':temp.title()} for temp in disease_node_dict
-                        ],key=lambda x:x['label']),
-                        multi=False,
-                    ), 
-                    html.Br(),
-                ],
-                width={'size':3}
-            ),
-            dbc.Col(
-                children=[
-                    html.Br(),
-                    html.Br(),
-                    html.H2("Vs.", className='text-center'),
-                    html.Br(),
-                ],
-                width={'size':1}
-            ),
-            dbc.Col(
-                children=[
-                    html.H2("To Triplet", className='text-center'),
-                    dcc.Dropdown(
-                        id='dropdown_to_species',
-                        options=sorted([
-                            {'label':species_node_dict[temp], 'value':temp.title()} for temp in species_node_dict
-                        ],key=lambda x:x['label']),
-                        multi=False,
-                    ),  
-                    dcc.Dropdown(
-                        id='dropdown_to_organ',
-                        options=sorted([
-                            {'label':organ_node_dict[temp], 'value':temp.title()} for temp in organ_node_dict
-                        ],key=lambda x:x['label']),
-                        multi=False,
-                    ), 
-                    dcc.Dropdown(
-                        id='dropdown_to_disease',
-                        options=sorted([
-                            {'label':disease_node_dict[temp], 'value':temp.title()} for temp in disease_node_dict
-                        ],key=lambda x:x['label']),
-                        multi=False,
-                    ), 
-                    html.Br(),
-                ],
-                width={'size':3}
-            ),
-            dbc.Col(
-                children=[
-                    html.Br(),
-                    html.Br(),
-                ],
-                width={'size':2}
-            ),
-            dbc.Col(
-                children=[
-                    html.H2("Options", className='text-center'),
-                    html.H6("Choose Statistical Approach for Volcano", className='text-center'),
-                    html.Div(className="radio-group-container add-margin-top-1", children=[
-                        html.Div(className="radio-group", children=[
-                            dbc.RadioItems(
-                                id='radio_items_fold_type',
-                                options=[
-                                    {'label': 'Average/Welch', 'value': 'average_welch'},
-                                    {'label': 'Median/MWU', 'value': 'median_mwu'},
-                                    #{'label': 'Unique', 'value': 'unique'},
-                                ],         
-                                value='average_welch',
-                                className="btn-group",
-                                inputClassName="btn-check",
-                                labelClassName="btn btn-outline-primary",
-                                inputCheckedClassName="active",                                
+        dbc.Row(
+            children=[
+                #dbc.Col(width=5),
+                #dbc.Col(
+                #    children=[
+                html.H2('Step 1: Choose Triplets and Options'),
+                #    ],
+                    #width=(4)
+                #),
+                #dbc.Col(width=3)
+            ],
+            #align='center',
+            style={'textAlign': 'center'}
+        ),
+        dbc.Row(
+            children=[
+                dbc.Col(width=3),
+                dbc.Col(
+                    children=[
+                        #html.H2("From Triplet", className='text-center'),
+                        dcc.Dropdown(
+                            id='dropdown_from_species',
+                            options=sorted([
+                                {'label':species_node_dict[temp], 'value':temp.title()} for temp in species_node_dict
+                            ],key=lambda x:x['label']),
+                            multi=False,
+                        ),  
+                        dcc.Dropdown(
+                            id='dropdown_from_organ',
+                            options=sorted([
+                                {'label':organ_node_dict[temp], 'value':temp.title()} for temp in organ_node_dict
+                            ],key=lambda x:x['label']),
+                            multi=False,
+                        ), 
+                        dcc.Dropdown(
+                            id='dropdown_from_disease',
+                            options=sorted([
+                                {'label':disease_node_dict[temp], 'value':temp.title()} for temp in disease_node_dict
+                            ],key=lambda x:x['label']),
+                            multi=False,
+                        ), 
+                        html.Br(),
+                    ],
+                    width={'size':2}
+                ),
+                # dbc.Col(
+                #     children=[
+                #         html.Br(),
+                #         html.Br(),
+                #         html.H2("Vs.", className='text-center'),
+                #         html.Br(),
+                #     ],
+                #     width={'size':1}
+                # ),
+                dbc.Col(
+                    children=[
+                        #html.H2("To Triplet", className='text-center'),
+                        dcc.Dropdown(
+                            id='dropdown_to_species',
+                            options=sorted([
+                                {'label':species_node_dict[temp], 'value':temp.title()} for temp in species_node_dict
+                            ],key=lambda x:x['label']),
+                            multi=False,
+                        ),  
+                        dcc.Dropdown(
+                            id='dropdown_to_organ',
+                            options=sorted([
+                                {'label':organ_node_dict[temp], 'value':temp.title()} for temp in organ_node_dict
+                            ],key=lambda x:x['label']),
+                            multi=False,
+                        ), 
+                        dcc.Dropdown(
+                            id='dropdown_to_disease',
+                            options=sorted([
+                                {'label':disease_node_dict[temp], 'value':temp.title()} for temp in disease_node_dict
+                            ],key=lambda x:x['label']),
+                            multi=False,
+                        ), 
+                        html.Br(),
+                    ],
+                    width={'size':2}
+                ),
+                # dbc.Col(
+                #     children=[
+                #         html.Br(),
+                #         html.Br(),
+                #     ],
+                #     width={'size':2}
+                # ),
+                dbc.Col(
+                    children=[
+                        #html.H2("Options", className='text-center'),
+                        html.H6("Choose Statistical Approach for Volcano", className='text-center'),
+                        html.Div(className="radio-group-container add-margin-top-1", children=[
+                            html.Div(className="radio-group", children=[
+                                dbc.RadioItems(
+                                    id='radio_items_fold_type',
+                                    options=[
+                                        {'label': 'Average/Welch', 'value': 'average_welch'},
+                                        {'label': 'Median/MWU', 'value': 'median_mwu'},
+                                        #{'label': 'Unique', 'value': 'unique'},
+                                    ],         
+                                    value='average_welch',
+                                    className="btn-group",
+                                    inputClassName="btn-check",
+                                    labelClassName="btn btn-outline-primary",
+                                    inputCheckedClassName="active",                                
+                                ),
+                            ])
+                        ]),
+                        html.Br(),
+                        html.H6("Choose Compound Result Type", className='text-center'),
+                        html.Div(className="radio-group-container add-margin-top-1", children=[
+                            html.Div(className="radio-group", children=[
+                                dbc.RadioItems(
+                                    id='radio_items_bin_type',
+                                    options=[
+                                        {'label': 'Knowns', 'value': 'known'},
+                                        {'label': 'Classes', 'value': 'class'},
+                                        {'label': 'Unknowns', 'value': 'unknown'},
+                                    ],         
+                                    value='known',
+                                    className="btn-group",
+                                    inputClassName="btn-check",
+                                    labelClassName="btn btn-outline-primary",
+                                    inputCheckedClassName="active",                                
+                                ),
+                            ])
+                        ]),
+                    ],
+                    width={'size':3}
+                ),
+            ],
+        ),
+        html.Br(),
+        html.Br(),
+        html.Br(),
+        dbc.Row(
+            children=[
+                dbc.Col(width=3),
+                dbc.Col(
+                    children=[
+                        html.H2("Step 2: Express Chosen Triplets", className='text-center'),
+                        html.Div(
+                            dbc.Button(
+                                'Get Results',
+                                id='hgda_metadata_query',
                             ),
-                        ])
-                    ]),
-                    html.H6("Choose Compound Result Type", className='text-center'),
-                    html.Div(className="radio-group-container add-margin-top-1", children=[
-                        html.Div(className="radio-group", children=[
-                            dbc.RadioItems(
-                                id='radio_items_bin_type',
-                                options=[
-                                    {'label': 'Knowns', 'value': 'known'},
-                                    {'label': 'Classes', 'value': 'class'},
-                                    {'label': 'Unknowns', 'value': 'unknown'},
-                                ],         
-                                value='known',
-                                className="btn-group",
-                                inputClassName="btn-check",
-                                labelClassName="btn btn-outline-primary",
-                                inputCheckedClassName="active",                                
+                            className="d-grid gap-2 col-3 mx-auto",
+                        ),
+                        #html.H2("Venn Comparator", className='text-center'),
+                        dash_table.DataTable(
+                            id='hgda_table_metadata',
+                            columns=[
+                                {'name': 'From or To', 'id': 'from_or_to'},
+                                {'name': 'Triplet ID', 'id': 'triplet_id'}, 
+                                {'name': 'Sample Count', 'id': 'sample_count'}
+                            ],
+                            data=[],
+                            page_current=0,
+                            page_size=10,
+                            #page_action='custom',
+                            page_action='native',
+                            #sort_action='custom',
+                            sort_action='native',
+                            sort_mode='multi',
+                            #sort_by=[],
+                            #filter_action='custom',
+                            filter_action='native',
+                            #filter_query='',
+                            style_header={
+                                'backgroundColor': 'rgb(30, 30, 30)',
+                                'color': 'white'
+                            },
+                            style_data={
+                                'backgroundColor': 'rgb(50, 50, 50)',
+                                'color': 'white'
+                            },
+                            style_cell={
+                                'font-family':'sans-serif'
+                            },
+                            row_deletable=True,
+                        )
+                    ],
+                    #width={'size':3}
+                ),
+                dbc.Col(width=3),
+            ]
+        ),
+        html.Br(),
+        html.Br(),
+        html.Br(),
+        dbc.Row(
+            children=[
+                dbc.Col(width={'size':2}),
+                dbc.Col(
+                    children=[
+                        html.H2("Step 3: Perform Differential Analysis", className='text-center'),
+                        html.Div(
+                            dbc.Button(
+                                'Get Results',
+                                id='hgda_query',
                             ),
-                        ])
-                    ]),
-                ],
-                width={'size':3}
-            ),
-        ],
-    ),
-    html.Br(),
-    html.Br(),
-    dbc.Row(
-        children=[
-            dbc.Col(
-                children=[
-                    html.H2("Execute or Update Query", className='text-center'),
-                    html.Div(
-                        dbc.Button(
-                            'Get Results',
-                            id='hgda_query',
+                            className="d-grid gap-2 col-3 mx-auto",
                         ),
-                        className="d-grid gap-2 col-6 mx-auto",
-                    ),
-                ],
-                width={'size':9}
-            ),
-            dbc.Col(
-                children=[
-                    html.H2("Describe Triplets", className='text-center'),
-                    html.Div(
-                        dbc.Button(
-                            'Get Results',
-                            id='hgda_metadata_query',
+                    ],
+                    width={'size':8}
+                ),
+                dbc.Col(width={'size':2}),
+            ],
+            #justify='center'
+        ),
+        dbc.Row(
+            children=[
+                dbc.Col(width={'size':2}),
+                dbc.Col(
+                    children=[
+                        #html.H2("Venn Comparator", className='text-center'),
+                        dcc.Graph(
+                            id='hgda_figure'
+                        )
+                    ],
+                    width={'size':8}
+                ),
+                dbc.Col(width={'size':2}),
+                
+            ],
+            #justify='center'
+        ),
+        html.Br(),
+        html.Br(),
+        dbc.Row(
+            children=[
+                dbc.Col(width={'size':2}),
+                dbc.Col(
+                    children=[
+                        html.H2("Result Datatable", className='text-center'),
+                        html.Div(
+                            dbc.Button(
+                                'Download Datatable as .xlsx',
+                                id='button_download',
+                            ),
+                            className="d-grid gap-2 col-3 mx-auto",
                         ),
-                        className="d-grid gap-2 col-6 mx-auto",
-                    ),
-                ],
-                width={'size':3}
-            )
-        ],
+                        dcc.Download(id="download_hgda_datatable"),
+                        dash_table.DataTable(
+                            id='hgda_table',
+                            columns=[
+                                {"name": "English Name", "id": "english_name"},
+                                {"name": "Identifier", "id": "identifier"},
+                                {"name": "Fold Average", "id": "fold_change_average","type": "numeric","format": Format(group=Group.yes, precision=2, scheme=Scheme.exponent)},
+                                {"name": "Significance Welch", "id": "significance_welch","type": "numeric","format": Format(group=Group.yes, precision=2, scheme=Scheme.exponent)},
+                                {"name": "Fold Median", "id": "fold_change_median","type": "numeric","format": Format(group=Group.yes, precision=2, scheme=Scheme.exponent)},
+                                {"name": "Significance MWU", "id": "significance_mwu","type": "numeric","format": Format(group=Group.yes, precision=2, scheme=Scheme.exponent)}
+                            ],
+                            data=[],
+                            page_current=0,
+                            page_size=50,
+                            #page_action='custom',
+                            page_action='native',
+                            #sort_action='custom',
+                            sort_action='native',
+                            sort_mode='multi',
+                            #sort_by=[],
+                            #filter_action='custom',
+                            filter_action='native',
+                            #filter_query='',
+                            style_header={
+                                'backgroundColor': 'rgb(30, 30, 30)',
+                                'color': 'white'
+                            },
+                            style_data={
+                                'backgroundColor': 'rgb(50, 50, 50)',
+                                'color': 'white'
+                            },
+                            style_cell={
+                                'font-family':'sans-serif'
+                            }
+                        )
+                    ],
+                    #width={'size':6}
+                ),
+                dbc.Col(width={'size':2}),
+            ],
         #justify='center'
-    ),
-    dbc.Row(
-        children=[
-            dbc.Col(
-                children=[
-                    #html.H2("Venn Comparator", className='text-center'),
-                    dcc.Graph(
-                        id='hgda_figure'
-                    )
-                ],
-                width={'size':9}
-            ),
-            dbc.Col(
-                children=[
-                    #html.H2("Venn Comparator", className='text-center'),
-                    dash_table.DataTable(
-                        id='hgda_table_metadata',
-                        columns=[
-                            {'name': 'From or To', 'id': 'from_or_to'},
-                            {'name': 'Triplet ID', 'id': 'triplet_id'}, 
-                            {'name': 'Sample Count', 'id': 'sample_count'}
-                        ],
-                        data=[],
-                        page_current=0,
-                        page_size=10,
-                        #page_action='custom',
-                        page_action='native',
-                        #sort_action='custom',
-                        sort_action='native',
-                        sort_mode='multi',
-                        #sort_by=[],
-                        #filter_action='custom',
-                        filter_action='native',
-                        #filter_query='',
-                        style_header={
-                            'backgroundColor': 'rgb(30, 30, 30)',
-                            'color': 'white'
-                        },
-                        style_data={
-                            'backgroundColor': 'rgb(50, 50, 50)',
-                            'color': 'white'
-                        },
-                        style_cell={
-                            'font-family':'sans-serif'
-                        }
-                    )
-                ],
-                width={'size':3}
-            )
-        ],
-        #justify='center'
-    ),
-    html.Br(),
-    html.Br(),
-    dbc.Row(
-        children=[
-            dbc.Col(
-                children=[
-                    html.H2("Result Datatable", className='text-center'),
-                    html.Div(
-                        dbc.Button(
-                            'Download Datatable as .xlsx',
-                            id='button_download',
-                        ),
-                        className="d-grid gap-2 col-3 mx-auto",
-                    ),
-                    dcc.Download(id="download_hgda_datatable"),
-                    dash_table.DataTable(
-                        id='hgda_table',
-                        columns=[
-                            {"name": "English Name", "id": "english_name"},
-                            {"name": "Identifier", "id": "identifier"},
-                            {"name": "Fold Average", "id": "fold_change_average","type": "numeric","format": Format(group=Group.yes, precision=2, scheme=Scheme.exponent)},
-                            {"name": "Significance Welch", "id": "significance_welch","type": "numeric","format": Format(group=Group.yes, precision=2, scheme=Scheme.exponent)},
-                            {"name": "Fold Median", "id": "fold_change_median","type": "numeric","format": Format(group=Group.yes, precision=2, scheme=Scheme.exponent)},
-                            {"name": "Significance MWU", "id": "significance_mwu","type": "numeric","format": Format(group=Group.yes, precision=2, scheme=Scheme.exponent)}
-                        ],
-                        data=[],
-                        page_current=0,
-                        page_size=50,
-                        #page_action='custom',
-                        page_action='native',
-                        #sort_action='custom',
-                        sort_action='native',
-                        sort_mode='multi',
-                        #sort_by=[],
-                        #filter_action='custom',
-                        filter_action='native',
-                        #filter_query='',
-                        style_header={
-                            'backgroundColor': 'rgb(30, 30, 30)',
-                            'color': 'white'
-                        },
-                        style_data={
-                            'backgroundColor': 'rgb(50, 50, 50)',
-                            'color': 'white'
-                        },
-                        style_cell={
-                            'font-family':'sans-serif'
-                        }
-                    )
-                ],
-                #width={'size':6}
-            )
-        ],
-        #justify='center'
-    ),
-])
+        ),
+    ]
+)
 
 
 @callback(
@@ -507,33 +538,36 @@ def perform_metadata_query(
         Input(component_id='hgda_query', component_property='n_clicks'),
     ],
     [
-        State(component_id="dropdown_from_species", component_property="value"),
-        State(component_id="dropdown_from_organ", component_property="value"),
-        State(component_id="dropdown_from_disease", component_property="value"),
-        State(component_id="dropdown_to_species", component_property="value"),
-        State(component_id="dropdown_to_organ", component_property="value"),
-        State(component_id="dropdown_to_disease", component_property="value"),
-        State(component_id='radio_items_bin_type',component_property='value')
+        # State(component_id="dropdown_from_species", component_property="value"),
+        # State(component_id="dropdown_from_organ", component_property="value"),
+        # State(component_id="dropdown_from_disease", component_property="value"),
+        # State(component_id="dropdown_to_species", component_property="value"),
+        # State(component_id="dropdown_to_organ", component_property="value"),
+        # State(component_id="dropdown_to_disease", component_property="value"),
+        State(component_id='radio_items_bin_type',component_property='value'),
+        State(component_id='hgda_table_metadata', component_property='derived_virtual_data')
     ],
     prevent_initial_call=True
 )
 def query_table(
     query,
-    from_species_value,
-    from_organ_value,
-    from_disease_value,
-    to_species_value,
-    to_organ_value,
-    to_disease_value,
-    radio_items_bin_type_value
+    # from_species_value,
+    # from_organ_value,
+    # from_disease_value,
+    # to_species_value,
+    # to_organ_value,
+    # to_disease_value,
+    radio_items_bin_type_value,
+    hgda_table_metadata_derived_virtual_data
 ):
     json_output = {
-        "from_species": from_species_value,
-        "from_organ": from_organ_value,
-        "from_disease": from_disease_value,
-        "to_species": to_species_value,
-        "to_organ": to_organ_value,
-        "to_disease": to_disease_value,
+        # "from_species": from_species_value,
+        # "from_organ": from_organ_value,
+        # "from_disease": from_disease_value,
+        # "to_species": to_species_value,
+        # "to_organ": to_organ_value,
+        # "to_disease": to_disease_value,
+        'metadata_datatable':hgda_table_metadata_derived_virtual_data
     }
     #obtain results from api
     response = requests.post(base_url_api + "/hgdaresource/", json=json_output)
@@ -580,6 +614,7 @@ def query_figure(hgda_table_derived_virtual_data,radio_items_fold_type_value):
         xlabel='log2 Fold Change',
         genomewideline_value=1e-2,
     )
+    volcano.update_layout(showlegend=False)
 
     return [volcano]
 
