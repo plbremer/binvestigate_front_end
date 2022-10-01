@@ -10,6 +10,7 @@ from pprint import pprint
 from dash_table.Format import Format, Scheme, Group
 import xlsxwriter
 
+
 base_url_api = "http://127.0.0.1:4999/"
 
 dash.register_page(__name__)
@@ -59,7 +60,7 @@ layout=html.Div(
                 dbc.Col(
                     children=[
                         #html.H2("Venn Diagram", className='text-center'),
-                        html.H2("Venn Diagram",style={'textAlign': 'center'}),
+                        dbc.Row(html.H2("Upset Plot"),style={'textAlign': 'center'}),
                         html.Div(className="venn-thumbnail-container",
                             children=[
                                 html.Img(
@@ -71,21 +72,29 @@ layout=html.Div(
                             ]
                         ),
                         dbc.Modal(
-                            dbc.ModalBody(
-                                html.Div(className="modal-body-container",children=[
-                                        html.Img(
-                                            id='modal_Img_venn',
-                                            #src=plotly_fig,
-                                            height=800,
-                                            width=800,
-                                        )
-                                    ]
-                                )
-                            ),
-                            className="modal-body",
+                            children=[
+                                #dbc.ModalHeader
+                                dbc.ModalHeader(dbc.ModalTitle("Right Click + Copy Image Address for High-Res"),close_button=True),
+                                dbc.ModalBody(
+                                #    html.Div(className="modal-body-container",children=[
+                                    html.Img(
+                                        id='modal_Img_venn',
+                                        #src=plotly_fig,
+                                        #height=400,
+                                        #width=800,
+                                        style={"height": "40vh"}
+                                    )
+                                #        ]
+                                #    )
+                                ),
+                            ],
+                            className="modal-overarching",
+                            #fullscreen=True,
                             id='modal',
+                            centered=True,
                             size='xl',
-                            is_open=False
+                            is_open=False,
+                            style={"max-width": "none", "width": "90%"}
                         ),
                         html.Br(),
                     ],
@@ -314,9 +323,14 @@ def perform_query_diagram(
         """
         print(pd.DataFrame.from_records(table_derived_virtual_data).drop(['compound','bin'],axis='columns'))
 
-        temp_img=venn_helper.make_venn_figure_from_panda(pd.DataFrame.from_records(table_derived_virtual_data).drop(['compound','bin'],axis='columns'))
+        #temp_img=venn_helper.make_venn_figure_from_panda(pd.DataFrame.from_records(table_derived_virtual_data).drop(['compound','bin'],axis='columns',inplace=True))
+        #temp_img=
+        temp_img=create_upset(pd.DataFrame.from_records(table_derived_virtual_data).drop(['compound','bin'],axis='columns'))
 
         return [temp_img,temp_img]
+
+
+
 
 @callback(
     [

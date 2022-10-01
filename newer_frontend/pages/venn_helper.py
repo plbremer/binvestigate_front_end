@@ -7,6 +7,7 @@ matplotlib.use('Agg')
 from matplotlib import pyplot as plt
 import io
 import base64
+from upsetplot import UpSet
 
 #############Load pandas for data selection options ##########
 def get_unique_sod_combinations():
@@ -17,6 +18,42 @@ def get_unique_sod_combinations():
     }
     return unique_sod_combinations_dict
 ##############################################################
+
+########################upset###################################
+def create_upset(temp_panda):
+    #print(temp_panda)
+    print('-----------------')
+    # print(temp_panda.set_index(
+    #     temp_panda.isnull(),
+    #     drop=False
+    # ))
+    print(temp_panda.isnull())
+    temp_MultiIndex=temp_panda.isnull()
+    print(temp_MultiIndex)
+    temp_panda.index=temp_MultiIndex
+    temp_panda.index=pd.MultiIndex.from_tuples(temp_panda.index)
+    temp_panda.index.set_names(names=temp_panda.columns,inplace=True)
+    temp_panda.to_pickle('delete-this.bin')
+    print(temp_panda)
+    #temp_upset=UpSet(temp_panda,subset_size='count')
+
+    fig = plt.figure(figsize=(5, 5),dpi=200)
+    my_UpSet = UpSet(temp_panda,subset_size='count')
+    #fig = matplotlib.pyplot.gcf()
+    #fig.set_size_inches(18.5, 10.5)
+    UpSet.plot(my_UpSet,fig=fig)
+    #plotly_fig = mpl_to_plotly(fig)
+    #plt.show()
+    buf = io.BytesIO() # in-memory files
+    #plt.scatter(x, y)
+    plt.savefig(buf, format = "png") # save to the above file object
+    plt.close()
+    data = base64.b64encode(buf.getbuffer()).decode("utf8") # encode to html elements
+    plotly_fig="data:image/png;base64,{}".format(data)
+
+    return plotly_fig
+####################################################################
+
 
 
 #############Creates the venn diagram images##################

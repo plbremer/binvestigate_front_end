@@ -50,5 +50,7 @@ def extract_networkx_selections_disease():
     disease_node_dict=dict()
     for temp_node in disease_networkx.nodes:
         disease_node_dict[temp_node]=disease_networkx.nodes[temp_node]['mesh_label']+' - '+temp_node
+        print(temp_node)
+        print(disease_networkx.nodes[temp_node])
 
     return disease_networkx,disease_node_dict

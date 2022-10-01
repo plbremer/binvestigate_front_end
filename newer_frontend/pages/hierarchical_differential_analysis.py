@@ -70,14 +70,14 @@ layout=html.Div(
                         dcc.Dropdown(
                             id='dropdown_from_organ',
                             options=sorted([
-                                {'label':organ_node_dict[temp], 'value':temp.title()} for temp in organ_node_dict
+                                {'label':organ_node_dict[temp], 'value':temp} for temp in organ_node_dict
                             ],key=lambda x:x['label']),
                             multi=False,
                         ), 
                         dcc.Dropdown(
                             id='dropdown_from_disease',
                             options=sorted([
-                                {'label':disease_node_dict[temp], 'value':temp.title()} for temp in disease_node_dict
+                                {'label':disease_node_dict[temp], 'value':temp} for temp in disease_node_dict
                             ],key=lambda x:x['label']),
                             multi=False,
                         ), 
@@ -107,14 +107,14 @@ layout=html.Div(
                         dcc.Dropdown(
                             id='dropdown_to_organ',
                             options=sorted([
-                                {'label':organ_node_dict[temp], 'value':temp.title()} for temp in organ_node_dict
+                                {'label':organ_node_dict[temp], 'value':temp} for temp in organ_node_dict
                             ],key=lambda x:x['label']),
                             multi=False,
                         ), 
                         dcc.Dropdown(
                             id='dropdown_to_disease',
                             options=sorted([
-                                {'label':disease_node_dict[temp], 'value':temp.title()} for temp in disease_node_dict
+                                {'label':disease_node_dict[temp], 'value':temp} for temp in disease_node_dict
                             ],key=lambda x:x['label']),
                             multi=False,
                         ), 
@@ -393,11 +393,11 @@ def update_input_options_from(
     ],key=lambda x:x['label'])
 
     organ_options=sorted([
-        {'label':organ_node_dict[temp], 'value':temp.title()} for temp in organ_node_dict if temp in all_valid_organ_options
+        {'label':organ_node_dict[temp], 'value':temp} for temp in organ_node_dict if temp in all_valid_organ_options
     ],key=lambda x:x['label'])
 
     disease_options=sorted([
-        {'label':disease_node_dict[temp], 'value':temp.title()} for temp in disease_node_dict if temp in all_valid_disease_options
+        {'label':disease_node_dict[temp], 'value':temp} for temp in disease_node_dict if temp in all_valid_disease_options
     ],key=lambda x:x['label'])
 
     return species_options,organ_options,disease_options
@@ -444,6 +444,7 @@ def update_input_options_to(
         ]
 
     if to_disease_value_input!=None:
+        print(to_disease_value_input)
         temp_set=nx.algorithms.dag.descendants(disease_networkx,to_disease_value_input)
         temp_set.add(to_disease_value_input)
         temp_view=temp_view.loc[
@@ -467,11 +468,11 @@ def update_input_options_to(
     ],key=lambda x:x['label'])
 
     organ_options=sorted([
-        {'label':organ_node_dict[temp], 'value':temp.title()} for temp in organ_node_dict if temp in all_valid_organ_options
+        {'label':organ_node_dict[temp], 'value':temp} for temp in organ_node_dict if temp in all_valid_organ_options
     ],key=lambda x:x['label'])
 
     disease_options=sorted([
-        {'label':disease_node_dict[temp], 'value':temp.title()} for temp in disease_node_dict if temp in all_valid_disease_options
+        {'label':disease_node_dict[temp], 'value':temp} for temp in disease_node_dict if temp in all_valid_disease_options
     ],key=lambda x:x['label'])
 
     return species_options,organ_options,disease_options
