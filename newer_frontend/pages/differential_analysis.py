@@ -369,7 +369,7 @@ def query_table(leaf_query_n_clicks,radio_items_bin_type_value,table_metadata_de
     response = requests.post(base_url_api + "/leafresource/", json=leaf_output)
     total_panda = pd.read_json(response.json(), orient="records")
     print(total_panda)
-
+    print('***********************************')
 
     total_panda=total_panda.loc[total_panda['bin_type_dict']==radio_items_bin_type_value]
 
