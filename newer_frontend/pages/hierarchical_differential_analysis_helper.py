@@ -20,7 +20,9 @@ def extract_networkx_selections_species():
         #         species_node_dict[temp_node]='Formal: '+species_networkx.nodes[temp_node]['scientific_name']+' Common: '+species_networkx.nodes[temp_node]['genbank_common_name'][0]
         # else:
         #     species_node_dict[temp_node]='Formal: '+species_networkx.nodes[temp_node]['scientific_name']+' Common: None Available'
-        if 'common_name' in species_networkx.nodes[temp_node].keys():
+        if temp_node=='1':
+            species_node_dict[temp_node]='All Species'
+        elif 'common_name' in species_networkx.nodes[temp_node].keys():
             if isinstance(species_networkx.nodes[temp_node]['common_name'],str):
                 species_node_dict[temp_node]=species_networkx.nodes[temp_node]['scientific_name']+' AKA '+species_networkx.nodes[temp_node]['common_name']
             else:
@@ -32,7 +34,7 @@ def extract_networkx_selections_species():
                 species_node_dict[temp_node]=species_networkx.nodes[temp_node]['scientific_name']+' AKA '+species_networkx.nodes[temp_node]['genbank_common_name'][0]
         else:
             species_node_dict[temp_node]=species_networkx.nodes[temp_node]['scientific_name']
-    #print(species_node_dict)
+    print(species_node_dict)
 
     return species_networkx,species_node_dict
     
@@ -41,7 +43,10 @@ def extract_networkx_selections_organ():
     organ_networkx=nx.read_gpickle('../newer_datasets/organ_networkx.bin')
     organ_node_dict=dict()
     for temp_node in organ_networkx.nodes:
-        organ_node_dict[temp_node]=organ_networkx.nodes[temp_node]['mesh_label']+' - '+temp_node
+        if temp_node=='organ':
+            organ_node_dict[temp_node]='All Organs'
+        else:
+            organ_node_dict[temp_node]=organ_networkx.nodes[temp_node]['mesh_label']+' - '+temp_node
 
     return organ_networkx,organ_node_dict
 
@@ -49,7 +54,10 @@ def extract_networkx_selections_disease():
     disease_networkx=nx.read_gpickle('../newer_datasets/disease_networkx.bin')
     disease_node_dict=dict()
     for temp_node in disease_networkx.nodes:
-        disease_node_dict[temp_node]=disease_networkx.nodes[temp_node]['mesh_label']+' - '+temp_node
+        if temp_node=='disease':
+            disease_node_dict[temp_node]='All diseases - Healthy'
+        else:
+            disease_node_dict[temp_node]=disease_networkx.nodes[temp_node]['mesh_label']+' - '+temp_node
         print(temp_node)
         print(disease_networkx.nodes[temp_node])
 

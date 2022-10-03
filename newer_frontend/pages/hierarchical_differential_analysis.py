@@ -56,7 +56,7 @@ layout=html.Div(
         ),
         dbc.Row(
             children=[
-                dbc.Col(width=3),
+                dbc.Col(width=1),
                 dbc.Col(
                     children=[
                         #html.H2("From Triplet", className='text-center'),
@@ -83,7 +83,7 @@ layout=html.Div(
                         ), 
                         html.Br(),
                     ],
-                    width={'size':2}
+                    width={'size':3}
                 ),
                 # dbc.Col(
                 #     children=[
@@ -120,7 +120,7 @@ layout=html.Div(
                         ), 
                         html.Br(),
                     ],
-                    width={'size':2}
+                    width={'size':3}
                 ),
                 # dbc.Col(
                 #     children=[
