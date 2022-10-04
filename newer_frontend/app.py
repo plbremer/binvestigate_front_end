@@ -12,6 +12,18 @@ local_stylesheet = {
 
 app = dash.Dash(__name__, use_pages=True, external_stylesheets=[local_stylesheet, dbc.themes.BOOTSTRAP])
 
+# using these, we manually created a list of links
+# print([x['path'] for x in dash.page_registry.values()])
+# print([x['name'] for x in dash.page_registry.values()])
+# print('!'*50)
+my_page_link_list=[
+    dbc.NavItem(dbc.NavLink('Home', href='/')),
+    dbc.NavItem(dbc.NavLink('Ontological Differential Analysis', href='/hierarchical-differential-analysis')),
+    dbc.NavItem(dbc.NavLink('Differential Analysis', href='/differential-analysis')),
+    dbc.NavItem(dbc.NavLink('Sunburst', href='/sunburst')),
+    dbc.NavItem(dbc.NavLink('Upset Plot', href='/venn')),
+    dbc.NavItem(dbc.NavLink('Bin Browser', href='/bin-browser')),
+]
 app.layout = html.Div([
         # this stuff appears on every page
         # we should have some logo stuff
@@ -35,7 +47,9 @@ app.layout = html.Div([
                         href="https://fiehnlab.ucdavis.edu/",
                         style={"textDecoration": "none"},
                     )
-                ]+[dbc.NavItem(dbc.NavLink(page['name'], href=page['path'])) for page in dash.page_registry.values()],
+                # the earlier viersion that was alphabetized
+                # ]+[dbc.NavItem(dbc.NavLink(page['name'], href=page['path'])) for page in dash.page_registry.values()],
+                ]+my_page_link_list,
                 
                 style={"height": "50px"}, 
             ), 
