@@ -181,21 +181,21 @@ def query_figure(button_bin_visualize_n_clicks,dropdown_bin_value):
 
     response = requests.post(base_url_api + "/binresource/", json=bin_output)
     total_panda = pd.read_json(response.json(), orient="records")
-    print(total_panda)
+    #print(total_panda)
     
-    print(total_panda.T)
+    #print(total_panda.T)
 
-    print('***********************************')
-    print(total_panda.at[0,'spectrum'])
+    #print('***********************************')
+    #print(total_panda.at[0,'spectrum'])
     mzs=[float(x.split(':')[0]) for x in total_panda.at[0,'spectrum'].split(' ')]
     intensities=[float(x.split(':')[1]) for x in total_panda.at[0,'spectrum'].split(' ')]
     mzs=[0]+mzs
     intensities=[0]+intensities
     #mzs=[4,12]
     #intensities=[3,4]
-    print(mzs)
-    print(intensities)
-    print('-'*50)
+    #print(mzs)
+    #print(intensities)
+    #print('-'*50)
     spectrum_figure=go.Figure(
         go.Bar(
             x=mzs,
@@ -209,7 +209,7 @@ def query_figure(button_bin_visualize_n_clicks,dropdown_bin_value):
     spectrum_figure.update_layout(showlegend=False,font=dict(size=18))
     # total_panda=total_panda.loc[total_panda['bin_type_dict']==radio_items_bin_type_value]
 
-    print(total_panda.columns)
+    #print(total_panda.columns)
     total_panda=total_panda[['english_name','compound_identifier','retentionIndex','kovats','spectrum','quantMass','uniqueMass','splash','purity']]
     total_panda.rename(
         {
@@ -228,7 +228,7 @@ def query_figure(button_bin_visualize_n_clicks,dropdown_bin_value):
     )
     total_panda=total_panda.T
     total_panda.reset_index(inplace=True)
-    print(total_panda)
+    #print(total_panda)
     total_panda.rename(
         {
             'index':'Attribute',
@@ -237,7 +237,7 @@ def query_figure(button_bin_visualize_n_clicks,dropdown_bin_value):
         axis='columns',
         inplace=True
     )
-    print(total_panda)
+    #print(total_panda)
 
     # total_panda=pd.DataFrame.from_dict(
     #     {
@@ -280,7 +280,7 @@ def download_sunburst_datatable(
         #temp_img=venn_helper.make_venn_figure_from_panda(pd.DataFrame.from_records(table_derived_virtual_data).drop(['compound','bin'],axis='columns'))
         #print(pd.DataFrame.from_records(table_data).to_excel)
 
-        print(pd.DataFrame.from_records(table_bin_derived_virual_data).to_excel)
+        #print(pd.DataFrame.from_records(table_bin_derived_virual_data).to_excel)
 
         return [dcc.send_data_frame(
             pd.DataFrame.from_records(table_bin_derived_virual_data).to_excel, "binvestigate_sunburst_datatable.xlsx", sheet_name="sheet_1"

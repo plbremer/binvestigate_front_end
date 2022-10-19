@@ -6,7 +6,7 @@ import requests
 from . import sunburst_helper
 import pandas as pd
 from dash.dependencies import Input, Output, State
-from pprint import pprint
+from p#print import p#print
 from dash_table.Format import Format, Scheme, Group
 import xlsxwriter
 import plotly.express as px
@@ -269,12 +269,12 @@ def query_figure(sunburst_table_derived_virtual_data,radio_items_sod_order_value
 
     #get dataframe from derived data
     temp=pd.DataFrame.from_records(sunburst_table_derived_virtual_data)
-    print(temp)
-    print(temp.columns[-1])
+    ##print(temp)
+    ##print(temp.columns[-1])
     #coerce it into sunburst form with helper function
     temp_in_sunburst_form=sunburst_helper.coerce_full_panda(temp,radio_items_sunburst_value_value,radio_items_sod_order_value.split(','))
-    print('----------------------')
-    print(temp_in_sunburst_form)
+    ##print('----------------------')
+    ##print(temp_in_sunburst_form)
 
     #my_hovertext_values=(temp_in_sunburst_form['id'].str.split('/').str[1])+' - '+(temp_in_sunburst_form['id'].str.split('/').str[2])+' - '+(temp_in_sunburst_form['id'].str.split('/').str[3])+': '+(temp_in_sunburst_form['sum'].astype(str))
     #my_hovertext_values=' - '.join((temp_in_sunburst_form['id'].str.split('/'))[1:])
@@ -317,10 +317,10 @@ def download_sunburst_datatable(
     ):
         """
         """
-        #print(pd.DataFrame.from_records(table_derived_virtual_data).drop(['compound','bin'],axis='columns'))
+        ##print(pd.DataFrame.from_records(table_derived_virtual_data).drop(['compound','bin'],axis='columns'))
 
         #temp_img=venn_helper.make_venn_figure_from_panda(pd.DataFrame.from_records(table_derived_virtual_data).drop(['compound','bin'],axis='columns'))
-        print(pd.DataFrame.from_records(table_data).to_excel)
+        #print(pd.DataFrame.from_records(table_data).to_excel)
 
         return [dcc.send_data_frame(
             pd.DataFrame.from_records(table_data).to_excel, "binvestigate_sunburst_datatable.xlsx", sheet_name="sheet_1"

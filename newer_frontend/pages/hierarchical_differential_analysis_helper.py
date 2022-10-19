@@ -34,7 +34,7 @@ def extract_networkx_selections_species():
                 species_node_dict[temp_node]=species_networkx.nodes[temp_node]['scientific_name']+' AKA '+species_networkx.nodes[temp_node]['genbank_common_name'][0]
         else:
             species_node_dict[temp_node]=species_networkx.nodes[temp_node]['scientific_name']
-    print(species_node_dict)
+    #print(species_node_dict)
 
     return species_networkx,species_node_dict
     
@@ -58,7 +58,7 @@ def extract_networkx_selections_disease():
             disease_node_dict[temp_node]='All diseases - Healthy'
         else:
             disease_node_dict[temp_node]=disease_networkx.nodes[temp_node]['mesh_label']+' - '+temp_node
-        print(temp_node)
-        print(disease_networkx.nodes[temp_node])
+        #print(temp_node)
+        #print(disease_networkx.nodes[temp_node])
 
     return disease_networkx,disease_node_dict

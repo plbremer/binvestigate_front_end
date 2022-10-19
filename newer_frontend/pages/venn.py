@@ -325,7 +325,7 @@ def perform_query_diagram(
 
         #temp_img=venn_helper.make_venn_figure_from_panda(pd.DataFrame.from_records(table_derived_virtual_data).drop(['compound','bin'],axis='columns',inplace=True))
         #temp_img=
-        temp_img=create_upset(pd.DataFrame.from_records(table_derived_virtual_data).drop(['compound','bin'],axis='columns'))
+        temp_img=venn_helper.create_upset(pd.DataFrame.from_records(table_derived_virtual_data).drop(['compound','bin'],axis='columns'))
 
         return [temp_img,temp_img]
 

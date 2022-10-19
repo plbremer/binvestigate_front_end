@@ -8,6 +8,7 @@ from dash.dependencies import Input, Output, State
 import pandas as pd
 from dash_table.Format import Format, Scheme, Group
 import dash_bio as dashbio
+import time
 
 dash.register_page(__name__)
 
@@ -363,18 +364,30 @@ def query_table(leaf_query_n_clicks,radio_items_bin_type_value,table_metadata_de
     #    "triplet_to":dropdown_triplet_selection_to_value
         "metadata_datatable":table_metadata_derived_virtual_data
     }
-    print(table_metadata_derived_virtual_data)
+    #print(table_metadata_derived_virtual_data)
     #leaf_output=table_metadata_derived_virtual_data
 
+    start=time.time()
     response = requests.post(base_url_api + "/leafresource/", json=leaf_output)
+    end=time.time()
+    print(f'the time to get our info from the api is {end-start}')
+    
+    start=time.time()
     total_panda = pd.read_json(response.json(), orient="records")
-    print(total_panda)
-    print('***********************************')
+    end=time.time()
+    print(f'the time to turn our json into a panda is  {end-start}')
+    #print(total_panda)
+    #print('***********************************')
 
+    start=time.time()
     total_panda=total_panda.loc[total_panda['bin_type_dict']==radio_items_bin_type_value]
+    end=time.time()
+    print(f'the time to subset our panda is  {end-start}')
 
+    start=time.time()
     data = total_panda.to_dict(orient='records')
-
+    end=time.time()
+    print(f'the time to turn our panda into json again is  {end-start}')
     return [data]
 
 

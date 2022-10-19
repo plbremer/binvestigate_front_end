@@ -22,19 +22,19 @@ def get_unique_sod_combinations():
 ########################upset###################################
 def create_upset(temp_panda):
     #print(temp_panda)
-    print('-----------------')
+    #print('-----------------')
     # print(temp_panda.set_index(
     #     temp_panda.isnull(),
     #     drop=False
     # ))
-    print(temp_panda.isnull())
+    #print(temp_panda.isnull())
     temp_MultiIndex=temp_panda.isnull()
-    print(temp_MultiIndex)
+    #print(temp_MultiIndex)
     temp_panda.index=temp_MultiIndex
     temp_panda.index=pd.MultiIndex.from_tuples(temp_panda.index)
     temp_panda.index.set_names(names=temp_panda.columns,inplace=True)
     temp_panda.to_pickle('delete-this.bin')
-    print(temp_panda)
+    #print(temp_panda)
     #temp_upset=UpSet(temp_panda,subset_size='count')
 
     fig = plt.figure(figsize=(5, 5),dpi=200)

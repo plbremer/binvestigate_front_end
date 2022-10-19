@@ -21,8 +21,8 @@ disease_networkx,disease_node_dict=hierarchical_differential_analysis_helper.ext
 index_panda=pd.read_pickle('../newer_datasets/index_panda.bin')
 index_panda=index_panda.sort_index()
 index_panda['species']=index_panda['species'].astype(str)
-print(index_panda)
-print(index_panda.dtypes)
+#print(index_panda)
+#print(index_panda.dtypes)
 #############################################
 
 #layout=dbc.Container(
@@ -352,7 +352,7 @@ def update_input_options_from(
     this callback makes it so that if a user specifies a species, an organ, or a disease
     for "from", then the other options are filtered accordingly
     '''
-    print('here')
+    # print('here')
     #determine valid species options
     temp_view=index_panda.copy()
     if from_species_value_input!=None:
@@ -426,7 +426,7 @@ def update_input_options_to(
     this callback makes it so that if a user specifies a species, an organ, or a disease
     for "to", then the other options are filtered accordingly
     '''
-    print('here')
+    #print('here')
     #determine valid species options
     temp_view=index_panda.copy()
     if to_species_value_input!=None:
@@ -444,7 +444,7 @@ def update_input_options_to(
         ]
 
     if to_disease_value_input!=None:
-        print(to_disease_value_input)
+        #print(to_disease_value_input)
         temp_set=nx.algorithms.dag.descendants(disease_networkx,to_disease_value_input)
         temp_set.add(to_disease_value_input)
         temp_view=temp_view.loc[
@@ -524,7 +524,7 @@ def perform_metadata_query(
     response = requests.post(base_url_api + "/hgdametadataresource/", json=metadata_json_output)
     total_panda = pd.read_json(response.json(), orient="records")
 
-    print(total_panda)
+    #print(total_panda)
 
     data = total_panda.to_dict(orient='records')
 
@@ -573,7 +573,7 @@ def query_table(
     #obtain results from api
     response = requests.post(base_url_api + "/hgdaresource/", json=json_output)
     total_panda = pd.read_json(response.json(), orient="records")
-    print(total_panda)
+    #print(total_panda)
 
     total_panda=total_panda.loc[total_panda['bin_type_dict']==radio_items_bin_type_value]
 
@@ -595,8 +595,8 @@ def query_figure(hgda_table_derived_virtual_data,radio_items_fold_type_value):
 
     #get dataframe from derived data
     temp=pd.DataFrame.from_records(hgda_table_derived_virtual_data)
-    print(temp)
-    print(temp.columns[-1])
+    #print(temp)
+    #print(temp.columns[-1])
 
     if radio_items_fold_type_value=='average_welch':
         p='significance_welch'
@@ -641,7 +641,7 @@ def download_hgda_datatable(
         #print(pd.DataFrame.from_records(table_derived_virtual_data).drop(['compound','bin'],axis='columns'))
 
         #temp_img=venn_helper.make_venn_figure_from_panda(pd.DataFrame.from_records(table_derived_virtual_data).drop(['compound','bin'],axis='columns'))
-        print(pd.DataFrame.from_records(table_data).to_excel)
+        #print(pd.DataFrame.from_records(table_data).to_excel)
 
         return [dcc.send_data_frame(
             pd.DataFrame.from_records(table_data).to_excel, "binvestigate_differential_datatable.xlsx", sheet_name="sheet_1"
