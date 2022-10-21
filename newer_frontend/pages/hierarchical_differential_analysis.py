@@ -568,14 +568,15 @@ def query_table(
         # "to_species": to_species_value,
         # "to_organ": to_organ_value,
         # "to_disease": to_disease_value,
-        'metadata_datatable':hgda_table_metadata_derived_virtual_data
+        'metadata_datatable':hgda_table_metadata_derived_virtual_data,
+        "bin_type":radio_items_bin_type_value
     }
     #obtain results from api
     response = requests.post(base_url_api + "/hgdaresource/", json=json_output)
     total_panda = pd.read_json(response.json(), orient="records")
     #print(total_panda)
 
-    total_panda=total_panda.loc[total_panda['bin_type_dict']==radio_items_bin_type_value]
+    # total_panda=total_panda.loc[total_panda['bin_type_dict']==radio_items_bin_type_value]
 
     data = total_panda.to_dict(orient='records')
 
@@ -589,9 +590,25 @@ def query_table(
         Input(component_id='hgda_table', component_property='derived_virtual_data'),
         Input(component_id='radio_items_fold_type',component_property='value')
     ],
+    [
+        State(component_id='dropdown_from_species',component_property='value'),
+        State(component_id='dropdown_from_organ',component_property='value'),
+        State(component_id='dropdown_from_disease',component_property='value'),
+        State(component_id='dropdown_to_species',component_property='value'),
+        State(component_id='dropdown_to_organ',component_property='value'),
+        State(component_id='dropdown_to_disease',component_property='value'),
+
+    ],
     prevent_initial_call=True
 )
-def query_figure(hgda_table_derived_virtual_data,radio_items_fold_type_value):
+def query_figure(hgda_table_derived_virtual_data,radio_items_fold_type_value,
+    dropdown_from_species_value,
+    dropdown_from_organ_value,
+    dropdown_from_disease_value,
+    dropdown_to_species_value,
+    dropdown_to_organ_value,
+    dropdown_to_disease_value,
+):
 
     #get dataframe from derived data
     temp=pd.DataFrame.from_records(hgda_table_derived_virtual_data)
@@ -605,6 +622,8 @@ def query_figure(hgda_table_derived_virtual_data,radio_items_fold_type_value):
         p='significance_mwu'
         effect_size='fold_change_median'
         
+    title_string_from=' - '.join([species_node_dict[dropdown_from_species_value],organ_node_dict[dropdown_from_organ_value].split(' - ')[0],disease_node_dict[dropdown_from_disease_value].split(' - ')[0]])
+    title_string_to=' - '.join([species_node_dict[dropdown_to_species_value],organ_node_dict[dropdown_to_organ_value].split(' - ')[0],disease_node_dict[dropdown_to_disease_value].split(' - ')[0]])
 
     volcano = dashbio.VolcanoPlot(
         dataframe=temp,#bins_panda,
@@ -614,6 +633,8 @@ def query_figure(hgda_table_derived_virtual_data,radio_items_fold_type_value):
         gene=None,
         xlabel='log2 Fold Change',
         genomewideline_value=1e-2,
+        title=title_string_from+'        vs.       '+title_string_to,
+        title_x=0.5
     )
     volcano.update_layout(showlegend=False)
 

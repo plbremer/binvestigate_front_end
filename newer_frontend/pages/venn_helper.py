@@ -11,11 +11,12 @@ from upsetplot import UpSet
 
 #############Load pandas for data selection options ##########
 def get_unique_sod_combinations():
-    unique_sod_combinations_address = "../newer_datasets/unique_sod_combinations.bin"
+    unique_sod_combinations_address = "../newer_datasets/unique_sod_combinations_common_and_database_names.bin"
     unique_sod_combinations_panda = pd.read_pickle(unique_sod_combinations_address)
-    unique_sod_combinations_dict = {
-        temp:temp for temp in unique_sod_combinations_panda.keys().to_list()
-    }
+    # unique_sod_combinations_dict = {
+    #     temp:temp for temp in unique_sod_combinations_panda.keys().to_list()
+    # }
+    unique_sod_combinations_dict=dict(zip(unique_sod_combinations_panda['triplet_with_common_name'],unique_sod_combinations_panda['triplet']))
     return unique_sod_combinations_dict
 ##############################################################
 
@@ -28,13 +29,13 @@ def create_upset(temp_panda):
     #     drop=False
     # ))
     #print(temp_panda.isnull())
-    temp_MultiIndex=temp_panda.isnull()
+    temp_MultiIndex=temp_panda.isnull()==False
     #print(temp_MultiIndex)
     temp_panda.index=temp_MultiIndex
     temp_panda.index=pd.MultiIndex.from_tuples(temp_panda.index)
     temp_panda.index.set_names(names=temp_panda.columns,inplace=True)
-    temp_panda.to_pickle('delete-this.bin')
-    #print(temp_panda)
+    #temp_panda.to_pickle('delete-this.bin')
+    print(temp_panda)
     #temp_upset=UpSet(temp_panda,subset_size='count')
 
     fig = plt.figure(figsize=(5, 5),dpi=200)

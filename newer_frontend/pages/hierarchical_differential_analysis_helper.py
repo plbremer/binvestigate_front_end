@@ -35,6 +35,7 @@ def extract_networkx_selections_species():
         else:
             species_node_dict[temp_node]=species_networkx.nodes[temp_node]['scientific_name']
     #print(species_node_dict)
+        species_node_dict['9606']='Homo sapiens AKA human'
 
     return species_networkx,species_node_dict
     

@@ -49,16 +49,19 @@ layout=html.Div(
         ),
         dbc.Row(
             children=[
-                dbc.Col(width=3),
+                dbc.Col(width=1),
                 dbc.Col(
                     children=[
                         #html.H2("From Triplet", className='text-center'),
                         dcc.Dropdown(
                             id='dropdown_triplet_selection_from',
                             options=sorted([
-                                {'label': temp.title(), 'value':unique_sod_combinations_dict[temp]} for temp in unique_sod_combinations_dict
+                                {'label': temp, 'value':unique_sod_combinations_dict[temp]} for temp in unique_sod_combinations_dict
                             ],key=lambda x:x['label']),
                             multi=True,
+                            #maxHeight=300
+                            #style={ "overflow-y":"scroll", "height": "100px"}
+                            #style = {'max-height': '280px', 'overflow-y': 'auto'}
                             # style={
                             #     'color': '#212121',
                             #     'background-color': '#3EB489',
@@ -66,7 +69,7 @@ layout=html.Div(
                         ),  
                         html.Br(),
                     ],
-                    width={'size':2}
+                    width={'size':3}
                 ),
                 # dbc.Col(
                 #     children=[
@@ -83,7 +86,7 @@ layout=html.Div(
                         dcc.Dropdown(
                             id='dropdown_triplet_selection_to',
                             options=sorted([
-                                {'label': temp.title(), 'value':unique_sod_combinations_dict[temp]} for temp in unique_sod_combinations_dict
+                                {'label': temp, 'value':unique_sod_combinations_dict[temp]} for temp in unique_sod_combinations_dict
                             ],key=lambda x:x['label']),
                             multi=True,
                             # style={
@@ -93,7 +96,7 @@ layout=html.Div(
                         ),  
                         html.Br(),
                     ],
-                    width={'size':2}
+                    width={'size':3}
                 ),
                 # dbc.Col(
                 #     children=[
@@ -308,9 +311,13 @@ layout=html.Div(
         Input(component_id='leaf_table', component_property='derived_virtual_data'),
         Input(component_id='radio_items_fold_type',component_property='value')
     ],
+    [
+        State(component_id='dropdown_triplet_selection_from',component_property='value'),
+        State(component_id='dropdown_triplet_selection_to',component_property='value'),
+    ],
     prevent_initial_call=True
 )
-def query_figure(leaf_table_derived_virtual_data,radio_items_fold_type_value):
+def query_figure(leaf_table_derived_virtual_data,radio_items_fold_type_value,dropdown_triplet_selection_from_value,dropdown_triplet_selection_to_value):
 
     #get dataframe from derived data
     temp=pd.DataFrame.from_records(leaf_table_derived_virtual_data)
@@ -333,6 +340,8 @@ def query_figure(leaf_table_derived_virtual_data,radio_items_fold_type_value):
         gene=None,
         xlabel='log2 Fold Change',
         genomewideline_value=1e-2,
+        title=dropdown_triplet_selection_from_value[0].title()+'             vs.               '+dropdown_triplet_selection_to_value[0].title(),
+        title_x=0.5
     )
     volcano.update_layout(showlegend=False)
 
@@ -362,7 +371,8 @@ def query_table(leaf_query_n_clicks,radio_items_bin_type_value,table_metadata_de
     leaf_output={
     #    "triplet_from":dropdown_triplet_selection_from_value,
     #    "triplet_to":dropdown_triplet_selection_to_value
-        "metadata_datatable":table_metadata_derived_virtual_data
+        "metadata_datatable":table_metadata_derived_virtual_data,
+        "bin_type":radio_items_bin_type_value
     }
     #print(table_metadata_derived_virtual_data)
     #leaf_output=table_metadata_derived_virtual_data
@@ -379,10 +389,10 @@ def query_table(leaf_query_n_clicks,radio_items_bin_type_value,table_metadata_de
     #print(total_panda)
     #print('***********************************')
 
-    start=time.time()
-    total_panda=total_panda.loc[total_panda['bin_type_dict']==radio_items_bin_type_value]
-    end=time.time()
-    print(f'the time to subset our panda is  {end-start}')
+    # start=time.time()
+    # total_panda=total_panda.loc[total_panda['bin_type_dict']==radio_items_bin_type_value]
+    # end=time.time()
+    # print(f'the time to subset our panda is  {end-start}')
 
     start=time.time()
     data = total_panda.to_dict(orient='records')
@@ -446,8 +456,8 @@ def download_leaf_datatable(
     ],
     prevent_initial_call=True
 )
-def query_table(metadata_query_n_clicks,dropdown_triplet_selection_from_value,dropdown_triplet_selection_to_value):
-
+def query_md_table(metadata_query_n_clicks,dropdown_triplet_selection_from_value,dropdown_triplet_selection_to_value):
+    #print(dropdown_triplet_selection_from_value)
     leaf_output={
         "triplet_from":dropdown_triplet_selection_from_value,
         "triplet_to":dropdown_triplet_selection_to_value
@@ -455,7 +465,7 @@ def query_table(metadata_query_n_clicks,dropdown_triplet_selection_from_value,dr
 
     response = requests.post(base_url_api + "/leafmetadataresource/", json=leaf_output)
     total_panda = pd.read_json(response.json(), orient="records")
-    print(total_panda)
+    #print(total_panda)
 
 
     # total_panda=total_panda.loc[total_panda['bin_type_dict']==radio_items_bin_type_value]
