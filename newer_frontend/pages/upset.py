@@ -140,6 +140,24 @@ layout=html.Div(
                             ])
                         ]),
                         html.Br(),
+                        html.H6("Display Knowns or Unknowns", className='text-center'),
+                        html.Div(className="radio-group-container add-margin-top-1", children=[
+                            html.Div(className="radio-group", children=[
+                                dbc.RadioItems(
+                                    id='radio_items_bin_type_upset',
+                                    options=[
+                                        {'label': 'Knowns', 'value': 'known'},
+                                        {'label': 'Unknowns', 'value': 'unknown'},
+                                    ],         
+                                    value='known',
+                                    className="btn-group",
+                                    inputClassName="btn-check",
+                                    labelClassName="btn btn-outline-primary",
+                                    inputCheckedClassName="active",                                
+                                ),
+                            ])
+                        ]),
+                        html.Br(),
                         html.H6("What Percent Observed Constitutes Present", className='text-center'),
                         dcc.Slider(
                             id='slider_percent_present',
@@ -253,7 +271,8 @@ layout=html.Div(
         State(component_id="dropdown_triplet_selection",component_property="value"),
         State(component_id="slider_percent_present", component_property="value"),
         State(component_id="toggle_average_true", component_property="value"),
-        State(component_id="radio_items_filter",component_property="value")
+        State(component_id="radio_items_filter",component_property="value"),
+        State(component_id='radio_items_bin_type_upset',component_property='value')
     ],
     prevent_initial_call=True
 )
@@ -262,7 +281,8 @@ def perform_query_table(
     dropdown_triplet_selection_value,
     slider_percent_present_value,
     toggle_average_true_value,
-    radio_items_filter_value
+    radio_items_filter_value,
+    radio_items_bin_type_upset_value
     ):
 
         ##################volcano query######################
@@ -271,7 +291,8 @@ def perform_query_table(
             "dropdown_triplet_selection_value":dropdown_triplet_selection_value,
             "slider_percent_present_value":slider_percent_present_value,
             "toggle_average_true_value":toggle_average_true_value,
-            "radio_items_filter_value":radio_items_filter_value
+            "radio_items_filter_value":radio_items_filter_value,
+            "radio_items_bin_type_upset_value":radio_items_bin_type_upset_value
         }
 
         pprint(venn_data_table_output)
@@ -279,19 +300,40 @@ def perform_query_table(
         response = requests.post(base_url_api + "/venntableresource/", json=venn_data_table_output)
         total_panda = pd.read_json(response.json(), orient="records")
 
+        total_panda=total_panda.loc[
+            total_panda['bin_type']==radio_items_bin_type_upset_value,
+            :
+        ].copy()
 
+        total_panda.drop(['compound','bin_type','compound_identifier'],axis='columns',inplace=True)
+
+        # start=time.time()
+        # total_panda=total_panda.loc[total_panda['bin_type_dict']==radio_items_bin_type_value]
+        # end=time.time()
+        # print(f'the time to subset our panda is  {end-start}')
+
+        #print(total_panda)
 
         #prepare columns and data for the table
         column_list = [
-            {"name": "bin", "id": "bin"},
-            {"name": "English Name", "id":"compound"}
+            {"name": "Bin", "id": "bin"},
+            {"name": "English Name", "id":"english_name"},
+            {"name": "InChIKey","id":"identifier"}
+
         ]
         sod_column_list=[
             {"name": temp_column, "id": temp_column,"type": "numeric","format": Format(group=Group.yes, precision=2, scheme=Scheme.exponent)} for temp_column in total_panda.columns 
-            if (temp_column != "bin" and temp_column!="compound")
+            if (temp_column != "bin" and temp_column!="english_name" and temp_column!="identifier")
         ]
 
         column_list+=sod_column_list
+        temp_column_names=[element['id'] for element in column_list]
+        total_panda=total_panda.loc[
+            :,
+            temp_column_names
+        ].copy()
+
+        
         data = total_panda.to_dict(orient='records')
 
         return (
@@ -321,11 +363,11 @@ def perform_query_diagram(
     ):
         """
         """
-        print(pd.DataFrame.from_records(table_derived_virtual_data).drop(['compound','bin'],axis='columns'))
+        print(pd.DataFrame.from_records(table_derived_virtual_data).drop(['english_name','identifier','bin'],axis='columns'))
 
         #temp_img=venn_helper.make_venn_figure_from_panda(pd.DataFrame.from_records(table_derived_virtual_data).drop(['compound','bin'],axis='columns',inplace=True))
         #temp_img=
-        temp_img=venn_helper.create_upset(pd.DataFrame.from_records(table_derived_virtual_data).drop(['compound','bin'],axis='columns'))
+        temp_img=venn_helper.create_upset(pd.DataFrame.from_records(table_derived_virtual_data).drop(['english_name','identifier','bin'],axis='columns'))
 
         return [temp_img,temp_img]
 
