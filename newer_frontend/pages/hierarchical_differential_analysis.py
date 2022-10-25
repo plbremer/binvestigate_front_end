@@ -632,7 +632,7 @@ def query_figure(hgda_table_derived_virtual_data,radio_items_fold_type_value,
         effect_size=effect_size,
         gene=None,
         xlabel='log2 Fold Change',
-        genomewideline_value=1e-2,
+        genomewideline_value=2,
         title=title_string_from+'        vs.       '+title_string_to,
         title_x=0.5
     )

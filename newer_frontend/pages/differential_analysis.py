@@ -339,7 +339,7 @@ def query_figure(leaf_table_derived_virtual_data,radio_items_fold_type_value,dro
         effect_size=effect_size,
         gene=None,
         xlabel='log2 Fold Change',
-        genomewideline_value=1e-2,
+        genomewideline_value=2,
         title=dropdown_triplet_selection_from_value[0].title()+'             vs.               '+dropdown_triplet_selection_to_value[0].title(),
         title_x=0.5
     )
