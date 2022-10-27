@@ -69,7 +69,7 @@ layout=html.Div(
                         ),  
                         html.Br(),
                     ],
-                    width={'size':3}
+                    width={'size':4}
                 ),
                 # dbc.Col(
                 #     children=[
@@ -96,7 +96,7 @@ layout=html.Div(
                         ),  
                         html.Br(),
                     ],
-                    width={'size':3}
+                    width={'size':4}
                 ),
                 # dbc.Col(
                 #     children=[
@@ -231,75 +231,119 @@ layout=html.Div(
             children=[
                 dbc.Col(width=2),
                 dbc.Col(
-                    children=[
-                        #html.H2("Venn Comparator", className='text-center'),
-                        dcc.Graph(
-                            id='leaf_figure'
-                        )
-                    ],
-                    width={'size':8}
-                ),
-                dbc.Col(width=2),
-            ],
-            #justify='center'
-        ),
-        html.Br(),
-        html.Br(),
-        dbc.Row(
-            children=[
-                dbc.Col(width=2),
-                dbc.Col(
-                    children=[
-                        #html.H2("Result Datatable", className='text-center'),
-                        html.Div(
-                            dbc.Button(
-                                'Download Datatable as .xlsx',
-                                id='button_download',
+                    dbc.Spinner(
+                        children=[
+                            #html.H2("Venn Comparator", className='text-center'),
+                            dcc.Graph(
+                                id='leaf_figure'
                             ),
-                            className="d-grid gap-2 col-3 mx-auto",
-                        ),
-                        dcc.Download(id="download_leaf_datatable"),
-                        dash_table.DataTable(
-                            id='leaf_table',
-                            columns=[
-                                {"name": "English Name", "id": "english_name"},
-                                {"name": "Identifier", "id": "identifier"},
-                                {"name": "Fold Average", "id": "fold_change_average","type": "numeric","format": Format(group=Group.yes, precision=2, scheme=Scheme.exponent)},
-                                {"name": "Significance Welch", "id": "significance_welch","type": "numeric","format": Format(group=Group.yes, precision=2, scheme=Scheme.exponent)},
-                                {"name": "Fold Median", "id": "fold_change_median","type": "numeric","format": Format(group=Group.yes, precision=2, scheme=Scheme.exponent)},
-                                {"name": "Significance MWU", "id": "significance_mwu","type": "numeric","format": Format(group=Group.yes, precision=2, scheme=Scheme.exponent)}
-                            ],
-                            data=[],
-                            page_current=0,
-                            page_size=50,
-                            #page_action='custom',
-                            page_action='native',
-                            #sort_action='custom',
-                            sort_action='native',
-                            sort_mode='multi',
-                            #sort_by=[],
-                            #filter_action='custom',
-                            filter_action='native',
-                            #filter_query='',
-                            style_header={
-                                'backgroundColor': 'rgb(30, 30, 30)',
-                                'color': 'white'
-                            },
-                            style_data={
-                                'backgroundColor': 'rgb(50, 50, 50)',
-                                'color': 'white'
-                            },
-                            style_cell={
-                                'font-family':'sans-serif'
-                            }
-                        )
-                    ],
+                            html.Div(
+                                dbc.Button(
+                                    'Download Datatable as .xlsx',
+                                    id='button_download',
+                                ),
+                                className="d-grid gap-2 col-3 mx-auto",
+                            ),
+                            dcc.Download(id="download_leaf_datatable"),
+                            dash_table.DataTable(
+                                id='leaf_table',
+                                columns=[
+                                    {"name": "English Name", "id": "english_name"},
+                                    {"name": "Identifier", "id": "identifier"},
+                                    {"name": "Fold Average", "id": "fold_change_average","type": "numeric","format": Format(group=Group.yes, precision=2, scheme=Scheme.exponent)},
+                                    {"name": "Significance Welch", "id": "significance_welch","type": "numeric","format": Format(group=Group.yes, precision=2, scheme=Scheme.exponent)},
+                                    {"name": "Fold Median", "id": "fold_change_median","type": "numeric","format": Format(group=Group.yes, precision=2, scheme=Scheme.exponent)},
+                                    {"name": "Significance MWU", "id": "significance_mwu","type": "numeric","format": Format(group=Group.yes, precision=2, scheme=Scheme.exponent)}
+                                ],
+                                data=[],
+                                page_current=0,
+                                page_size=50,
+                                #page_action='custom',
+                                page_action='native',
+                                #sort_action='custom',
+                                sort_action='native',
+                                sort_mode='multi',
+                                #sort_by=[],
+                                #filter_action='custom',
+                                filter_action='native',
+                                #filter_query='',
+                                style_header={
+                                    'backgroundColor': 'rgb(30, 30, 30)',
+                                    'color': 'white'
+                                },
+                                style_data={
+                                    'backgroundColor': 'rgb(50, 50, 50)',
+                                    'color': 'white'
+                                },
+                                style_cell={
+                                    'font-family':'sans-serif'
+                                }
+                            )
+                        ],
+                    ),
                     width={'size':8}
                 ),
                 dbc.Col(width=2),
             ],
             #justify='center'
         ),
+        html.Br(),
+        html.Br(),
+        # dbc.Row(
+        #     children=[
+        #         dbc.Col(width=2),
+        #         dbc.Col(
+        #             children=[
+        #                 #html.H2("Result Datatable", className='text-center'),
+        #                 html.Div(
+        #                     dbc.Button(
+        #                         'Download Datatable as .xlsx',
+        #                         id='button_download',
+        #                     ),
+        #                     className="d-grid gap-2 col-3 mx-auto",
+        #                 ),
+        #                 dcc.Download(id="download_leaf_datatable"),
+        #                 dash_table.DataTable(
+        #                     id='leaf_table',
+        #                     columns=[
+        #                         {"name": "English Name", "id": "english_name"},
+        #                         {"name": "Identifier", "id": "identifier"},
+        #                         {"name": "Fold Average", "id": "fold_change_average","type": "numeric","format": Format(group=Group.yes, precision=2, scheme=Scheme.exponent)},
+        #                         {"name": "Significance Welch", "id": "significance_welch","type": "numeric","format": Format(group=Group.yes, precision=2, scheme=Scheme.exponent)},
+        #                         {"name": "Fold Median", "id": "fold_change_median","type": "numeric","format": Format(group=Group.yes, precision=2, scheme=Scheme.exponent)},
+        #                         {"name": "Significance MWU", "id": "significance_mwu","type": "numeric","format": Format(group=Group.yes, precision=2, scheme=Scheme.exponent)}
+        #                     ],
+        #                     data=[],
+        #                     page_current=0,
+        #                     page_size=50,
+        #                     #page_action='custom',
+        #                     page_action='native',
+        #                     #sort_action='custom',
+        #                     sort_action='native',
+        #                     sort_mode='multi',
+        #                     #sort_by=[],
+        #                     #filter_action='custom',
+        #                     filter_action='native',
+        #                     #filter_query='',
+        #                     style_header={
+        #                         'backgroundColor': 'rgb(30, 30, 30)',
+        #                         'color': 'white'
+        #                     },
+        #                     style_data={
+        #                         'backgroundColor': 'rgb(50, 50, 50)',
+        #                         'color': 'white'
+        #                     },
+        #                     style_cell={
+        #                         'font-family':'sans-serif'
+        #                     }
+        #                 )
+        #             ],
+        #             width={'size':8}
+        #         ),
+        #         dbc.Col(width=2),
+        #     ],
+        #     #justify='center'
+        # ),
     ]
 )
 

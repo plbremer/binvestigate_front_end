@@ -134,15 +134,60 @@ layout=html.Div(
                 #children=[
                 #html.H2("Sunburst Diagram", className='text-center'),
                 dbc.Col(
-                    children=[
-                        html.Div(className="sunburst-container",
-                            children=[
-                                dcc.Graph(
-                                    id='sunburst_figure'
-                                )
-                            ]
-                        ),
-                    ],
+                    dbc.Spinner(
+                        children=[
+                            html.Div(className="sunburst-container",
+                                children=[
+                                    dcc.Graph(
+                                        id='sunburst_figure'
+                                    )
+                                ]
+                            ),
+                            html.H2("Result Datatable", className='text-center'),
+                            html.Div(
+                                dbc.Button(
+                                    'Download Datatable as .xlsx',
+                                    id='button_download',
+                                ),
+                                className="d-grid gap-2 col-3 mx-auto",
+                            ),
+                            dcc.Download(id="download_sunburst_datatable"),
+                            dash_table.DataTable(
+                                id='sunburst_table',
+                                columns=[
+                                    #the id were copied and pasted from the previous version...
+                                    #surely an error.... but makes no difference?
+                                    {"name": "Species", "id": "bin_id"},
+                                    {"name": "Organ", "id": "compound_name"},
+                                    {"name": "Disease", "id": "group_1"},
+                                    {"name": "Metric", "id": "metric"}
+                                ],
+                                data=[],
+                                page_current=0,
+                                page_size=50,
+                                #page_action='custom',
+                                page_action='native',
+                                #sort_action='custom',
+                                sort_action='native',
+                                sort_mode='multi',
+                                #sort_by=[],
+                                #filter_action='custom',
+                                filter_action='native',
+                                #filter_query='',
+                                style_header={
+                                    'backgroundColor': 'rgb(30, 30, 30)',
+                                    'color': 'white'
+                                },
+                                style_data={
+                                    'backgroundColor': 'rgb(50, 50, 50)',
+                                    'color': 'white'
+                                },
+                                style_cell={
+                                    'font-family':'sans-serif'
+                                }
+                            )
+                        ],
+                    ),
                     width=8
                 ),
                 dbc.Col(width=2)
@@ -155,62 +200,60 @@ layout=html.Div(
         html.Br(),
         html.Br(),
 
-        dbc.Row(
-            children=[
-                dbc.Col(width=2),
-                dbc.Col(
-                    children=[
-                        html.H2("Result Datatable", className='text-center'),
-                        html.Div(
-                            dbc.Button(
-                                'Download Datatable as .xlsx',
-                                id='button_download',
-                            ),
-                            className="d-grid gap-2 col-3 mx-auto",
-                        ),
-                        dcc.Download(id="download_sunburst_datatable"),
-                        dash_table.DataTable(
-                            id='sunburst_table',
-                            columns=[
-                                #the id were copied and pasted from the previous version...
-                                #surely an error.... but makes no difference?
-                                {"name": "Species", "id": "bin_id"},
-                                {"name": "Organ", "id": "compound_name"},
-                                {"name": "Disease", "id": "group_1"},
-                                {"name": "Metric", "id": "metric"}
-                            ],
-                            data=[],
-                            page_current=0,
-                            page_size=50,
-                            #page_action='custom',
-                            page_action='native',
-                            #sort_action='custom',
-                            sort_action='native',
-                            sort_mode='multi',
-                            #sort_by=[],
-                            #filter_action='custom',
-                            filter_action='native',
-                            #filter_query='',
-                            style_header={
-                                'backgroundColor': 'rgb(30, 30, 30)',
-                                'color': 'white'
-                            },
-                            style_data={
-                                'backgroundColor': 'rgb(50, 50, 50)',
-                                'color': 'white'
-                            },
-                            style_cell={
-                                'font-family':'sans-serif'
-                            }
-                        )
-                    ],
-                    width=8
-                ),
-                dbc.Col(width=2),
-            ],
-            
-            #justify='center'
-        ),
+        # dbc.Row(
+        #     children=[
+        #         dbc.Col(width=2),
+        #         dbc.Col(
+        #             children=[
+        #                 html.H2("Result Datatable", className='text-center'),
+        #                 html.Div(
+        #                     dbc.Button(
+        #                         'Download Datatable as .xlsx',
+        #                         id='button_download',
+        #                     ),
+        #                     className="d-grid gap-2 col-3 mx-auto",
+        #                 ),
+        #                 dcc.Download(id="download_sunburst_datatable"),
+        #                 dash_table.DataTable(
+        #                     id='sunburst_table',
+        #                     columns=[
+        #                         #the id were copied and pasted from the previous version...
+        #                         #surely an error.... but makes no difference?
+        #                         {"name": "Species", "id": "bin_id"},
+        #                         {"name": "Organ", "id": "compound_name"},
+        #                         {"name": "Disease", "id": "group_1"},
+        #                         {"name": "Metric", "id": "metric"}
+        #                     ],
+        #                     data=[],
+        #                     page_current=0,
+        #                     page_size=50,
+        #                     #page_action='custom',
+        #                     page_action='native',
+        #                     #sort_action='custom',
+        #                     sort_action='native',
+        #                     sort_mode='multi',
+        #                     #sort_by=[],
+        #                     #filter_action='custom',
+        #                     filter_action='native',
+        #                     #filter_query='',
+        #                     style_header={
+        #                         'backgroundColor': 'rgb(30, 30, 30)',
+        #                         'color': 'white'
+        #                     },
+        #                     style_data={
+        #                         'backgroundColor': 'rgb(50, 50, 50)',
+        #                         'color': 'white'
+        #                     },
+        #                     style_cell={
+        #                         'font-family':'sans-serif'
+        #                     }
+        #                 )
+        #             ],
+        #             width=8
+        #         ),
+        #         dbc.Col(width=2),
+        #     ],
+        # ),
     ]
 )
 

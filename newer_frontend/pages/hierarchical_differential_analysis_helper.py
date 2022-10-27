@@ -56,7 +56,7 @@ def extract_networkx_selections_disease():
     disease_node_dict=dict()
     for temp_node in disease_networkx.nodes:
         if temp_node=='disease':
-            disease_node_dict[temp_node]='All diseases - Healthy'
+            disease_node_dict[temp_node]='All diseases'
         else:
             disease_node_dict[temp_node]=disease_networkx.nodes[temp_node]['mesh_label']+' - '+temp_node
         #print(temp_node)

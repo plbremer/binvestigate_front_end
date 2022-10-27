@@ -55,51 +55,51 @@ layout=html.Div(
                         ),  
                         html.Br(),
                     ],
-                    width={'size':2}
+                    width={'size':4}
                 ),
-                dbc.Col(
-                    children=[
-                        #html.H2("Venn Diagram", className='text-center'),
-                        dbc.Row(html.H2("Upset Plot"),style={'textAlign': 'center'}),
-                        html.Div(className="venn-thumbnail-container",
-                            children=[
-                                html.Img(
-                                    id='Img_venn',
-                                    #src=plotly_fig,
-                                    height=200,
-                                    width=200
-                                ),
-                            ]
-                        ),
-                        dbc.Modal(
-                            children=[
-                                #dbc.ModalHeader
-                                dbc.ModalHeader(dbc.ModalTitle("Right Click + Copy Image Address for High-Res"),close_button=True),
-                                dbc.ModalBody(
-                                #    html.Div(className="modal-body-container",children=[
-                                    html.Img(
-                                        id='modal_Img_venn',
-                                        #src=plotly_fig,
-                                        #height=400,
-                                        #width=800,
-                                        style={"height": "40vh"}
-                                    )
-                                #        ]
-                                #    )
-                                ),
-                            ],
-                            className="modal-overarching",
-                            #fullscreen=True,
-                            id='modal',
-                            centered=True,
-                            size='xl',
-                            is_open=False,
-                            style={"max-width": "none", "width": "90%"}
-                        ),
-                        html.Br(),
-                    ],
-                    #width={'size':3}
-                ),
+                # dbc.Col(
+                #     children=[
+                #         #html.H2("Venn Diagram", className='text-center'),
+                #         dbc.Row(html.H2("Upset Plot"),style={'textAlign': 'center'}),
+                #         html.Div(className="venn-thumbnail-container",
+                #             children=[
+                #                 html.Img(
+                #                     id='Img_venn',
+                #                     #src=plotly_fig,
+                #                     height=200,
+                #                     width=200
+                #                 ),
+                #             ]
+                #         ),
+                #         dbc.Modal(
+                #             children=[
+                #                 #dbc.ModalHeader
+                #                 dbc.ModalHeader(dbc.ModalTitle("Right Click + Copy Image Address for High-Res"),close_button=True),
+                #                 dbc.ModalBody(
+                #                 #    html.Div(className="modal-body-container",children=[
+                #                     html.Img(
+                #                         id='modal_Img_venn',
+                #                         #src=plotly_fig,
+                #                         #height=400,
+                #                         #width=800,
+                #                         style={"height": "40vh"}
+                #                     )
+                #                 #        ]
+                #                 #    )
+                #                 ),
+                #             ],
+                #             className="modal-overarching",
+                #             #fullscreen=True,
+                #             id='modal',
+                #             centered=True,
+                #             size='xl',
+                #             is_open=False,
+                #             style={"max-width": "none", "width": "90%"}
+                #         ),
+                #         html.Br(),
+                #     ],
+                #     #width={'size':3}
+                # ),
                 dbc.Col(
                     children=[
                         html.H2("Options", className='text-center'),
@@ -165,7 +165,7 @@ layout=html.Div(
                             min=0,
                             max=100,
                             step=1,
-                            value=50,   
+                            value=80,   
                             marks=None,
                             tooltip={"placement": "bottom", "always_visible": True}       
                         ),
@@ -206,50 +206,98 @@ layout=html.Div(
         dbc.Row(
             children=[
                 dbc.Col(width=2),
-                dbc.Col(
-                    children=[
-                        html.H2("Result Datatable", className='text-center'),
-                        html.Div(
-                            dbc.Button(
-                                'Download Datatable as .xlsx',
-                                id='button_download',
+                dbc.Spinner(
+                    dbc.Col(
+                        children=[
+                            #html.H2("Venn Diagram", className='text-center'),
+                            dbc.Row(html.H2("Upset Plot"),style={'textAlign': 'center'}),
+                            dbc.Row(
+                                html.Div(className="venn-thumbnail-container",
+                                    children=[
+                                        html.Img(
+                                            id='Img_venn',
+                                            #src=plotly_fig,
+                                            height=200,
+                                            width=200
+                                        ),
+                                    ]
+                                ),
+                                style={'textAlign': 'center'}
                             ),
-                            className="d-grid gap-2 col-3 mx-auto",
-                        ),
-                        dcc.Download(id="download_datatable"),
-                        dash_table.DataTable(
-                            id='table',
-                            columns=[
-                                {"name": "Bin ID", "id": "bin_id"},
-                                {"name": "Compound Name", "id": "compound_name"},
-                                {"name": "Group 1", "id": "group_1"},
-                            ],
-                            data=[],
-                            page_current=0,
-                            page_size=50,
-                            #page_action='custom',
-                            page_action='native',
-                            #sort_action='custom',
-                            sort_action='native',
-                            sort_mode='multi',
-                            #sort_by=[],
-                            #filter_action='custom',
-                            filter_action='native',
-                            #filter_query='',
-                            style_header={
-                                'backgroundColor': 'rgb(30, 30, 30)',
-                                'color': 'white'
-                            },
-                            style_data={
-                                'backgroundColor': 'rgb(50, 50, 50)',
-                                'color': 'white'
-                            },
-                            style_cell={
-                                'font-family':'sans-serif'
-                            }
-                        )
-                    ],
-                    #width={'size':6}
+
+                            dbc.Modal(
+                                children=[
+                                    #dbc.ModalHeader
+                                    dbc.ModalHeader(dbc.ModalTitle("Right Click + Copy Image Address for High-Res"),close_button=True),
+                                    dbc.ModalBody(
+                                    #    html.Div(className="modal-body-container",children=[
+                                        html.Img(
+                                            id='modal_Img_venn',
+                                            #src=plotly_fig,
+                                            #height=400,
+                                            #width=800,
+                                            style={"height": "40vh"}
+                                        )
+                                    #        ]
+                                    #    )
+                                    ),
+                                ],
+                                className="modal-overarching",
+                                #fullscreen=True,
+                                id='modal',
+                                centered=True,
+                                size='xl',
+                                is_open=False,
+                                style={"max-width": "none", "width": "90%"}
+                            ),
+                            html.Br(),
+                            html.Br(),
+                            html.Br(),
+                            html.Br(),
+                            html.Br(),
+                            html.H2("Result Datatable", className='text-center'),
+                            html.Div(
+                                dbc.Button(
+                                    'Download Datatable as .xlsx',
+                                    id='button_download',
+                                ),
+                                className="d-grid gap-2 col-3 mx-auto",
+                            ),
+                            dcc.Download(id="download_datatable"),
+                            dash_table.DataTable(
+                                id='table',
+                                columns=[
+                                    {"name": "Bin ID", "id": "bin_id"},
+                                    {"name": "Compound Name", "id": "compound_name"},
+                                    {"name": "Group 1", "id": "group_1"},
+                                ],
+                                data=[],
+                                page_current=0,
+                                page_size=50,
+                                #page_action='custom',
+                                page_action='native',
+                                #sort_action='custom',
+                                sort_action='native',
+                                sort_mode='multi',
+                                #sort_by=[],
+                                #filter_action='custom',
+                                filter_action='native',
+                                #filter_query='',
+                                style_header={
+                                    'backgroundColor': 'rgb(30, 30, 30)',
+                                    'color': 'white'
+                                },
+                                style_data={
+                                    'backgroundColor': 'rgb(50, 50, 50)',
+                                    'color': 'white'
+                                },
+                                style_cell={
+                                    'font-family':'sans-serif'
+                                }
+                            )
+                        ],
+                        #width={'size':6}
+                    ),
                 ),
                 dbc.Col(width=2),
             ],
