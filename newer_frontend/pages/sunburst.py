@@ -16,7 +16,9 @@ base_url_api = "http://127.0.0.1:4999/"
 
 dash.register_page(__name__)
 
-compound_dropdown_options=sunburst_helper.create_compound_selection_labels("../newer_datasets/compounds_networkx.bin")
+#compound_dropdown_options=sunburst_helper.create_compound_selection_labels("../newer_datasets/compounds_#networkx.bin",'../newer_datasets/compound_curations.tsv')
+#compound_final_curations=sunburst_helper.create_compound_selection_labels("../newer_datasets/compounds_networkx.bin")
+compound_dropdown_options=sunburst_helper.create_compound_selection_labels("../newer_datasets/compound_list_for_sun_and_bin.bin")
 
 #layout=dbc.Container(
 layout=html.Div(
@@ -42,7 +44,10 @@ layout=html.Div(
                         html.H2("Compounds", className='text-center'),
                         dcc.Dropdown(
                             id='compound_selection',
-                            options=compound_dropdown_options,
+                            options=sorted(
+                                compound_dropdown_options,
+                                key=lambda x:x['label']
+                            ),
                             multi=False,
                         ),
                         html.Br(),

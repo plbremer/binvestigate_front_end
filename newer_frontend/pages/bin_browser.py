@@ -46,9 +46,10 @@ layout=html.Div(
                             # options=sorted([
                             #     {'label': temp.title(), 'value':unique_sod_combinations_dict[temp]} for temp in unique_sod_combinations_dict
                             # ],key=lambda x:x['label']),
-                            options=[
-                                {'label': x, 'value':bins_dict[x]} for x in bins_dict
-                            ],
+                            options=sorted(
+                                bins_dict,
+                                key=lambda x:x['label']
+                            ),
                             multi=False,
                             # style={
                             #     'color': '#212121',

@@ -165,7 +165,7 @@ layout=html.Div(
                             min=0,
                             max=100,
                             step=1,
-                            value=80,   
+                            value=50,   
                             marks=None,
                             tooltip={"placement": "bottom", "always_visible": True}       
                         ),

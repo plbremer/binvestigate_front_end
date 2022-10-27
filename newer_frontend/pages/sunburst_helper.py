@@ -4,23 +4,50 @@ import pandas as pd
 
 
 ######### HELPER FUNCTIONS ################
-def create_compound_selection_labels(nx_address):
-    compound_dropdown_options=list()
-    compound_networkx=nx.read_gpickle(nx_address)
-    
-    for temp_node in compound_networkx.nodes:
+def create_compound_selection_labels(final_curations_address):
+    # compound_dropdown_options=list()
+    # compound_networkx=nx.read_gpickle(nx_address)
 
-        if compound_networkx.nodes[temp_node]['type_of_node']=='from_binvestigate':
-            if bool(re.search('^([\s\d]+)$',compound_networkx.nodes[temp_node]['common_name'])):
-                compound_dropdown_options.append(
-                    {'label': 'Unknown: Bin ID '+compound_networkx.nodes[temp_node]['common_name'], 'value': temp_node}
-                )
-            else:
-                compound_dropdown_options.append(
-                    {'label': 'Known: '+compound_networkx.nodes[temp_node]['common_name'], 'value': temp_node}
-                )
+    # final_curations=pd.read_csv(final_curations_address,sep='\t')
+    # final_curations=final_curations.loc[
+    #     final_curations['english_name_curated']!='DELETE'
+    # ]
+    # final_curation_valid_bin_set=set(final_curations.integer_representation.unique())
+    # final_curation_map=dict(zip(
+    #     final_curations['integer_representation'],final_curations['english_name_curated']
+    # ))
+    # print(final_curation_valid_bin_set)
+    # print(compound_networkx.nodes)
+    
+    # for temp_node in compound_networkx.nodes:
+
+    #     if compound_networkx.nodes[temp_node]['type_of_node']=='from_binvestigate':
+    #         #i believe that this is checcking for an integer name
+    #         if bool(re.search('^([\s\d]+)$',compound_networkx.nodes[temp_node]['common_name'])):
+    #             compound_dropdown_options.append(
+    #                 {'label': 'Unknown: Bin ID '+compound_networkx.nodes[temp_node]['common_name'], 'value': temp_node}
+    #             )
+    #         # else:
+    #         #     #print(temp_node)
+    #         #     if int(temp_node) in final_curation_valid_bin_set:
+    #         #         compound_dropdown_options.append(
+    #         #             {
+    #         #                 'label': 'Known: '+final_curation_map[temp_node],#compound_networkx.nodes[temp_node]['common_name'], 
+    #         #                 'value': temp_node
+    #         #             }
+    #         #         )
            
-    return compound_dropdown_options
+    # return compound_dropdown_options
+    final_curations=pd.read_pickle(final_curations_address)
+    final_curations.loc[final_curations.bin_type=='known','english_name']='Known: '+final_curations.loc[final_curations.bin_type=='known']['english_name'].astype(str)
+    final_curations.drop(['bin_type','identifier'],axis='columns',inplace=True)
+    final_curations.rename(columns={'compound_identifier':'value','english_name':'label'},inplace=True)
+    
+    #compound_dropdown_options=
+    return final_curations.to_dict(
+        'records'
+    )
+
 
 def coerce_full_panda(df,value_column,column_list):
     #df=df.round({value_column:6})
