@@ -165,7 +165,7 @@ layout=html.Div(
                             min=0,
                             max=100,
                             step=1,
-                            value=80,   
+                            value=50,   
                             marks=None,
                             tooltip={"placement": "bottom", "always_visible": True}       
                         ),
@@ -206,8 +206,9 @@ layout=html.Div(
         dbc.Row(
             children=[
                 dbc.Col(width=2),
-                dbc.Spinner(
-                    dbc.Col(
+                
+                dbc.Col(
+                    dbc.Spinner(
                         children=[
                             #html.H2("Venn Diagram", className='text-center'),
                             dbc.Row(html.H2("Upset Plot"),style={'textAlign': 'center'}),
@@ -296,8 +297,8 @@ layout=html.Div(
                                 }
                             )
                         ],
-                        #width={'size':6}
-                    ),
+                    #width={'size':6}
+                    )
                 ),
                 dbc.Col(width=2),
             ],

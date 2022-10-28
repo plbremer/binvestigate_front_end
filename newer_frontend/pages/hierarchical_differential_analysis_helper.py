@@ -54,9 +54,13 @@ def extract_networkx_selections_organ():
 def extract_networkx_selections_disease():
     disease_networkx=nx.read_gpickle('../newer_datasets/disease_networkx.bin')
     disease_node_dict=dict()
+    # temp_mapping={'No':'No Disease'}
+    # disease_networkx=nx.relabel_nodes(disease_networkx,temp_mapping)
     for temp_node in disease_networkx.nodes:
         if temp_node=='disease':
             disease_node_dict[temp_node]='All diseases'
+        # elif temp_node=='No Disease':
+        #     disease_node_dict[temp_node]='No Disease'
         else:
             disease_node_dict[temp_node]=disease_networkx.nodes[temp_node]['mesh_label']+' - '+temp_node
         #print(temp_node)
