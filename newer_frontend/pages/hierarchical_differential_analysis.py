@@ -5,7 +5,7 @@ import dash_bootstrap_components as dbc
 import requests
 from dash.dependencies import Input, Output, State
 import pandas as pd
-from dash_table.Format import Format, Scheme, Group
+from dash.dash_table.Format import Format, Scheme, Group
 import dash_bio as dashbio
 from . import hierarchical_differential_analysis_helper
 import networkx as nx
@@ -68,6 +68,7 @@ layout=html.Div(
                                 {'label':species_node_dict[temp], 'value':temp.title()} for temp in species_node_dict
                             ],key=lambda x:x['label']),
                             multi=False,
+                            placeholder='Select species ontology node'
                         ),  
                         dcc.Dropdown(
                             id='dropdown_from_organ',
@@ -75,6 +76,7 @@ layout=html.Div(
                                 {'label':organ_node_dict[temp], 'value':temp} for temp in organ_node_dict
                             ],key=lambda x:x['label']),
                             multi=False,
+                            placeholder='Select organ ontology node'
                         ), 
                         dcc.Dropdown(
                             id='dropdown_from_disease',
@@ -82,6 +84,7 @@ layout=html.Div(
                                 {'label':disease_node_dict[temp], 'value':temp} for temp in disease_node_dict
                             ],key=lambda x:x['label']),
                             multi=False,
+                            placeholder='Select disease ontology node'
                         ), 
                         html.Br(),
                     ],
@@ -105,6 +108,7 @@ layout=html.Div(
                                 {'label':species_node_dict[temp], 'value':temp.title()} for temp in species_node_dict
                             ],key=lambda x:x['label']),
                             multi=False,
+                            placeholder='Select species ontology node'
                         ),  
                         dcc.Dropdown(
                             id='dropdown_to_organ',
@@ -112,6 +116,7 @@ layout=html.Div(
                                 {'label':organ_node_dict[temp], 'value':temp} for temp in organ_node_dict
                             ],key=lambda x:x['label']),
                             multi=False,
+                            placeholder='Select organ ontology node'
                         ), 
                         dcc.Dropdown(
                             id='dropdown_to_disease',
@@ -119,6 +124,7 @@ layout=html.Div(
                                 {'label':disease_node_dict[temp], 'value':temp} for temp in disease_node_dict
                             ],key=lambda x:x['label']),
                             multi=False,
+                            placeholder='Select disease ontology node'
                         ), 
                         html.Br(),
                     ],
@@ -134,26 +140,26 @@ layout=html.Div(
                 dbc.Col(
                     children=[
                         #html.H2("Options", className='text-center'),
-                        html.H6("Choose Statistical Approach for Volcano", className='text-center'),
-                        html.Div(className="radio-group-container add-margin-top-1", children=[
-                            html.Div(className="radio-group", children=[
-                                dbc.RadioItems(
-                                    id='radio_items_fold_type',
-                                    options=[
-                                        {'label': 'Average/Welch', 'value': 'average_welch'},
-                                        {'label': 'Median/MWU', 'value': 'median_mwu'},
-                                        #{'label': 'Unique', 'value': 'unique'},
-                                    ],         
-                                    value='average_welch',
-                                    className="btn-group",
-                                    inputClassName="btn-check",
-                                    labelClassName="btn btn-outline-primary",
-                                    inputCheckedClassName="active",                                
-                                ),
-                            ])
-                        ]),
-                        html.Br(),
-                        html.H6("Choose Compound Result Type", className='text-center'),
+                        # html.H6("Choose Statistical Approach for Volcano", className='text-center'),
+                        # html.Div(className="radio-group-container add-margin-top-1", children=[
+                        #     html.Div(className="radio-group", children=[
+                        #         dbc.RadioItems(
+                        #             id='radio_items_fold_type',
+                        #             options=[
+                        #                 {'label': 'Average/Welch', 'value': 'average_welch'},
+                        #                 {'label': 'Median/MWU', 'value': 'median_mwu'},
+                        #                 #{'label': 'Unique', 'value': 'unique'},
+                        #             ],         
+                        #             value='average_welch',
+                        #             className="btn-group",
+                        #             inputClassName="btn-check",
+                        #             labelClassName="btn btn-outline-primary",
+                        #             inputCheckedClassName="active",                                
+                        #         ),
+                        #     ])
+                        # ]),
+                        # html.Br(),
+                        # html.H6("Choose Compound Result Type", className='text-center'),
                         html.Div(className="radio-group-container add-margin-top-1", children=[
                             html.Div(className="radio-group", children=[
                                 dbc.RadioItems(
@@ -636,7 +642,7 @@ def query_table(
     ],
     [
         Input(component_id='hgda_table', component_property='derived_virtual_data'),
-        Input(component_id='radio_items_fold_type',component_property='value')
+        #Input(component_id='radio_items_fold_type',component_property='value')
     ],
     [
         State(component_id='dropdown_from_species',component_property='value'),
@@ -649,7 +655,7 @@ def query_table(
     ],
     prevent_initial_call=True
 )
-def query_figure(hgda_table_derived_virtual_data,radio_items_fold_type_value,
+def query_figure(hgda_table_derived_virtual_data,#radio_items_fold_type_value,
     dropdown_from_species_value,
     dropdown_from_organ_value,
     dropdown_from_disease_value,
@@ -663,12 +669,12 @@ def query_figure(hgda_table_derived_virtual_data,radio_items_fold_type_value,
     #print(temp)
     #print(temp.columns[-1])
 
-    if radio_items_fold_type_value=='average_welch':
-        p='significance_welch'
-        effect_size='fold_change_average'
-    elif radio_items_fold_type_value=='median_mwu':
-        p='significance_mwu'
-        effect_size='fold_change_median'
+    #if radio_items_fold_type_value=='average_welch':
+    p='significance_welch'
+    effect_size='fold_change_average'
+    #elif radio_items_fold_type_value=='median_mwu':
+    #    p='significance_mwu'
+    #    effect_size='fold_change_median'
         
     title_string_from=' - '.join([species_node_dict[dropdown_from_species_value],organ_node_dict[dropdown_from_organ_value].split(' - ')[0],disease_node_dict[dropdown_from_disease_value].split(' - ')[0]])
     title_string_to=' - '.join([species_node_dict[dropdown_to_species_value],organ_node_dict[dropdown_to_organ_value].split(' - ')[0],disease_node_dict[dropdown_to_disease_value].split(' - ')[0]])

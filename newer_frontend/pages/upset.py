@@ -7,7 +7,7 @@ from . import venn_helper
 import pandas as pd
 from dash.dependencies import Input, Output, State
 from pprint import pprint
-from dash_table.Format import Format, Scheme, Group
+from dash.dash_table.Format import Format, Scheme, Group
 import xlsxwriter
 
 

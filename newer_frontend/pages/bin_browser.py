@@ -1,5 +1,6 @@
 #from msilib.schema import Component
 import re
+from typing import final
 import dash
 from dash import dcc, html, dash_table, callback
 import plotly.express as px
@@ -7,7 +8,7 @@ import dash_bootstrap_components as dbc
 import requests
 from dash.dependencies import Input, Output, State
 import pandas as pd
-from dash_table.Format import Format, Scheme, Group
+from dash.dash_table.Format import Format, Scheme, Group
 import dash_bio as dashbio
 from . import bin_browser_helper
 import plotly.graph_objects as go
@@ -21,6 +22,12 @@ base_url_api = f"http://api_alias:4999/"
 ########get things from helper script########
 bins_dict=bin_browser_helper.generate_bin_dropdown_options()
 #############################################
+
+#to get inchikey from identifier
+final_curations=pd.read_pickle('../newer_datasets/compound_list_for_sun_and_bin.bin')
+final_curations.drop(['bin_type','english_name'],axis='columns',inplace=True)
+final_curations.set_index('compound_identifier',drop=True,inplace=True)
+
 
 #layout=dbc.Container(
 layout=html.Div(
@@ -230,6 +237,12 @@ def query_figure(button_bin_visualize_n_clicks,dropdown_bin_value):
         inplace=True
     )
     total_panda=total_panda.T
+    print('+'*50)
+    print(total_panda)
+    print(final_curations)
+    total_panda.at['InChIKey',0]=final_curations.at[
+        str(total_panda.at['InChIKey',0]),'identifier'
+    ]
     total_panda.reset_index(inplace=True)
     #print(total_panda)
     total_panda.rename(

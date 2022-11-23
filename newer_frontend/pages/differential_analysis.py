@@ -1,3 +1,4 @@
+from logging import PlaceHolder
 import dash
 from dash import dcc, html, dash_table, callback
 import plotly.express as px
@@ -6,7 +7,7 @@ from . import venn_helper
 import requests
 from dash.dependencies import Input, Output, State
 import pandas as pd
-from dash_table.Format import Format, Scheme, Group
+from dash.dash_table.Format import Format, Scheme, Group
 import dash_bio as dashbio
 import time
 
@@ -66,6 +67,7 @@ layout=html.Div(
                                 {'label': temp, 'value':unique_sod_combinations_dict[temp]} for temp in unique_sod_combinations_dict
                             ],key=lambda x:x['label']),
                             multi=True,
+                            placeholder='Select Triplet'
                             #maxHeight=300
                             #style={ "overflow-y":"scroll", "height": "100px"}
                             #style = {'max-height': '280px', 'overflow-y': 'auto'}
@@ -96,6 +98,7 @@ layout=html.Div(
                                 {'label': temp, 'value':unique_sod_combinations_dict[temp]} for temp in unique_sod_combinations_dict
                             ],key=lambda x:x['label']),
                             multi=True,
+                            placeholder='Select Triplet'
                             # style={
                             #     'color': '#212121',
                             #     'background-color': '#3EB489',
@@ -115,26 +118,26 @@ layout=html.Div(
                 dbc.Col(
                     children=[
                         #html.H2("Options", className='text-center'),
-                        html.H6("Choose Statistical Approach for Volcano", className='text-center'),
-                        html.Div(className="radio-group-container add-margin-top-1", children=[
-                            html.Div(className="radio-group", children=[
-                                dbc.RadioItems(
-                                    id='radio_items_fold_type',
-                                    options=[
-                                        {'label': 'Average/Welch', 'value': 'average_welch'},
-                                        {'label': 'Median/MWU', 'value': 'median_mwu'},
-                                        #{'label': 'Unique', 'value': 'unique'},
-                                    ],         
-                                    value='average_welch',
-                                    className="btn-group",
-                                    inputClassName="btn-check",
-                                    labelClassName="btn btn-outline-primary",
-                                    inputCheckedClassName="active",                                
-                                ),
-                            ])
-                        ]),
-                        html.Br(),
-                        html.H6("Choose Compound Result Type", className='text-center'),
+                        # html.H6("Choose Statistical Approach for Volcano", className='text-center'),
+                        # html.Div(className="radio-group-container add-margin-top-1", children=[
+                        #     html.Div(className="radio-group", children=[
+                        #         dbc.RadioItems(
+                        #             id='radio_items_fold_type',
+                        #             options=[
+                        #                 {'label': 'Average/Welch', 'value': 'average_welch'},
+                        #                 {'label': 'Median/MWU', 'value': 'median_mwu'},
+                        #                 #{'label': 'Unique', 'value': 'unique'},
+                        #             ],         
+                        #             value='average_welch',
+                        #             className="btn-group",
+                        #             inputClassName="btn-check",
+                        #             labelClassName="btn btn-outline-primary",
+                        #             inputCheckedClassName="active",                                
+                        #         ),
+                        #     ])
+                        # ]),
+                        # html.Br(),
+                        # html.H6("Choose Compound Result Type", className='text-center'),
                         html.Div(className="radio-group-container add-margin-top-1", children=[
                             html.Div(className="radio-group", children=[
                                 dbc.RadioItems(
@@ -204,6 +207,10 @@ layout=html.Div(
                             },
                             style_cell={
                                 'font-family':'sans-serif'
+                            },
+                            filter_options={
+                                'case':'insensitive',
+                                'placeholder_text':'Type here to filter'
                             }
                         )
                     ],
@@ -273,6 +280,10 @@ layout=html.Div(
                                 #sort_by=[],
                                 #filter_action='custom',
                                 filter_action='native',
+                                filter_options={
+                                    'case':'insensitive',
+                                    'placeholder_text':'Type here to filter'
+                                },
                                 #filter_query='',
                                 style_header={
                                     'backgroundColor': 'rgb(30, 30, 30)',
@@ -284,7 +295,8 @@ layout=html.Div(
                                 },
                                 style_cell={
                                     'font-family':'sans-serif'
-                                }
+                                },
+
                             )
                         ],
                     ),
@@ -360,7 +372,7 @@ layout=html.Div(
     ],
     [
         Input(component_id='leaf_table', component_property='derived_virtual_data'),
-        Input(component_id='radio_items_fold_type',component_property='value')
+        # Input(component_id='radio_items_fold_type',component_property='value')
     ],
     [
         State(component_id='dropdown_triplet_selection_from',component_property='value'),
@@ -368,19 +380,19 @@ layout=html.Div(
     ],
     prevent_initial_call=True
 )
-def query_figure(leaf_table_derived_virtual_data,radio_items_fold_type_value,dropdown_triplet_selection_from_value,dropdown_triplet_selection_to_value):
+def query_figure(leaf_table_derived_virtual_data,dropdown_triplet_selection_from_value,dropdown_triplet_selection_to_value):
 
     #get dataframe from derived data
     temp=pd.DataFrame.from_records(leaf_table_derived_virtual_data)
     print(temp)
     print(temp.columns[-1])
 
-    if radio_items_fold_type_value=='average_welch':
-        p='significance_welch'
-        effect_size='fold_change_average'
-    elif radio_items_fold_type_value=='median_mwu':
-        p='significance_mwu'
-        effect_size='fold_change_median'
+    # if radio_items_fold_type_value=='average_welch':
+    p='significance_welch'
+    effect_size='fold_change_average'
+    # elif radio_items_fold_type_value=='median_mwu':
+        # p='significance_mwu'
+        # effect_size='fold_change_median'
         
 
     volcano = dashbio.VolcanoPlot(
