@@ -11,8 +11,10 @@ from dash_table.Format import Format, Scheme, Group
 import xlsxwriter
 
 
-base_url_api = "http://127.0.0.1:4999/"
-
+base_url_api = f"http://api_alias:4999/"
+#base_url_api = "http://127.0.0.1:4999/"
+#base_url_api = "http://172.17.0.3:4999/"
+#172.17.0.3:4999/"
 dash.register_page(__name__)
 
 ########get things from helper script########
@@ -384,6 +386,8 @@ def perform_query_table(
 
         
         data = total_panda.to_dict(orient='records')
+
+        del total_panda
 
         return (
             column_list,

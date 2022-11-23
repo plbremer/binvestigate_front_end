@@ -14,7 +14,9 @@ import plotly.graph_objects as go
 
 dash.register_page(__name__)
 
-base_url_api = "http://127.0.0.1:4999/"
+base_url_api = f"http://api_alias:4999/"
+#base_url_api = "http://127.0.0.1:4999/"
+#base_url_api = "http://172.18.0.3:4999/"
 
 ########get things from helper script########
 bins_dict=bin_browser_helper.generate_bin_dropdown_options()

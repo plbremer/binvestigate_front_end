@@ -48,7 +48,8 @@ def create_upset(temp_panda):
     buf = io.BytesIO() # in-memory files
     #plt.scatter(x, y)
     plt.savefig(buf, format = "png") # save to the above file object
-    plt.close()
+    plt.close('all')
+    #plt.clf()
     data = base64.b64encode(buf.getbuffer()).decode("utf8") # encode to html elements
     plotly_fig="data:image/png;base64,{}".format(data)
 

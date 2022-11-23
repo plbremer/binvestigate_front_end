@@ -12,8 +12,9 @@ import xlsxwriter
 import plotly.express as px
 import plotly.graph_objects as go
 
+#base_url_api = f"http://api_alias:4999/"
 base_url_api = "http://127.0.0.1:4999/"
-
+#base_url_api = "http://172.18.0.3:4999/"
 dash.register_page(__name__)
 
 #compound_dropdown_options=sunburst_helper.create_compound_selection_labels("../newer_datasets/compounds_#networkx.bin",'../newer_datasets/compound_curations.tsv')
@@ -331,7 +332,8 @@ def query_figure(sunburst_table_derived_virtual_data,radio_items_sod_order_value
         go.Sunburst(
             #data_frame=temp_in_sunburst_form,
             parents=temp_in_sunburst_form['parent'].to_list(),
-            labels=temp_in_sunburst_form['name'].to_list(),
+            labels=[' ' for x in temp_in_sunburst_form['name'].to_list()],
+            #labels=temp_in_sunburst_form['name'].to_list(),
             values=temp_in_sunburst_form['sum'].to_list(),
             ids=temp_in_sunburst_form['id'].to_list(),
             hovertext=my_hovertext_values,#temp_in_sunburst_form['id'].to_list(),
