@@ -15,12 +15,13 @@ import plotly.graph_objects as go
 
 dash.register_page(__name__)
 
-base_url_api = f"http://api_alias:4999/"
-#base_url_api = "http://127.0.0.1:4999/"
+#base_url_api = f"http://api_alias:4999/"
+base_url_api = "http://127.0.0.1:4999/"
 #base_url_api = "http://172.18.0.3:4999/"
 
 ########get things from helper script########
 bins_dict=bin_browser_helper.generate_bin_dropdown_options()
+compound_classes=bin_browser_helper.generate_compound_classes()
 #############################################
 
 #to get inchikey from identifier
@@ -190,9 +191,13 @@ def query_figure(button_bin_visualize_n_clicks,dropdown_bin_value):
     # print(table_metadata_derived_virtual_data)
 
     response = requests.post(base_url_api + "/binresource/", json=bin_output)
+    print(response.json())
+    print('!@#'*20)
     total_panda = pd.read_json(response.json(), orient="records")
     #print(total_panda)
     
+
+
     #print(total_panda.T)
 
     #print('***********************************')
@@ -220,7 +225,9 @@ def query_figure(button_bin_visualize_n_clicks,dropdown_bin_value):
     # total_panda=total_panda.loc[total_panda['bin_type_dict']==radio_items_bin_type_value]
 
     #print(total_panda.columns)
-    total_panda=total_panda[['english_name','compound_identifier','retentionIndex','kovats','spectrum','quantMass','uniqueMass','splash','purity']]
+    #total_panda=total_panda[['english_name','compound_identifier','retentionIndex','kovats','spectrum','quantMass','uniqueMass','splash','purity']]
+    total_panda=total_panda[['english_name','compound_identifier','retentionIndex','kovats','spectrum','quantMass','uniqueMass','splash']]
+    
     total_panda.rename(
         {
             'english_name':'Name',
@@ -231,7 +238,7 @@ def query_figure(button_bin_visualize_n_clicks,dropdown_bin_value):
             'quantMass':'Quant Mass',
             'uniqueMass':'Unique Mass',
             'splash':'SPLASH',
-            'purity':'Purity'
+            #'purity':'Purity'
         },
         axis='columns',
         inplace=True
@@ -243,6 +250,18 @@ def query_figure(button_bin_visualize_n_clicks,dropdown_bin_value):
     total_panda.at['InChIKey',0]=final_curations.at[
         str(total_panda.at['InChIKey',0]),'identifier'
     ]
+    total_panda.at['Superclass',0]=compound_classes.at[
+        total_panda.at['InChIKey',0],'Superclass'
+    ]
+    total_panda.at['Class',0]=compound_classes.at[
+        total_panda.at['InChIKey',0],'Class'
+    ]
+    total_panda.at['Subclass',0]=compound_classes.at[
+        total_panda.at['InChIKey',0],'Subclass'
+    ]
+
+
+
     total_panda.reset_index(inplace=True)
     #print(total_panda)
     total_panda.rename(

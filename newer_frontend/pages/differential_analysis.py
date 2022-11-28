@@ -17,8 +17,8 @@ dash.register_page(__name__)
 #my_api_env_variable=os.getenv('API_ADDRESS')
 #print('*'*50)
 #print(my_api_env_variable)
-base_url_api = f"http://api_alias:4999/"
-#base_url_api = "http://127.0.0.1:4999/"
+#base_url_api = f"http://api_alias:4999/"
+base_url_api = "http://127.0.0.1:4999/"
 #base_url_api = "http://172.18.0.3:4999/"
 ########get things from helper script########
 unique_sod_combinations_dict=venn_helper.get_unique_sod_combinations()
@@ -266,8 +266,8 @@ layout=html.Div(
                                     {"name": "Identifier", "id": "identifier"},
                                     {"name": "Fold Average", "id": "fold_change_average","type": "numeric","format": Format(group=Group.yes, precision=2, scheme=Scheme.exponent)},
                                     {"name": "Significance Welch", "id": "significance_welch","type": "numeric","format": Format(group=Group.yes, precision=2, scheme=Scheme.exponent)},
-                                    {"name": "Fold Median", "id": "fold_change_median","type": "numeric","format": Format(group=Group.yes, precision=2, scheme=Scheme.exponent)},
-                                    {"name": "Significance MWU", "id": "significance_mwu","type": "numeric","format": Format(group=Group.yes, precision=2, scheme=Scheme.exponent)}
+                                    #{"name": "Fold Median", "id": "fold_change_median","type": "numeric","format": Format(group=Group.yes, precision=2, scheme=Scheme.exponent)},
+                                    #{"name": "Significance MWU", "id": "significance_mwu","type": "numeric","format": Format(group=Group.yes, precision=2, scheme=Scheme.exponent)}
                                 ],
                                 data=[],
                                 page_current=0,

@@ -16,3 +16,9 @@ def generate_bin_dropdown_options():
     return final_curations.to_dict(
         'records'
     )
+
+def generate_compound_classes():
+    compound_classes=pd.read_csv('../newer_datasets/classes_curated_map.txt',sep='\t')
+    compound_classes.drop_duplicates(subset='InChIKey',inplace=True)
+    compound_classes.set_index('InChIKey',drop=True,inplace=True)
+    return compound_classes

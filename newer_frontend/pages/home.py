@@ -35,12 +35,12 @@ layout = html.Div(
                         html.Br(),
                         html.Br(),
                         html.Br(),                        
-                        html.Div(
-                            [
-                                html.Img(src=r'assets/mana_cover.png',alt='image')
-                            ],
-                            style={'textAlign':'center'}
-                        )
+                        # html.Div(
+                        #     [
+                        #         html.Img(src=r'assets/mana_cover.png',alt='image')
+                        #     ],
+                        #     style={'textAlign':'center'}
+                        # )
                         #html.H3('Here is a webapp that enables the exploration of A database query interface across 160,000 metabolomic samples in GC-TOF mass spectrometryon a 160,000-sample dataset from the UC Davis/West Coast Metabolomics Center. We enable common techniques such as venn, sunburst, and differential diagrams.'),
                         #html.Br(),
                         #html.Br(),
