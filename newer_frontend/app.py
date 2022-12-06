@@ -22,7 +22,7 @@ my_page_link_list=[
     dbc.NavItem(dbc.NavLink('Differential Analysis', href='/differential-analysis')),
     dbc.NavItem(dbc.NavLink('Sunburst', href='/sunburst')),
     dbc.NavItem(dbc.NavLink('Upset Plot', href='/upset')),
-    dbc.NavItem(dbc.NavLink('Bin Browser', href='/bin-browser')),
+    dbc.NavItem(dbc.NavLink('Bin Browser', href='/bin-browser/2')),
 ]
 app.layout = html.Div([
         # this stuff appears on every page

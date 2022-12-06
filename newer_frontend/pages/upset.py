@@ -105,24 +105,24 @@ layout=html.Div(
                 dbc.Col(
                     children=[
                         html.H2("Options", className='text-center'),
-                        html.H6("Display Average or Median in Datatable", className='text-center'),
-                        html.Div(className="radio-group-container add-margin-top-1", children=[
-                            html.Div(className="radio-group", children=[
-                                dbc.RadioItems(
-                                    id='toggle_average_true',
-                                    options=[
-                                        {'label':'Average','value':True},
-                                        {'label':'Median','value':False}
-                                    ],
-                                    value=True,
-                                    className="btn-group",
-                                    inputClassName="btn-check",
-                                    labelClassName="btn btn-outline-primary",
-                                    inputCheckedClassName="active",                                
-                                ),
-                            ])
-                        ]),
-                        html.Br(),
+                        # html.H6("Display Average or Median in Datatable", className='text-center'),
+                        # html.Div(className="radio-group-container add-margin-top-1", children=[
+                        #     html.Div(className="radio-group", children=[
+                        #         dbc.RadioItems(
+                        #             id='toggle_average_true',
+                        #             options=[
+                        #                 {'label':'Average','value':True},
+                        #                 {'label':'Median','value':False}
+                        #             ],
+                        #             value=True,
+                        #             className="btn-group",
+                        #             inputClassName="btn-check",
+                        #             labelClassName="btn btn-outline-primary",
+                        #             inputCheckedClassName="active",                                
+                        #         ),
+                        #     ])
+                        # ]),
+                        # html.Br(),
                         html.H6("Display All Compounds or Only Compounds In-common", className='text-center'),
                         html.Div(className="radio-group-container add-margin-top-1", children=[
                             html.Div(className="radio-group", children=[
@@ -321,7 +321,7 @@ layout=html.Div(
     [
         State(component_id="dropdown_triplet_selection",component_property="value"),
         State(component_id="slider_percent_present", component_property="value"),
-        State(component_id="toggle_average_true", component_property="value"),
+        # State(component_id="toggle_average_true", component_property="value"),
         State(component_id="radio_items_filter",component_property="value"),
         State(component_id='radio_items_bin_type_upset',component_property='value')
     ],
@@ -331,7 +331,7 @@ def perform_query_table(
     button_query,
     dropdown_triplet_selection_value,
     slider_percent_present_value,
-    toggle_average_true_value,
+    # toggle_average_true_value,
     radio_items_filter_value,
     radio_items_bin_type_upset_value
     ):
@@ -341,7 +341,7 @@ def perform_query_table(
         venn_data_table_output={
             "dropdown_triplet_selection_value":dropdown_triplet_selection_value,
             "slider_percent_present_value":slider_percent_present_value,
-            "toggle_average_true_value":toggle_average_true_value,
+            "toggle_average_true_value":True,
             "radio_items_filter_value":radio_items_filter_value,
             "radio_items_bin_type_upset_value":radio_items_bin_type_upset_value
         }

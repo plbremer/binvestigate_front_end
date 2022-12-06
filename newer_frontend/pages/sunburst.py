@@ -12,8 +12,8 @@ import xlsxwriter
 import plotly.express as px
 import plotly.graph_objects as go
 
-base_url_api = f"http://api_alias:4999/"
-#base_url_api = "http://127.0.0.1:4999/"
+#base_url_api = f"http://api_alias:4999/"
+base_url_api = "http://127.0.0.1:4999/"
 #base_url_api = "http://172.18.0.3:4999/"
 dash.register_page(__name__)
 
@@ -65,7 +65,7 @@ layout=html.Div(
                                     id='radio_items_sunburst_value',
                                     options=[
                                         {'label': 'Average', 'value': 'intensity_average'},
-                                        {'label': 'Median', 'value': 'intensity_median'},
+                                        # {'label': 'Median', 'value': 'intensity_median'},
                                         {'label': 'Percent Present', 'value':'percent_present'}
                                         #{'label': 'Unique', 'value': 'unique'},
                                     ],         
@@ -284,8 +284,8 @@ def query_table(button_query_n_clicks,compound_selection_value,radio_items_sunbu
 
     if radio_items_sunburst_value_value=='intensity_average':
         last_column={'name': 'Average Intensity','id':'intensity_average',"type": "numeric","format": Format(group=Group.yes, precision=2, scheme=Scheme.exponent)}
-    elif radio_items_sunburst_value_value=='intensity_median':
-        last_column={'name': 'Median Intensity','id':'intensity_median',"type": "numeric","format": Format(group=Group.yes, precision=2, scheme=Scheme.exponent)}
+    # elif radio_items_sunburst_value_value=='intensity_median':
+    #     last_column={'name': 'Median Intensity','id':'intensity_median',"type": "numeric","format": Format(group=Group.yes, precision=2, scheme=Scheme.exponent)}
     elif radio_items_sunburst_value_value=='percent_present':
         last_column={'name': 'Percent Present','id':'percent_present',"type": "numeric","format": Format(group=Group.yes, precision=2, scheme=Scheme.exponent)}
     column_list=[
@@ -296,6 +296,12 @@ def query_table(button_query_n_clicks,compound_selection_value,radio_items_sunbu
         last_column
     ]
     total_panda=total_panda[['binvestigate','species','organ','disease',last_column['id']]]
+
+    # total_panda=total_panda.round(decimals=0)
+    # total_panda[last_column['id']]=total_panda[last_column['id']].astype(int)
+
+    # print('$$$$$$$$$$$$$$$$$$$')
+    # print(total_panda)
 
     data = total_panda.to_dict(orient='records')
 
@@ -322,8 +328,8 @@ def query_figure(sunburst_table_derived_virtual_data,radio_items_sod_order_value
     ##print(temp.columns[-1])
     #coerce it into sunburst form with helper function
     temp_in_sunburst_form=sunburst_helper.coerce_full_panda(temp,radio_items_sunburst_value_value,radio_items_sod_order_value.split(','))
-    ##print('----------------------')
-    ##print(temp_in_sunburst_form)
+    # print('----------------------')
+    # print(temp_in_sunburst_form)
 
     #my_hovertext_values=(temp_in_sunburst_form['id'].str.split('/').str[1])+' - '+(temp_in_sunburst_form['id'].str.split('/').str[2])+' - '+(temp_in_sunburst_form['id'].str.split('/').str[3])+': '+(temp_in_sunburst_form['sum'].astype(str))
     #my_hovertext_values=' - '.join((temp_in_sunburst_form['id'].str.split('/'))[1:])

@@ -12,8 +12,10 @@ from dash.dash_table.Format import Format, Scheme, Group
 import dash_bio as dashbio
 from . import bin_browser_helper
 import plotly.graph_objects as go
+from dash import callback_context
+from pprint import pprint
 
-dash.register_page(__name__)
+dash.register_page(__name__,path_template="/bin-browser/<linked_compound>")
 
 #base_url_api = f"http://api_alias:4999/"
 base_url_api = "http://127.0.0.1:4999/"
@@ -33,6 +35,7 @@ final_curations.set_index('compound_identifier',drop=True,inplace=True)
 #layout=dbc.Container(
 layout=html.Div(
     children=[
+        dcc.Location(id='url',refresh=False),
         dbc.Row(
             children=[
                 dbc.Col(
@@ -61,6 +64,8 @@ layout=html.Div(
                                 key=lambda x:x['label']
                             ),
                             multi=False,
+                            #placeholder='Known: alanine'
+                            #value=2
                             # style={
                             #     'color': '#212121',
                             #     'background-color': '#3EB489',
@@ -170,26 +175,42 @@ layout=html.Div(
         Output(component_id="table_bin", component_property="columns"),
         Output(component_id='table_bin', component_property='data'),
         Output(component_id='figure_bin', component_property='figure'),
+        Output(component_id='url', component_property='pathname')
     ],
     [
+        
         Input(component_id='button_bin_visualize', component_property='n_clicks'),
+        #Input(component_id='url', component_property='pathname'),
         #Input(component_id='radio_items_fold_type',component_property='value')
     ],
     [
+        State(component_id='url', component_property='pathname'),
         State(component_id='dropdown_bin', component_property='value')
     ],
-    prevent_initial_call=True
+    #prevent_initial_call=True
 )
-def query_figure(button_bin_visualize_n_clicks,dropdown_bin_value):
+def query_figure(button_bin_visualize_n_clicks,url_pathname,dropdown_bin_value):
 
-    bin_output={
-        'bin_id':dropdown_bin_value
-    }
+    print(callback_context.triggered[0]['prop_id'])
+    print(dropdown_bin_value)
+    print(url_pathname)
+    print('+='*50)
+    if callback_context.triggered[0]['prop_id']=='.':
+        bin_output={
+            'bin_id':url_pathname.split('/')[-1]
+        }
+        output_url=url_pathname.split('/')[-1]
+    else:
+        bin_output={
+            'bin_id':dropdown_bin_value
+        }
+        output_url=dropdown_bin_value
+
     # leaf_output={
     #     "metadata_datatable":table_metadata_derived_virtual_data
     # }
     # print(table_metadata_derived_virtual_data)
-
+    pprint(bin_output)
     response = requests.post(base_url_api + "/binresource/", json=bin_output)
     print(response.json())
     print('!@#'*20)
@@ -250,15 +271,20 @@ def query_figure(button_bin_visualize_n_clicks,dropdown_bin_value):
     total_panda.at['InChIKey',0]=final_curations.at[
         str(total_panda.at['InChIKey',0]),'identifier'
     ]
-    total_panda.at['Superclass',0]=compound_classes.at[
-        total_panda.at['InChIKey',0],'Superclass'
-    ]
-    total_panda.at['Class',0]=compound_classes.at[
-        total_panda.at['InChIKey',0],'Class'
-    ]
-    total_panda.at['Subclass',0]=compound_classes.at[
-        total_panda.at['InChIKey',0],'Subclass'
-    ]
+    try:
+        total_panda.at['Superclass',0]=compound_classes.at[
+            total_panda.at['InChIKey',0],'Superclass'
+        ]
+        total_panda.at['Class',0]=compound_classes.at[
+            total_panda.at['InChIKey',0],'Class'
+        ]
+        total_panda.at['Subclass',0]=compound_classes.at[
+            total_panda.at['InChIKey',0],'Subclass'
+        ]
+    except KeyError:
+        total_panda.at['Superclass',0]=''
+        total_panda.at['Class',0]=''      
+        total_panda.at['Subclass',0]=''       
 
 
 
@@ -286,7 +312,8 @@ def query_figure(button_bin_visualize_n_clicks,dropdown_bin_value):
     ]
 
     #data='nonsense'
-    return [column_list,data,spectrum_figure]
+    print(url_pathname.split('/'))
+    return [column_list,data,spectrum_figure,'/'+url_pathname.split('/')[1]+'/'+str(output_url)]
     #return [spectrum_figure]
 
 
@@ -304,7 +331,7 @@ def query_figure(button_bin_visualize_n_clicks,dropdown_bin_value):
     ],
     prevent_initial_call=True
 )
-def download_sunburst_datatable(
+def download_bin_datatable(
     button_download_msp_n_clicks,
     table_bin_derived_virual_data
     ):

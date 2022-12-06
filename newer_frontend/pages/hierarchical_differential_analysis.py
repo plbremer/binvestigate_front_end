@@ -25,6 +25,9 @@ index_panda=index_panda.sort_index()
 index_panda['species']=index_panda['species'].astype(str)
 #print(index_panda)
 #print(index_panda.dtypes)
+compound_translation_panda=pd.read_pickle('../newer_datasets/compound_translation_panda.bin')
+hyperlink_translation_dict=dict(zip(compound_translation_panda.integer_representation.tolist(),compound_translation_panda.compound_identifier.tolist()))
+del compound_translation_panda
 #############################################
 
 #layout=dbc.Container(
@@ -282,13 +285,14 @@ layout=html.Div(
                             dash_table.DataTable(
                                 id='hgda_table',
                                 columns=[
-                                    {"name": "English Name", "id": "english_name"},
+                                    {"name": "English Name", "id": "english_name",'presentation':'markdown'},
                                     {"name": "Identifier", "id": "identifier"},
                                     {"name": "Fold Average", "id": "fold_change_average","type": "numeric","format": Format(group=Group.yes, precision=2, scheme=Scheme.exponent)},
                                     {"name": "Significance Welch", "id": "significance_welch","type": "numeric","format": Format(group=Group.yes, precision=2, scheme=Scheme.exponent)},
                                 #    {"name": "Fold Median", "id": "fold_change_median","type": "numeric","format": Format(group=Group.yes, precision=2, scheme=Scheme.exponent)},
                                 #    {"name": "Significance MWU", "id": "significance_mwu","type": "numeric","format": Format(group=Group.yes, precision=2, scheme=Scheme.exponent)}
                                 ],
+                                markdown_options={"link_target": "_blank"},
                                 data=[],
                                 page_current=0,
                                 page_size=50,
@@ -629,12 +633,24 @@ def query_table(
     response = requests.post(base_url_api + "/hgdaresource/", json=json_output)
     total_panda = pd.read_json(response.json(), orient="records")
     #print(total_panda)
-
+    if radio_items_bin_type_value!='class':
+        total_panda['english_name']='['+total_panda['english_name']+'](/bin-browser/'+total_panda['compound_id'].astype(str)+')'
     # total_panda=total_panda.loc[total_panda['bin_type_dict']==radio_items_bin_type_value]
 
     data = total_panda.to_dict(orient='records')
 
     return [data]
+
+
+
+
+
+
+
+
+
+
+
 
 @callback(
     [
@@ -651,6 +667,7 @@ def query_table(
         State(component_id='dropdown_to_species',component_property='value'),
         State(component_id='dropdown_to_organ',component_property='value'),
         State(component_id='dropdown_to_disease',component_property='value'),
+        State(component_id='radio_items_bin_type',component_property='value'),
 
     ],
     prevent_initial_call=True
@@ -662,12 +679,17 @@ def query_figure(hgda_table_derived_virtual_data,#radio_items_fold_type_value,
     dropdown_to_species_value,
     dropdown_to_organ_value,
     dropdown_to_disease_value,
+    radio_items_bin_type_value
 ):
 
     #get dataframe from derived data
     temp=pd.DataFrame.from_records(hgda_table_derived_virtual_data)
     #print(temp)
     #print(temp.columns[-1])
+
+    if radio_items_bin_type_value!='class':
+        temp['english_name']=temp['english_name'].str.extract('\[(.*)\]')
+
 
     #if radio_items_fold_type_value=='average_welch':
     p='significance_welch'
@@ -685,7 +707,7 @@ def query_figure(hgda_table_derived_virtual_data,#radio_items_fold_type_value,
         p=p,
         effect_size=effect_size,
         gene=None,
-        xlabel='log2 Fold Change',
+        xlabel='log2 Fold Change - negative values are decreases from \"'+title_string_from+'\" to \"'+title_string_to+'\"',
         genomewideline_value=2,
         title=title_string_from+'        vs.       '+title_string_to,
         title_x=0.5

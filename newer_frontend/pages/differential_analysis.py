@@ -22,6 +22,9 @@ base_url_api = "http://127.0.0.1:4999/"
 #base_url_api = "http://172.18.0.3:4999/"
 ########get things from helper script########
 unique_sod_combinations_dict=venn_helper.get_unique_sod_combinations()
+compound_translation_panda=pd.read_pickle('../newer_datasets/compound_translation_panda.bin')
+hyperlink_translation_dict=dict(zip(compound_translation_panda.integer_representation.tolist(),compound_translation_panda.compound_identifier.tolist()))
+del compound_translation_panda
 #############################################
 
 #layout=dbc.Container(
@@ -262,13 +265,14 @@ layout=html.Div(
                             dash_table.DataTable(
                                 id='leaf_table',
                                 columns=[
-                                    {"name": "English Name", "id": "english_name"},
+                                    {"name": "English Name", "id": "english_name",'presentation':'markdown'},
                                     {"name": "Identifier", "id": "identifier"},
                                     {"name": "Fold Average", "id": "fold_change_average","type": "numeric","format": Format(group=Group.yes, precision=2, scheme=Scheme.exponent)},
                                     {"name": "Significance Welch", "id": "significance_welch","type": "numeric","format": Format(group=Group.yes, precision=2, scheme=Scheme.exponent)},
                                     #{"name": "Fold Median", "id": "fold_change_median","type": "numeric","format": Format(group=Group.yes, precision=2, scheme=Scheme.exponent)},
                                     #{"name": "Significance MWU", "id": "significance_mwu","type": "numeric","format": Format(group=Group.yes, precision=2, scheme=Scheme.exponent)}
                                 ],
+                                markdown_options={"link_target": "_blank"},
                                 data=[],
                                 page_current=0,
                                 page_size=50,
@@ -377,13 +381,18 @@ layout=html.Div(
     [
         State(component_id='dropdown_triplet_selection_from',component_property='value'),
         State(component_id='dropdown_triplet_selection_to',component_property='value'),
+        State(component_id='radio_items_bin_type',component_property='value'),
     ],
     prevent_initial_call=True
 )
-def query_figure(leaf_table_derived_virtual_data,dropdown_triplet_selection_from_value,dropdown_triplet_selection_to_value):
+def query_figure(leaf_table_derived_virtual_data,dropdown_triplet_selection_from_value,dropdown_triplet_selection_to_value,radio_items_bin_type_value):
 
     #get dataframe from derived data
     temp=pd.DataFrame.from_records(leaf_table_derived_virtual_data)
+    
+    if radio_items_bin_type_value!='class':
+        temp['english_name']=temp['english_name'].str.extract('\[(.*)\]')
+    print('***!!!'*20)
     print(temp)
     print(temp.columns[-1])
 
@@ -401,7 +410,7 @@ def query_figure(leaf_table_derived_virtual_data,dropdown_triplet_selection_from
         p=p,
         effect_size=effect_size,
         gene=None,
-        xlabel='log2 Fold Change',
+        xlabel='log2 Fold Change - negative values are decreases from \"'+dropdown_triplet_selection_from_value[0].title()+'\" to \"'+dropdown_triplet_selection_to_value[0].title()+'\"',
         genomewideline_value=2,
         title=dropdown_triplet_selection_from_value[0].title()+'             vs.               '+dropdown_triplet_selection_to_value[0].title(),
         title_x=0.5
@@ -447,6 +456,10 @@ def query_table(leaf_query_n_clicks,radio_items_bin_type_value,table_metadata_de
     
     start=time.time()
     total_panda = pd.read_json(response.json(), orient="records")
+    print(total_panda)
+    print('&#$'*50)
+    if radio_items_bin_type_value!='class':
+        total_panda['english_name']='['+total_panda['english_name']+'](/bin-browser/'+total_panda['compound_id'].astype(str)+')'
     end=time.time()
     print(f'the time to turn our json into a panda is  {end-start}')
     #print(total_panda)
