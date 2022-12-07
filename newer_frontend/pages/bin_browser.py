@@ -17,17 +17,20 @@ from pprint import pprint
 
 dash.register_page(__name__,path_template="/bin-browser/<linked_compound>")
 
-#base_url_api = f"http://api_alias:4999/"
-base_url_api = "http://127.0.0.1:4999/"
+base_url_api = f"http://api_alias:4999/"
+#base_url_api = "http://127.0.0.1:4999/"
 #base_url_api = "http://172.18.0.3:4999/"
 
 ########get things from helper script########
 bins_dict=bin_browser_helper.generate_bin_dropdown_options()
 compound_classes=bin_browser_helper.generate_compound_classes()
+compound_translation_panda=pd.read_pickle('../newer_datasets/compound_list_for_differential_new.bin')
+compound_translation_dict=dict(zip(compound_translation_panda.compound_identifier.tolist(),compound_translation_panda.english_name.tolist()))
+del compound_translation_panda
 #############################################
 
 #to get inchikey from identifier
-final_curations=pd.read_pickle('../newer_datasets/compound_list_for_sun_and_bin.bin')
+final_curations=pd.read_pickle('../newer_datasets/compound_list_for_sun_and_bin_new.bin')
 final_curations.drop(['bin_type','english_name'],axis='columns',inplace=True)
 final_curations.set_index('compound_identifier',drop=True,inplace=True)
 
@@ -175,7 +178,8 @@ layout=html.Div(
         Output(component_id="table_bin", component_property="columns"),
         Output(component_id='table_bin', component_property='data'),
         Output(component_id='figure_bin', component_property='figure'),
-        Output(component_id='url', component_property='pathname')
+        Output(component_id='url', component_property='pathname'),
+        Output(component_id='dropdown_bin', component_property='value')
     ],
     [
         
@@ -300,6 +304,14 @@ def query_figure(button_bin_visualize_n_clicks,url_pathname,dropdown_bin_value):
     )
     #print(total_panda)
 
+    #the names that we stashed into the DB are sometimes old. eg have things like 'NIST' in them. translate here
+    print(compound_translation_dict)
+    print(compound_translation_dict[str(bin_output['bin_id'])])
+    print(total_panda)
+    total_panda.at[0,'Value']=compound_translation_dict[
+        str(bin_output['bin_id'])
+    ]
+
     # total_panda=pd.DataFrame.from_dict(
     #     {
     #         'Attribute':[1,2],
@@ -311,9 +323,11 @@ def query_figure(button_bin_visualize_n_clicks,url_pathname,dropdown_bin_value):
         {'name': temp_column, 'id':temp_column} for temp_column in total_panda.columns
     ]
 
+
+
     #data='nonsense'
     print(url_pathname.split('/'))
-    return [column_list,data,spectrum_figure,'/'+url_pathname.split('/')[1]+'/'+str(output_url)]
+    return [column_list,data,spectrum_figure,'/'+url_pathname.split('/')[1]+'/'+str(output_url),bin_output['bin_id']]
     #return [spectrum_figure]
 
 

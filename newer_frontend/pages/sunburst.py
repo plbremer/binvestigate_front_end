@@ -11,19 +11,21 @@ from dash.dash_table.Format import Format, Scheme, Group
 import xlsxwriter
 import plotly.express as px
 import plotly.graph_objects as go
+from dash import callback_context
 
-#base_url_api = f"http://api_alias:4999/"
-base_url_api = "http://127.0.0.1:4999/"
+base_url_api = f"http://api_alias:4999/"
+#base_url_api = "http://127.0.0.1:4999/"
 #base_url_api = "http://172.18.0.3:4999/"
-dash.register_page(__name__)
+dash.register_page(__name__,path_template="/sunburst/<linked_compound>")
 
 #compound_dropdown_options=sunburst_helper.create_compound_selection_labels("../newer_datasets/compounds_#networkx.bin",'../newer_datasets/compound_curations.tsv')
 #compound_final_curations=sunburst_helper.create_compound_selection_labels("../newer_datasets/compounds_networkx.bin")
-compound_dropdown_options=sunburst_helper.create_compound_selection_labels("../newer_datasets/compound_list_for_sun_and_bin.bin")
+compound_dropdown_options=sunburst_helper.create_compound_selection_labels("../newer_datasets/compound_list_for_sun_and_bin_new.bin")
 
 #layout=dbc.Container(
 layout=html.Div(
     children=[
+        dcc.Location(id='url2',refresh=False),
         dbc.Col(width=3),
         dbc.Row(
             children=[
@@ -261,22 +263,36 @@ layout=html.Div(
 @callback(
     [
         Output(component_id="sunburst_table", component_property="columns"),
-        Output(component_id="sunburst_table", component_property="data")
+        Output(component_id="sunburst_table", component_property="data"),
+        Output(component_id='url2', component_property='pathname'),
+        Output(component_id='compound_selection',component_property='value')
     ],
     [
         Input(component_id='button_query', component_property='n_clicks'),
     ],
     [
+        State(component_id='url2', component_property='pathname'),
         State(component_id='compound_selection',component_property='value'),
         State(component_id='radio_items_sunburst_value',component_property='value')
     ],
-    prevent_initial_call=True
+    #prevent_initial_call=True
 )
-def query_table(button_query_n_clicks,compound_selection_value,radio_items_sunburst_value_value):
+def query_table(button_query_n_clicks,url_pathname,compound_selection_value,radio_items_sunburst_value_value):
 
-    sunburst_output={
-        "compound":compound_selection_value
-    }
+    if callback_context.triggered[0]['prop_id']=='.':
+        sunburst_output={
+            "compound":url_pathname.split('/')[-1]
+        }
+        output_url=url_pathname.split('/')[-1]
+    else:
+        sunburst_output={
+            "compound":compound_selection_value
+        }
+        output_url=compound_selection_value
+
+    # sunburst_output={
+    #     "compound":compound_selection_value
+    # }
 
     response = requests.post(base_url_api + "/sunburstresource/", json=sunburst_output)
     total_panda = pd.read_json(response.json(), orient="records")
@@ -305,7 +321,7 @@ def query_table(button_query_n_clicks,compound_selection_value,radio_items_sunbu
 
     data = total_panda.to_dict(orient='records')
 
-    return [column_list,data]
+    return [column_list,data,'/'+url_pathname.split('/')[1]+'/'+str(output_url),sunburst_output['compound']]
 
 @callback(
     [

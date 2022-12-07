@@ -9,7 +9,7 @@ def generate_bin_dropdown_options():
     #     temp.english_name+' | ' +temp.identifier,temp.compound_identifier
     # ))
     # return unique_bins
-    final_curations=pd.read_pickle('../newer_datasets/compound_list_for_sun_and_bin.bin')
+    final_curations=pd.read_pickle('../newer_datasets/compound_list_for_sun_and_bin_new.bin')
     final_curations.loc[final_curations.bin_type=='known','english_name']='Known: '+final_curations.loc[final_curations.bin_type=='known']['english_name'].astype(str)
     final_curations.drop(['bin_type','identifier'],axis='columns',inplace=True)
     final_curations.rename(columns={'compound_identifier':'value','english_name':'label'},inplace=True)

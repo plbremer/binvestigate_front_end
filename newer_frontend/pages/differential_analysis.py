@@ -17,8 +17,8 @@ dash.register_page(__name__)
 #my_api_env_variable=os.getenv('API_ADDRESS')
 #print('*'*50)
 #print(my_api_env_variable)
-#base_url_api = f"http://api_alias:4999/"
-base_url_api = "http://127.0.0.1:4999/"
+base_url_api = f"http://api_alias:4999/"
+#base_url_api = "http://127.0.0.1:4999/"
 #base_url_api = "http://172.18.0.3:4999/"
 ########get things from helper script########
 unique_sod_combinations_dict=venn_helper.get_unique_sod_combinations()
@@ -266,7 +266,7 @@ layout=html.Div(
                                 id='leaf_table',
                                 columns=[
                                     {"name": "English Name", "id": "english_name",'presentation':'markdown'},
-                                    {"name": "Identifier", "id": "identifier"},
+                                    {"name": "Identifier", "id": "identifier",'presentation':'markdown'},
                                     {"name": "Fold Average", "id": "fold_change_average","type": "numeric","format": Format(group=Group.yes, precision=2, scheme=Scheme.exponent)},
                                     {"name": "Significance Welch", "id": "significance_welch","type": "numeric","format": Format(group=Group.yes, precision=2, scheme=Scheme.exponent)},
                                     #{"name": "Fold Median", "id": "fold_change_median","type": "numeric","format": Format(group=Group.yes, precision=2, scheme=Scheme.exponent)},
@@ -459,7 +459,9 @@ def query_table(leaf_query_n_clicks,radio_items_bin_type_value,table_metadata_de
     print(total_panda)
     print('&#$'*50)
     if radio_items_bin_type_value!='class':
-        total_panda['english_name']='['+total_panda['english_name']+'](/bin-browser/'+total_panda['compound_id'].astype(str)+')'
+        total_panda['compound_id']=total_panda['compound_id'].map(hyperlink_translation_dict.get)
+        total_panda['english_name']='['+total_panda['english_name']+'](/sunburst/'+total_panda['compound_id'].astype(str)+')'
+        total_panda['identifier']='['+total_panda['identifier']+'](/bin-browser/'+total_panda['compound_id'].astype(str)+')'
     end=time.time()
     print(f'the time to turn our json into a panda is  {end-start}')
     #print(total_panda)
@@ -495,13 +497,15 @@ def query_table(leaf_query_n_clicks,radio_items_bin_type_value,table_metadata_de
         Input(component_id="button_download", component_property="n_clicks"),
     ],
     [
-        State(component_id="leaf_table",component_property="data")
+        State(component_id="leaf_table",component_property="data"),
+        State(component_id='radio_items_bin_type',component_property='value')
     ],
     prevent_initial_call=True
 )
 def download_leaf_datatable(
     download_click,
-    table_data
+    table_data,
+    radio_items_bin_type_value
     ):
         """
         """
@@ -510,8 +514,19 @@ def download_leaf_datatable(
         #temp_img=venn_helper.make_venn_figure_from_panda(pd.DataFrame.from_records(table_derived_virtual_data).drop(['compound','bin'],axis='columns'))
         print(pd.DataFrame.from_records(table_data).to_excel)
 
+        downloaded_panda=pd.DataFrame.from_records(table_data)
+
+        if radio_items_bin_type_value!='class':
+            downloaded_panda['english_name']=downloaded_panda['english_name'].str.extract('\[(.*)\]')
+            downloaded_panda['identifier']=downloaded_panda['identifier'].str.extract('\[(.*)\]')
+            # total_panda['english_name']='['+total_panda['english_name']+'](/sunburst/'+total_panda['compound_id'].astype(str)+')'
+            # total_panda['identifier']='['+total_panda['identifier']+'](/bin-browser/'+total_panda['compound_id'].astype(str)+')'
+
+    
+        # temp['english_name']=temp['english_name'].str.extract('\[(.*)\]')
+
         return [dcc.send_data_frame(
-            pd.DataFrame.from_records(table_data).to_excel, "binvestigate_differential_datatable.xlsx", sheet_name="sheet_1"
+            downloaded_panda.to_excel, "binvestigate_differential_datatable.xlsx", sheet_name="sheet_1"
         )]
 
 

@@ -20,7 +20,7 @@ my_page_link_list=[
     dbc.NavItem(dbc.NavLink('Home', href='/')),
     dbc.NavItem(dbc.NavLink('Ontological Differential Analysis', href='/hierarchical-differential-analysis')),
     dbc.NavItem(dbc.NavLink('Differential Analysis', href='/differential-analysis')),
-    dbc.NavItem(dbc.NavLink('Sunburst', href='/sunburst')),
+    dbc.NavItem(dbc.NavLink('Sunburst', href='/sunburst/2')),
     dbc.NavItem(dbc.NavLink('Upset Plot', href='/upset')),
     dbc.NavItem(dbc.NavLink('Bin Browser', href='/bin-browser/2')),
 ]
