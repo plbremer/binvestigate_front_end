@@ -135,19 +135,23 @@ layout=html.Div(
                             # filter_action='native',
                             # row_deletable=False,
                             #filter_query='',
+                            style_cell={
+                                'fontSize': 17,
+                                'padding': '8px',
+                                'textAlign': 'center'
+                            },
                             style_header={
-                                'backgroundColor': 'rgb(30, 30, 30)',
-                                'color': 'white'
+                                'font-family': 'arial',
+                                'fontSize': 15,
+                                'fontWeight': 'bold',
+                                'textAlign': 'center'
                             },
                             style_data={
-                                'backgroundColor': 'rgb(50, 50, 50)',
-                                'color': 'white'
+                                'textAlign': 'center',
+                                'fontWeight': 'bold',
+                                'font-family': 'Roboto',
+                                'fontSize': 15,
                             },
-                            style_cell={
-                                'font-family':'sans-serif',
-                                'textOverflow': 'ellipsis',
-                                'maxWidth':0
-                            }
                         )
                     ],
                     width=3

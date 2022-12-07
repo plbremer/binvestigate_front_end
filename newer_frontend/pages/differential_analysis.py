@@ -17,8 +17,8 @@ dash.register_page(__name__)
 #my_api_env_variable=os.getenv('API_ADDRESS')
 #print('*'*50)
 #print(my_api_env_variable)
-base_url_api = f"http://api_alias:4999/"
-#base_url_api = "http://127.0.0.1:4999/"
+#base_url_api = f"http://api_alias:4999/"
+base_url_api = "http://127.0.0.1:4999/"
 #base_url_api = "http://172.18.0.3:4999/"
 ########get things from helper script########
 unique_sod_combinations_dict=venn_helper.get_unique_sod_combinations()
@@ -200,16 +200,33 @@ layout=html.Div(
                             filter_action='native',
                             row_deletable=True,
                             #filter_query='',
+                            # style_header={
+                            #     'backgroundColor': 'rgb(30, 30, 30)',
+                            #     'color': 'white'
+                            # },
+                            # style_data={
+                            #     'backgroundColor': 'rgb(50, 50, 50)',
+                            #     'color': 'white'
+                            # },
+                            # style_cell={
+                            #     'font-family':'sans-serif'
+                            # },
+                            style_cell={
+                                'fontSize': 17,
+                                'padding': '8px',
+                                'textAlign': 'center'
+                            },
                             style_header={
-                                'backgroundColor': 'rgb(30, 30, 30)',
-                                'color': 'white'
+                                'font-family': 'arial',
+                                'fontSize': 15,
+                                'fontWeight': 'bold',
+                                'textAlign': 'center'
                             },
                             style_data={
-                                'backgroundColor': 'rgb(50, 50, 50)',
-                                'color': 'white'
-                            },
-                            style_cell={
-                                'font-family':'sans-serif'
+                                'textAlign': 'center',
+                                'fontWeight': 'bold',
+                                'font-family': 'Roboto',
+                                'fontSize': 15,
                             },
                             filter_options={
                                 'case':'insensitive',
@@ -289,18 +306,34 @@ layout=html.Div(
                                     'placeholder_text':'Type here to filter'
                                 },
                                 #filter_query='',
+                                # style_header={
+                                #     'backgroundColor': 'rgb(30, 30, 30)',
+                                #     'color': 'white'
+                                # },
+                                # style_data={
+                                #     'backgroundColor': 'rgb(50, 50, 50)',
+                                #     'color': 'white'
+                                # },
+                                # style_cell={
+                                #     'font-family':'sans-serif'
+                                # },
+                                style_cell={
+                                    'fontSize': 17,
+                                    'padding': '8px',
+                                    'textAlign': 'center'
+                                },
                                 style_header={
-                                    'backgroundColor': 'rgb(30, 30, 30)',
-                                    'color': 'white'
+                                    'font-family': 'arial',
+                                    'fontSize': 15,
+                                    'fontWeight': 'bold',
+                                    'textAlign': 'center'
                                 },
                                 style_data={
-                                    'backgroundColor': 'rgb(50, 50, 50)',
-                                    'color': 'white'
+                                    'textAlign': 'center',
+                                    'fontWeight': 'bold',
+                                    'font-family': 'Roboto',
+                                    'fontSize': 15,
                                 },
-                                style_cell={
-                                    'font-family':'sans-serif'
-                                },
-
                             )
                         ],
                     ),
