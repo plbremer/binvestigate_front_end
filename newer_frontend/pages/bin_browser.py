@@ -35,25 +35,41 @@ final_curations.drop(['bin_type','english_name'],axis='columns',inplace=True)
 final_curations.set_index('compound_identifier',drop=True,inplace=True)
 
 
+
+
 #layout=dbc.Container(
 layout=html.Div(
     children=[
         dcc.Location(id='url',refresh=False),
-        dbc.Row(
-            children=[
-                dbc.Col(
-                    children=[
-                        html.H2("Select a bin", className='text-center'),
-                        html.Br(),
-                    ],
-                    width={'size':6}
-                )
-            ],
-            justify='center'
+        dcc.Download(
+            id='download_msp_known'
+        ),
+        dcc.Download(
+            id='download_msp_unknown'
         ),
         dbc.Row(
             children=[
-                dbc.Col(width=3),
+                dbc.Col(width=1),
+                dbc.Col(
+                    children=[
+                        html.H2("Explore Single Compound", className='text-center'),
+                        html.Br(),
+                    ],
+                    width={'size':5}
+                ),
+                dbc.Col(
+                    children=[
+                        html.H2("Download .msp Files", className='text-center'),
+                        html.Br(),
+                    ],
+                    width={'size':4}
+                ),
+            ],
+            #justify='center'
+        ),
+        dbc.Row(
+            children=[
+                dbc.Col(width=2),
                 dbc.Col(
                     children=[
                         #html.H2("From Triplet", className='text-center'),
@@ -76,14 +92,36 @@ layout=html.Div(
                         ),  
                         html.Br(),
                     ],
-                    width={'size':6}
+                    width={'size':3}
                 ),
-                dbc.Col(width=3),
+                dbc.Col(width=1),
+                dbc.Col(
+                    children=[
+                        html.Div(
+                            dbc.Button(
+                                'Download Identified .msp',
+                                id='button_download_msp_identified',
+                            ),
+                            className="d-grid gap-2 col-4 mx-auto",
+                        ),
+                        html.Br(),
+                        html.Br(),
+                        html.Div(
+                            dbc.Button(
+                                'Download Unknown .msp',
+                                id='button_download_msp_unknown',
+                            ),
+                            className="d-grid gap-1 col-4 mx-auto",
+                        )
+                    ],
+                    width=4
+                ),
+                #dbc.Col(width=3)
             ]
         ),
         dbc.Row(
             children=[
-                dbc.Col(width=4),
+                dbc.Col(width=2),
                 dbc.Col(
                     children=[
                         #html.H2("Result Datatable", className='text-center'),
@@ -97,6 +135,17 @@ layout=html.Div(
                     ],
                     width=3
                 ),            
+            ]
+        ),
+        dbc.Row(
+            children=[
+                dbc.Col(width=1),
+                dbc.Col(
+                    dcc.Graph(
+                        id='figure_bin'
+                    ) 
+                ),
+                dbc.Col(width=5)
             ]
         ),
         dbc.Row(
@@ -165,14 +214,25 @@ layout=html.Div(
                         html.Br(),
                         html.Br(),
                         
-                        dcc.Graph(
-                            id='figure_bin'
-                        )                        
+                        # dcc.Graph(
+                        #     id='figure_bin'
+                        # )                        
                     ],
                     width=5
                 ),                
             ]
-        )
+        ),
+        # html.Br(),
+        # html.Br(),
+        # dbc.Row(
+        #     children=[
+        #         dbc.Col(width=1),
+
+        #         dbc.Col(width=1),
+
+        #         dbc.Col(width=3),
+        #     ]
+        # )
     ]
 )
 
@@ -365,3 +425,32 @@ def download_bin_datatable(
         return [dcc.send_data_frame(
             pd.DataFrame.from_records(table_bin_derived_virual_data).to_excel, "binvestigate_sunburst_datatable.xlsx", sheet_name="sheet_1"
         )]
+
+
+@callback(
+    [
+        Output(component_id="download_msp_known", component_property="data"),
+    ],
+    [
+        Input(component_id="button_download_msp_identified", component_property="n_clicks"),
+    ],
+    prevent_initial_call=True
+)
+def download_msp_known(    button_download_msp_identified_n_clicks    ):
+    return [dcc.send_file(
+        '../newer_datasets/GCBinbase_knowns_curated.msp'
+    )]
+
+@callback(
+    [
+        Output(component_id="download_msp_unknown", component_property="data"),
+    ],
+    [
+        Input(component_id="button_download_msp_unknown", component_property="n_clicks"),
+    ],
+    prevent_initial_call=True
+)
+def download_msp_unknown(    button_download_msp_unknown_n_clicks    ):
+    return [dcc.send_file(
+        '../newer_datasets/GCBinbase_unknowns.msp'
+    )]
