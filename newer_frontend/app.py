@@ -22,6 +22,7 @@ my_page_link_list=[
     dbc.NavItem(dbc.NavLink('Differential Analysis', href='/differential-analysis')),
     dbc.NavItem(dbc.NavLink('Sunburst', href='/sunburst/2')),
     dbc.NavItem(dbc.NavLink('Upset Plot', href='/upset')),
+    dbc.NavItem(dbc.NavLink('Tree Generator', href='/tree-generator')),
     dbc.NavItem(dbc.NavLink('Bin Browser', href='/bin-browser/2')),
 ]
 app.layout = html.Div([
@@ -69,4 +70,5 @@ app.layout = html.Div([
 
 
 if __name__ == "__main__":
-    app.run(debug=True, host='0.0.0.0')
+    #app.run(debug=False, host='0.0.0.0')
+    app.run(debug=True)

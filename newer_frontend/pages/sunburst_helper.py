@@ -81,8 +81,12 @@ def coerce_full_panda(df,value_column,column_list):
     # print('*********************************')
     # print(tree_panda)
 
-    tree_panda=tree_panda.round(decimals=0)
-    tree_panda['average']=tree_panda['average'].astype(int)
+    if value_column=='average':
+        tree_panda=tree_panda.round(decimals=0)
+        tree_panda['average']=tree_panda['average'].astype(int)
 
+    elif value_column=='percent_present':
+        tree_panda=tree_panda.round(decimals=3)
+        #tree_panda['average']=tree_panda['average'].astype(int)
     
     return tree_panda
