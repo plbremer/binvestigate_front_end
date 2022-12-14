@@ -10,6 +10,7 @@ import dash_bio as dashbio
 from . import hierarchical_differential_analysis_helper
 import networkx as nx
 from . import venn_helper
+from time import time
 
 from pprint import pprint
 dash.register_page(__name__)
@@ -319,6 +320,7 @@ def perform_metadata_query(
     dropdown_triplet_selection_value
 
 ):
+
     '''
     describes the query that the user makes
     '''
@@ -340,3 +342,77 @@ def perform_metadata_query(
     data = total_panda.to_dict(orient='records')
 
     return [data]
+
+
+
+
+@callback(
+    [
+        Output(component_id='tree_query', component_property='n_clicks')
+        #Output(component_id="leaf_table", component_property="columns"),
+        #Output(component_id="leaf_table", component_property="data")
+    ],
+    [
+        Input(component_id='tree_query', component_property='n_clicks'),
+    ],
+    [
+        #State(component_id='dropdown_triplet_selection_from',component_property='value'),
+        #State(component_id='dropdown_triplet_selection_to',component_property='value'),
+        #State(component_id='radio_items_bin_type',component_property='value'),
+        State(component_id='tree_table_metadata', component_property='derived_virtual_data'),
+    ],
+    prevent_initial_call=True
+)
+def query_table(
+    leaf_query_n_clicks,
+    #radio_items_bin_type_value,
+    tree_table_metadata_derived_virtual_data
+):
+    print('@'*50)
+    pprint(tree_table_metadata_derived_virtual_data)
+
+    input_metadata=pd.DataFrame.from_records(tree_table_metadata_derived_virtual_data)
+    print(input_metadata.triplet_id.tolist())
+
+    tree_output={
+    #    "triplet_from":dropdown_triplet_selection_from_value,
+    #    "triplet_to":dropdown_triplet_selection_to_value
+        "metadata_triplets":input_metadata.triplet_id.tolist(),
+        "bin_type":'knowns'
+    }
+    #print(table_metadata_derived_virtual_data)
+    #leaf_output=table_metadata_derived_virtual_data
+
+    start=time()
+    response = requests.post(base_url_api + "/treeresource/", json=tree_output)
+    end=time()
+    #print(response.json())
+    print(f'the time to get our info from the api is {end-start}')
+    
+    # start=time.time()
+    # total_panda = pd.read_json(response.json(), orient="records")
+    # print(total_panda)
+    # print('&#$'*50)
+    # if radio_items_bin_type_value!='class':
+    #     total_panda['compound_id']=total_panda['compound_id'].map(hyperlink_translation_dict.get)
+    #     total_panda['english_name']='['+total_panda['english_name']+'](/sunburst/'+total_panda['compound_id'].astype(str)+')'
+    #     total_panda['identifier']='['+total_panda['identifier']+'](/bin-browser/'+total_panda['compound_id'].astype(str)+')'
+    # end=time.time()
+    # print(f'the time to turn our json into a panda is  {end-start}')
+    # #print(total_panda)
+    # #print('***********************************')
+
+    # # start=time.time()
+    # # total_panda=total_panda.loc[total_panda['bin_type_dict']==radio_items_bin_type_value]
+    # # end=time.time()
+    # # print(f'the time to subset our panda is  {end-start}')
+
+    # start=time.time()
+    # data = total_panda.to_dict(orient='records')
+    # end=time.time()
+    # print(f'the time to turn our panda into json again is  {end-start}')
+    # return [data]
+
+
+
+
