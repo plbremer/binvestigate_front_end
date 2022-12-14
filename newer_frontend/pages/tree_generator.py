@@ -386,7 +386,7 @@ def query_table(
     start=time()
     response = requests.post(base_url_api + "/treeresource/", json=tree_output)
     end=time()
-    #print(response.json())
+    print(pd.read_json(response.json(),orient='records'))
     print(f'the time to get our info from the api is {end-start}')
     
     # start=time.time()
