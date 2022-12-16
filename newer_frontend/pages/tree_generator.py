@@ -304,12 +304,12 @@ layout=html.Div(
                         html.Div(
                             dbc.Button(
                                 'Download Clustergram Core Matrix',
-                                id='tree_download',
+                                id='button_tree_download',
                             ),
                             className="d-grid gap-2 col-3 mx-auto",
                         ),
-                        dcc.Download(id="download_tree_data"),
-                        dcc.Store(id='store_tree')
+                        dcc.Download(id="download_tree"),
+                        dcc.Store(id='store_tree'),
                         dcc.Graph(id='tree_clustergram_graph')
 
 
@@ -459,7 +459,7 @@ def perform_metadata_query(
         Output(component_id='tree_clustergram_graph',component_property="figure"),
         Output(component_id='Img_tanglegram',component_property="src"),
         Output(component_id='modal_Img_tanglegram',component_property="src"),
-        dcc.Store(id='store_tree',component_property='data')
+        Output(component_id='store_tree',component_property='data')
     ],
     [
         Input(component_id='tree_query', component_property='n_clicks'),
@@ -700,29 +700,29 @@ def query_table(
     # data = base64.b64encode(buf.getbuffer()).decode("utf8") # encode to html elements
     # plotly_fig="data:image/png;base64,{}".format(data)
 
+    clustergram_panda.index=input_metadata.triplet_id.tolist()
+    print(clustergram_panda)
+    return [clustergram_figure,plotly_fig,plotly_fig,clustergram_panda.to_dict(orient='index')]
 
-    return [clustergram_figure,plotly_fig,plotly_fig,clustergram_panda.to_json(orient='records')]
 
 
-
-# @callback(
-#     [
-#         Output(component_id="download_leaf_datatable", component_property="data"),
-#     ],
-#     [
-#         Input(component_id="button_download", component_property="n_clicks"),
-#     ],
-#     [
-#         State(component_id="leaf_table",component_property="data"),
-#         State(component_id='radio_items_bin_type',component_property='value')
-#     ],
-#     prevent_initial_call=True
-# )
-# def download_leaf_datatable(
-#     download_click,
-#     table_data,
-#     radio_items_bin_type_value
-#     ):
+@callback(
+    [
+        Output(component_id="download_tree", component_property="data"),
+    ],
+    [
+        Input(component_id="button_tree_download", component_property="n_clicks"),
+    ],
+    [
+        #State(component_id="leaf_table",component_property="data"),
+        State(component_id='store_tree',component_property='data')
+    ],
+    prevent_initial_call=True
+)
+def download_leaf_datatable(
+    button_tree_download_n_clicks,
+    store_tree_data
+    ):
 #         """
 #         """
 #         #print(pd.DataFrame.from_records(table_derived_virtual_data).drop(['compound','bin'],axis='columns'))
@@ -730,7 +730,9 @@ def query_table(
 #         #temp_img=venn_helper.make_venn_figure_from_panda(pd.DataFrame.from_records(table_derived_virtual_data).drop(['compound','bin'],axis='columns'))
 #         print(pd.DataFrame.from_records(table_data).to_excel)
 
-#         downloaded_panda=pd.DataFrame.from_records(table_data)
+        downloaded_panda=pd.DataFrame.from_dict(store_tree_data,orient='index')
+        print(store_tree_data)
+        print(downloaded_panda)
 
 #         if radio_items_bin_type_value!='class':
 #             downloaded_panda['english_name']=downloaded_panda['english_name'].str.extract('\[(.*)\]')
@@ -741,9 +743,9 @@ def query_table(
     
 #         # temp['english_name']=temp['english_name'].str.extract('\[(.*)\]')
 
-#         return [dcc.send_data_frame(
-#             downloaded_panda.to_excel, "binvestigate_differential_datatable.xlsx", sheet_name="sheet_1"
-#         )]
+        return [dcc.send_data_frame(
+            downloaded_panda.to_excel, "binvestigate_phylo_metabolomic_datatable.xlsx", sheet_name="sheet_1"
+        )]
 
 
 
