@@ -1,3 +1,4 @@
+from enum import unique
 import dash
 from dash import dcc, html, dash_table, callback
 import plotly.express as px
@@ -26,8 +27,15 @@ index_panda=pd.read_pickle('../newer_datasets/index_panda.bin')
 index_panda=index_panda.sort_index()
 index_panda['species']=index_panda['species'].astype(str)
 
-
+#['3701', '13442', '3705', '3052', '186826', '3633', '1129', '3041', '2706', '41073', '1485', '3883', '2']
+species_to_disallow_for_tanglegram={'arabidopsis', 'coffea', 'brassica', 'chlamydomonas', 'lactobacillales', 'gossypium', 'synechococcus', 'chlorophyta', 'citrus', 'carabidae', 'clostridium', 'phaseolus', 'bacteria'}
 unique_sod_combinations_dict=venn_helper.get_unique_sod_combinations()
+unique_sod_combinations_dict={
+    temp_key:unique_sod_combinations_dict[temp_key] for temp_key in unique_sod_combinations_dict.keys() if (unique_sod_combinations_dict[temp_key].split(' - ')[0] not in species_to_disallow_for_tanglegram)
+}
+
+tanglegram_species_nx=nx.read_gpickle('../newer_datasets/tanglegram_species_networkx.bin')
+#print(unique_sod_combinations_dict)
 ##############################################
 
 
@@ -213,6 +221,69 @@ layout=html.Div(
             ],
             #justify='center'
         ),
+        html.Div(
+            children=[
+                dbc.Spinner(
+                    id='spinner_clustergram',
+                    children=[
+
+
+
+                        dbc.Row(html.H2("Tanglegram"),style={'textAlign': 'center'}),
+                        dbc.Row(
+                            html.Div(className="venn-thumbnail-container",
+                                children=[
+                                    html.Img(
+                                        id='Img_tanglegram',
+                                        #src=plotly_fig,
+                                        height=200,
+                                        width=200
+                                    ),
+                                ]
+                            ),
+                            style={'textAlign': 'center'}
+                        ),
+                        html.Br(),
+                        html.Br(),
+                        html.Br(),
+                        html.Br(),
+                        html.Br(),
+                        html.Br(),                        
+                        dbc.Modal(
+                            children=[
+                                #dbc.ModalHeader
+                                dbc.ModalHeader(dbc.ModalTitle("Right Click + Copy Image Address for High-Res"),close_button=True),
+                                dbc.ModalBody(
+                                #    html.Div(className="modal-body-container",children=[
+                                    html.Img(
+                                        id='modal_Img_tanglegram',
+                                        #src=plotly_fig,
+                                        #height=400,
+                                        #width=800,
+                                        style={"height": "40vh"}
+                                    )
+                                #        ]
+                                #    )
+                                ),
+                            ],
+                            className="modal-overarching",
+                            #fullscreen=True,
+                            id='modal_tanglergram',
+                            centered=True,
+                            size='xl',
+                            is_open=False,
+                            style={"max-width": "none", "width": "90%"}
+                        ),
+                        html.H2("Clustergram", className='text-center'),
+                        dcc.Graph(id='tree_clustergram_graph')
+
+
+
+
+                    ],
+                )
+            ]
+        )
 
 
 
@@ -348,9 +419,11 @@ def perform_metadata_query(
 
 @callback(
     [
-        Output(component_id='tree_query', component_property='n_clicks')
+        #Output(component_id='tree_query', component_property='n_clicks')
         #Output(component_id="leaf_table", component_property="columns"),
         #Output(component_id="leaf_table", component_property="data")
+        #Output(component_id='spinner_clustergram',component_property="children")
+        Output(component_id='tree_clustergram_graph',component_property="figure")
     ],
     [
         Input(component_id='tree_query', component_property='n_clicks'),
@@ -364,7 +437,7 @@ def perform_metadata_query(
     prevent_initial_call=True
 )
 def query_table(
-    leaf_query_n_clicks,
+    tree_query_n_clicks,
     #radio_items_bin_type_value,
     tree_table_metadata_derived_virtual_data
 ):
@@ -378,7 +451,8 @@ def query_table(
     #    "triplet_from":dropdown_triplet_selection_from_value,
     #    "triplet_to":dropdown_triplet_selection_to_value
         "metadata_triplets":input_metadata.triplet_id.tolist(),
-        "bin_type":'knowns'
+        "bin_type":'knowns',
+        "data_type":'average'
     }
     #print(table_metadata_derived_virtual_data)
     #leaf_output=table_metadata_derived_virtual_data
@@ -386,7 +460,8 @@ def query_table(
     start=time()
     response = requests.post(base_url_api + "/treeresource/", json=tree_output)
     end=time()
-    print(pd.read_json(response.json(),orient='records'))
+    clustergram_panda=pd.read_json(response.json(),orient='records')
+    print(clustergram_panda)
     print(f'the time to get our info from the api is {end-start}')
     
     # start=time.time()
@@ -413,6 +488,82 @@ def query_table(
     # print(f'the time to turn our panda into json again is  {end-start}')
     # return [data]
 
+    columns = list(clustergram_panda.columns.values)
+    rows = list(clustergram_panda.index)
+
+    print('about to make clustergram')
+    clustergram_figure = dashbio.Clustergram(
+        data=clustergram_panda.loc[rows].values,
+        row_labels=rows,
+        column_labels=columns,
+        #height=40*len(rows),
+        height=1000,
+        width=2000
+    )
+    print('made clustergram')
+
+
+    #dcc.Graph(id='tree_clustergram_graph',figure=clustergram_figure)
+
+    #output_children=                  
+    
+    # clustergram_figure = dashbio.Clustergram(
+    #     data=clustergram_panda.values,#bins_panda,
+    #     row_labels=list(clustergram_panda.index),
+    #     column_labels=list(clustergram_panda.columns.values),
+    # )
+    #volcano.update_layout(showlegend=False)\
+
+
+    #convert incoming list of triplets into list of species
+    #conver incoming list of species into species IDs
+    #make a copy of the species networkx
+    #delete things that arent present
+    #run https://networkx.org/documentation/stable/reference/algorithms/generated/networkx.algorithms.shortest_paths.dense.floyd_warshall_numpy.html#networkx.algorithms.shortest_paths.dense.floyd_warshall_numpy
+    # be sure to use the subgraph
+    #  
+    #for each species id, if present more than once, duplicate distance matrix row (of course expanding all others too )
+    #if the matrix is
+    #________________
+    #|            |c |
+    #|            |o |
+    #|            |p |
+    #|____________|y_|
+    #|copy of abov|  |
+    #|___________ |__|
+    #thne the bottom right is the slice from the list of elements being copied, if possible
+
+    #then, simply feed the distance matrices to the tanglegram
+
+    #then, figure out exactly how to inject the genus, class, etc by looking at the locations in the R returned by "dendrogram"
+
+    #coerce incoming data into distance matrix (in same way that clustergram does)
+    #coerce mini species networkx into distance matrix
+    #send both to tangleram creator
 
 
 
+
+
+
+    return [clustergram_figure]
+
+
+
+
+
+
+
+
+
+# @callback(
+#     [
+#         Output(component_id='modal_Img_tanglegram', component_property='is_open'),
+#     ],
+#     [
+#         Input(component_id='Img_tanglegram', component_property='n_clicks'),
+#     ],
+#     prevent_initial_call=True
+# )
+# def open_modal(Img_tanglegram_n_clicks):
+#     return [True]
