@@ -1,4 +1,5 @@
 from enum import unique
+from operator import index
 import dash
 from dash import dcc, html, dash_table, callback
 import plotly.express as px
@@ -13,6 +14,19 @@ import networkx as nx
 from . import venn_helper
 from time import time
 
+from scipy.spatial.distance import cdist
+import numpy as np
+from scipy.cluster.hierarchy import linkage
+from scipy.cluster.hierarchy import dendrogram
+
+import matplotlib
+matplotlib.use('Agg')
+from matplotlib import pyplot as plt
+import io
+import base64
+
+import tanglegram as tg
+
 from pprint import pprint
 dash.register_page(__name__)
 
@@ -21,11 +35,17 @@ base_url_api = f"http://127.0.0.1:4999/"
 
 ########get things from helper script########
 species_networkx,species_node_dict=hierarchical_differential_analysis_helper.extract_networkx_selections_species()
+print('+++++++++++++++++++++')
+#print(species_node_dict)
+print(('+++++++++++++++++++++++++++'))
 organ_networkx,organ_node_dict=hierarchical_differential_analysis_helper.extract_networkx_selections_organ()
 disease_networkx,disease_node_dict=hierarchical_differential_analysis_helper.extract_networkx_selections_disease()
 index_panda=pd.read_pickle('../newer_datasets/index_panda.bin')
 index_panda=index_panda.sort_index()
 index_panda['species']=index_panda['species'].astype(str)
+print(index_panda)
+english_species_to_ncbi_id_dict=dict(zip(index_panda['species_english'].tolist(),index_panda['species'].tolist()))
+
 
 #['3701', '13442', '3705', '3052', '186826', '3633', '1129', '3041', '2706', '41073', '1485', '3883', '2']
 species_to_disallow_for_tanglegram={'arabidopsis', 'coffea', 'brassica', 'chlamydomonas', 'lactobacillales', 'gossypium', 'synechococcus', 'chlorophyta', 'citrus', 'carabidae', 'clostridium', 'phaseolus', 'bacteria'}
@@ -35,6 +55,12 @@ unique_sod_combinations_dict={
 }
 
 tanglegram_species_nx=nx.read_gpickle('../newer_datasets/tanglegram_species_networkx.bin')
+
+
+#fix the compound names
+final_curations=pd.read_pickle('../newer_datasets/compound_list_for_sun_and_bin_new.bin')
+compound_bin_translator_dict=dict(zip(final_curations.loc[final_curations.bin_type=='known']['compound_identifier'].astype(int).tolist(),final_curations.loc[final_curations.bin_type=='known']['english_name'].tolist()))
+
 #print(unique_sod_combinations_dict)
 ##############################################
 
@@ -206,7 +232,7 @@ layout=html.Div(
                 dbc.Col(width={'size':2}),
                 dbc.Col(
                     children=[
-                        html.H2("Step 3: Perform Differential Analysis", className='text-center'),
+                        html.H2("Step 3: Perform Cluster Analysis", className='text-center'),
                         html.Div(
                             dbc.Button(
                                 'Get Results',
@@ -268,13 +294,22 @@ layout=html.Div(
                             ],
                             className="modal-overarching",
                             #fullscreen=True,
-                            id='modal_tanglergram',
+                            id='modal_tanglegram',
                             centered=True,
                             size='xl',
                             is_open=False,
                             style={"max-width": "none", "width": "90%"}
                         ),
                         html.H2("Clustergram", className='text-center'),
+                        html.Div(
+                            dbc.Button(
+                                'Download Clustergram Core Matrix',
+                                id='tree_download',
+                            ),
+                            className="d-grid gap-2 col-3 mx-auto",
+                        ),
+                        dcc.Download(id="download_tree_data"),
+                        dcc.Store(id='store_tree')
                         dcc.Graph(id='tree_clustergram_graph')
 
 
@@ -415,15 +450,16 @@ def perform_metadata_query(
     return [data]
 
 
-
-
 @callback(
     [
         #Output(component_id='tree_query', component_property='n_clicks')
         #Output(component_id="leaf_table", component_property="columns"),
         #Output(component_id="leaf_table", component_property="data")
         #Output(component_id='spinner_clustergram',component_property="children")
-        Output(component_id='tree_clustergram_graph',component_property="figure")
+        Output(component_id='tree_clustergram_graph',component_property="figure"),
+        Output(component_id='Img_tanglegram',component_property="src"),
+        Output(component_id='modal_Img_tanglegram',component_property="src"),
+        dcc.Store(id='store_tree',component_property='data')
     ],
     [
         Input(component_id='tree_query', component_property='n_clicks'),
@@ -461,6 +497,15 @@ def query_table(
     response = requests.post(base_url_api + "/treeresource/", json=tree_output)
     end=time()
     clustergram_panda=pd.read_json(response.json(),orient='records')
+    clustergram_panda.index=input_metadata.triplet_id.tolist()
+
+    print(compound_bin_translator_dict)
+    clustergram_panda.rename(mapper=compound_bin_translator_dict, axis='columns',inplace=True)
+    print(clustergram_panda)
+    print([column_name for column_name in clustergram_panda.columns.tolist() if ( str(column_name).isnumeric()==True )])
+    clustergram_panda.drop([column_name for column_name in clustergram_panda.columns.tolist() if ( str(column_name).isnumeric()==True )],axis='columns',inplace=True)
+
+
     print(clustergram_panda)
     print(f'the time to get our info from the api is {end-start}')
     
@@ -489,7 +534,8 @@ def query_table(
     # return [data]
 
     columns = list(clustergram_panda.columns.values)
-    rows = list(clustergram_panda.index)
+    #rows = list(clustergram_panda.index)
+    rows=input_metadata.triplet_id.tolist()
 
     print('about to make clustergram')
     clustergram_figure = dashbio.Clustergram(
@@ -498,7 +544,8 @@ def query_table(
         column_labels=columns,
         #height=40*len(rows),
         height=1000,
-        width=2000
+        width=2000,
+        #cluster='row'
     )
     print('made clustergram')
 
@@ -516,12 +563,73 @@ def query_table(
 
 
     #convert incoming list of triplets into list of species
+    incoming_species=[element.split(' - ')[0] for element in input_metadata.triplet_id.tolist()]
     #conver incoming list of species into species IDs
+    incoming_species_as_ids=[english_species_to_ncbi_id_dict[element] for element in incoming_species]
     #make a copy of the species networkx
-    #delete things that arent present
+    shallow_copy_of_tanglegram_species=tanglegram_species_nx.copy()
+    #delete things that arent requested or directly connecting things that are present
+    nodes_to_retain=set()
+    for element in incoming_species_as_ids:
+        nodes_to_retain=nodes_to_retain.union(
+            set(nx.shortest_path(shallow_copy_of_tanglegram_species,source='1',target=element))
+        )
+    nodes_to_remove=set(shallow_copy_of_tanglegram_species.nodes)-nodes_to_retain
+    [shallow_copy_of_tanglegram_species.remove_node(element) for element in nodes_to_remove]
+    
+    
+    incoming_species_as_ids_set=set(incoming_species_as_ids)
+    all_remaining_nodes_set={element for element in shallow_copy_of_tanglegram_species.nodes}
+    non_requested_nodes=all_remaining_nodes_set-incoming_species_as_ids_set
+    incoming_species_as_ids_unique_list=list(incoming_species_as_ids_set)
+    nodes_ordered_by_requested_then_necessary=incoming_species_as_ids_unique_list+list(non_requested_nodes)
+    #nodes_ordered_by_requested_then_necessary=incoming_species_as_ids+list(non_requested_nodes)
+    print(nodes_to_retain)
+    print('!@#'*30)
     #run https://networkx.org/documentation/stable/reference/algorithms/generated/networkx.algorithms.shortest_paths.dense.floyd_warshall_numpy.html#networkx.algorithms.shortest_paths.dense.floyd_warshall_numpy
     # be sure to use the subgraph
     #  
+    #so that we can subset the subgraph distance matrix
+    #non_requested_nodes=
+    #{element for element in shallow_copy_of_tanglegram_species.nodes}
+    remaining_nodes_ordered=[element for element in shallow_copy_of_tanglegram_species.nodes]
+    print(incoming_species_as_ids)
+    print(remaining_nodes_ordered)
+    subgraph_distance_matrix=nx.floyd_warshall_numpy(shallow_copy_of_tanglegram_species.to_undirected(),nodelist=nodes_ordered_by_requested_then_necessary)
+    print(subgraph_distance_matrix)
+    print(type(subgraph_distance_matrix))
+    #print(subgraph_distance_matrix[[0,2],[0,2]])
+    print(subgraph_distance_matrix[0:len(incoming_species_as_ids_set),0:len(incoming_species_as_ids_set)])
+
+    core_subgraph=pd.DataFrame(
+        subgraph_distance_matrix[0:len(incoming_species_as_ids_set),0:len(incoming_species_as_ids_set)],
+        columns=incoming_species_as_ids_unique_list,
+        index=incoming_species_as_ids_unique_list
+    )
+    print(core_subgraph)
+
+
+    subgraph_with_multiple_instance_of_same_species=pd.DataFrame(
+        data=0,
+        #columns=input_metadata.triplet_id.tolist(),
+        #index=input_metadata.triplet_id.tolist()
+        columns=incoming_species_as_ids,
+        index=incoming_species_as_ids
+    )
+    print(subgraph_with_multiple_instance_of_same_species)
+
+    #yes i know this isnt fast but have you ever tried being the sole grad student developer
+    for row_index in subgraph_with_multiple_instance_of_same_species.index:
+        for column_index in subgraph_with_multiple_instance_of_same_species.columns:
+            subgraph_with_multiple_instance_of_same_species.at[row_index,column_index]=core_subgraph.at[row_index,column_index]
+
+    
+    print(subgraph_with_multiple_instance_of_same_species)
+    subgraph_with_multiple_instance_of_same_species.columns=input_metadata.triplet_id.tolist()
+    subgraph_with_multiple_instance_of_same_species.index=input_metadata.triplet_id.tolist()
+    print(subgraph_with_multiple_instance_of_same_species)
+    #ncbi_distance_matrix_for_tanglegram=subgraph_distance_matrix[0:len(incoming_species_as_ids_set),0:len(incoming_species_as_ids_set)]
+    #the below isnt necessarily true
     #for each species id, if present more than once, duplicate distance matrix row (of course expanding all others too )
     #if the matrix is
     #________________
@@ -541,29 +649,114 @@ def query_table(
     #coerce mini species networkx into distance matrix
     #send both to tangleram creator
 
+    metabolomics_oriented_distance_matrix=cdist(
+        XA=clustergram_panda,
+        XB=clustergram_panda,
+        #the clustergram default
+        metric='euclidean',
+    )
+
+    metabolomics_oriented_distance_matrix_panda=pd.DataFrame(
+        data=metabolomics_oriented_distance_matrix,
+        columns=input_metadata.triplet_id.tolist(),
+        index=input_metadata.triplet_id.tolist()
+    )
+
+
+
+
+    #fig = plt.figure(figsize=(5, 5),dpi=200)
+    #fig,ax=plt.subplots(figsize=(5,5),dpi=200)
+    #metabolomics_oriented_dendrogram=dendrogram(metabolomics_oriented_linkage_matrix,ax=ax)
+    fig=tg.plot(metabolomics_oriented_distance_matrix_panda, subgraph_with_multiple_instance_of_same_species, sort=False)
+    buf=io.BytesIO()
+    plt.savefig(buf, format = "png")
+    plt.close('all')
+    #plt.clf()
+    data = base64.b64encode(buf.getbuffer()).decode("utf8") # encode to html elements
+    plotly_fig="data:image/png;base64,{}".format(data)
 
 
 
 
 
-    return [clustergram_figure]
 
 
 
 
+    # metabolomics_oriented_linkage_matrix=linkage(
+    #     y=metabolomics_oriented_distance_matrix,
+    #     #the clustergram default
+    #     method='complete'
+    # )
+
+    # #fig = plt.figure(figsize=(5, 5),dpi=200)
+    # fig,ax=plt.subplots(figsize=(5,5),dpi=200)
+    # metabolomics_oriented_dendrogram=dendrogram(metabolomics_oriented_linkage_matrix,ax=ax)
+    # buf=io.BytesIO()
+    # plt.savefig(buf, format = "png")
+    # plt.close('all')
+    # #plt.clf()
+    # data = base64.b64encode(buf.getbuffer()).decode("utf8") # encode to html elements
+    # plotly_fig="data:image/png;base64,{}".format(data)
 
 
+    return [clustergram_figure,plotly_fig,plotly_fig,clustergram_panda.to_json(orient='records')]
 
 
 
 # @callback(
 #     [
-#         Output(component_id='modal_Img_tanglegram', component_property='is_open'),
+#         Output(component_id="download_leaf_datatable", component_property="data"),
 #     ],
 #     [
-#         Input(component_id='Img_tanglegram', component_property='n_clicks'),
+#         Input(component_id="button_download", component_property="n_clicks"),
+#     ],
+#     [
+#         State(component_id="leaf_table",component_property="data"),
+#         State(component_id='radio_items_bin_type',component_property='value')
 #     ],
 #     prevent_initial_call=True
 # )
-# def open_modal(Img_tanglegram_n_clicks):
-#     return [True]
+# def download_leaf_datatable(
+#     download_click,
+#     table_data,
+#     radio_items_bin_type_value
+#     ):
+#         """
+#         """
+#         #print(pd.DataFrame.from_records(table_derived_virtual_data).drop(['compound','bin'],axis='columns'))
+
+#         #temp_img=venn_helper.make_venn_figure_from_panda(pd.DataFrame.from_records(table_derived_virtual_data).drop(['compound','bin'],axis='columns'))
+#         print(pd.DataFrame.from_records(table_data).to_excel)
+
+#         downloaded_panda=pd.DataFrame.from_records(table_data)
+
+#         if radio_items_bin_type_value!='class':
+#             downloaded_panda['english_name']=downloaded_panda['english_name'].str.extract('\[(.*)\]')
+#             downloaded_panda['identifier']=downloaded_panda['identifier'].str.extract('\[(.*)\]')
+#             # total_panda['english_name']='['+total_panda['english_name']+'](/sunburst/'+total_panda['compound_id'].astype(str)+')'
+#             # total_panda['identifier']='['+total_panda['identifier']+'](/bin-browser/'+total_panda['compound_id'].astype(str)+')'
+
+    
+#         # temp['english_name']=temp['english_name'].str.extract('\[(.*)\]')
+
+#         return [dcc.send_data_frame(
+#             downloaded_panda.to_excel, "binvestigate_differential_datatable.xlsx", sheet_name="sheet_1"
+#         )]
+
+
+
+
+
+@callback(
+    [
+        Output(component_id='modal_tanglegram', component_property='is_open'),
+    ],
+    [
+        Input(component_id='Img_tanglegram', component_property='n_clicks'),
+    ],
+    prevent_initial_call=True
+)
+def open_modal(Img_tanglegram_n_clicks):
+    return [True]
