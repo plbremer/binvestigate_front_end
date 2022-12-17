@@ -297,6 +297,7 @@ layout=html.Div(
                             id='modal_tanglegram',
                             centered=True,
                             size='xl',
+                            #fullscreen=True,
                             is_open=False,
                             style={"max-width": "none", "width": "90%"}
                         ),
@@ -668,7 +669,23 @@ def query_table(
     #fig = plt.figure(figsize=(5, 5),dpi=200)
     #fig,ax=plt.subplots(figsize=(5,5),dpi=200)
     #metabolomics_oriented_dendrogram=dendrogram(metabolomics_oriented_linkage_matrix,ax=ax)
-    fig=tg.plot(metabolomics_oriented_distance_matrix_panda, subgraph_with_multiple_instance_of_same_species, sort=False)
+    start=time()
+    fig=tg.plot(
+        metabolomics_oriented_distance_matrix_panda, 
+        subgraph_with_multiple_instance_of_same_species, 
+        sort='step2side',
+        figsize=(20,10),
+        dend_kwargs={
+            'color_threshold':0,
+            'truncate_mode':None,
+            'leaf_rotation':45
+        },
+        sort_kwargs={
+            'max_n_iterations':100
+        }        
+        )
+    end=time()
+    print(f'{end-start} seconds to optimize the tangle')
     buf=io.BytesIO()
     plt.savefig(buf, format = "png")
     plt.close('all')
