@@ -1,5 +1,6 @@
 from enum import unique
 from operator import index
+from unittest import result
 import dash
 from dash import dcc, html, dash_table, callback
 import plotly.express as px
@@ -13,6 +14,8 @@ from . import hierarchical_differential_analysis_helper
 import networkx as nx
 from . import venn_helper
 from time import time
+
+from itertools import combinations
 
 from scipy.spatial.distance import cdist
 import numpy as np
@@ -63,6 +66,41 @@ compound_bin_translator_dict=dict(zip(final_curations.loc[final_curations.bin_ty
 
 #print(unique_sod_combinations_dict)
 ##############################################
+
+
+def append_index(Z, n, i, cluster_id_list):
+    # refer to the recursive progress in
+    # https://github.com/scipy/scipy/blob/4cf21e753cf937d1c6c2d2a0e372fbc1dbbeea81/scipy/cluster/hierarchy.py#L3549
+
+    # i is the idx of cluster(counting in all 2 * n - 1 clusters)
+    # so i-n is the idx in the "Z"
+    if i < n:
+        return
+    aa = int(Z[i - n, 0])
+    ab = int(Z[i - n, 1])
+
+    append_index(Z,n, aa, cluster_id_list)
+    append_index(Z,n, ab, cluster_id_list)
+
+    cluster_id_list.append(i-n)
+    # Imitate the progress in hierarchy.dendrogram
+    # so how `i-n` is appended , is the same as how the element in 'icoord'&'dcoord' be.
+    return
+
+def get_linkid_clusterid_relation(Z):
+    Zs = Z.shape
+    n = Zs[0] + 1
+    i = 2 * n - 2
+    cluster_id_list = []
+    append_index(Z, n, i, cluster_id_list)
+    # cluster_id_list[i] is the cluster idx(in Z) that the R['icoord'][i]/R['dcoord'][i] corresponds to
+
+    dict_linkid_2_clusterid = {linkid: clusterid for linkid, clusterid in enumerate(cluster_id_list)}
+    dict_clusterid_2_linkid = {clusterid: linkid for linkid, clusterid in enumerate(cluster_id_list)}
+    return dict_linkid_2_clusterid, dict_clusterid_2_linkid
+
+
+
 
 
 layout=html.Div(
@@ -670,20 +708,65 @@ def query_table(
     #fig,ax=plt.subplots(figsize=(5,5),dpi=200)
     #metabolomics_oriented_dendrogram=dendrogram(metabolomics_oriented_linkage_matrix,ax=ax)
     start=time()
-    fig=tg.plot(
+    fig,RHS_dendro_R,RHS_linkage,RHS_linkage_pre_sort,ax2=tg.plot(
         metabolomics_oriented_distance_matrix_panda, 
         subgraph_with_multiple_instance_of_same_species, 
         sort='step2side',
         figsize=(20,10),
+        leaf_rotation=45,
         dend_kwargs={
             'color_threshold':0,
             'truncate_mode':None,
-            'leaf_rotation':45
+            #'leaf_rotation':45
         },
         sort_kwargs={
             'max_n_iterations':100
         }        
         )
+
+    ax2.text(1,1,'hi there')
+
+    pprint(RHS_dendro_R)
+    for temp_key in RHS_dendro_R.keys():
+        print(temp_key)
+        print(len(RHS_dendro_R[temp_key]))
+
+
+    print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~`')
+    pprint(RHS_dendro_R)
+    print('=====================================================')
+    pprint(RHS_linkage_pre_sort)
+    pprint(RHS_linkage)
+    dict_1,dict_2=get_linkid_clusterid_relation(RHS_linkage)
+    pprint(dict_1)
+    pprint(dict_2)
+
+
+    dendro_u_to_species_dict=return_leaf_elements_for_each_dendro_u(
+        dict_2,
+        RHS_linkage,
+        incoming_species_as_ids
+    )
+
+    dendro_u_to_parent_node_dict=return_parent_node_for_species_grouping(
+        dendro_u_to_species_dict,
+        shallow_copy_of_tanglegram_species
+    )
+    print(dendro_u_to_parent_node_dict)
+    #dendro_u_to_words_we_display_dict=return_
+
+    #we want dict 1
+    #for each u element (icoord,dcoor paired lists)
+    #access the proper row in the linkage matrix
+
+    for i in range(len(RHS_dendro_R['dcoord'])):
+        x_value=RHS_dendro_R['dcoord'][i][1]
+        y_value=(RHS_dendro_R['icoord'][i][1]+RHS_dendro_R['icoord'][i][2])/2
+        ax2.text(x_value,y_value,dendro_u_to_parent_node_dict[i])
+
+
+    print('=====================================================')
+
     end=time()
     print(f'{end-start} seconds to optimize the tangle')
     buf=io.BytesIO()
@@ -694,34 +777,121 @@ def query_table(
     plotly_fig="data:image/png;base64,{}".format(data)
 
 
-
-
-
-
-
-
-
-    # metabolomics_oriented_linkage_matrix=linkage(
-    #     y=metabolomics_oriented_distance_matrix,
-    #     #the clustergram default
-    #     method='complete'
-    # )
-
-    # #fig = plt.figure(figsize=(5, 5),dpi=200)
-    # fig,ax=plt.subplots(figsize=(5,5),dpi=200)
-    # metabolomics_oriented_dendrogram=dendrogram(metabolomics_oriented_linkage_matrix,ax=ax)
-    # buf=io.BytesIO()
-    # plt.savefig(buf, format = "png")
-    # plt.close('all')
-    # #plt.clf()
-    # data = base64.b64encode(buf.getbuffer()).decode("utf8") # encode to html elements
-    # plotly_fig="data:image/png;base64,{}".format(data)
-
     clustergram_panda.index=input_metadata.triplet_id.tolist()
     print(clustergram_panda)
     return [clustergram_figure,plotly_fig,plotly_fig,clustergram_panda.to_dict(orient='index')]
 
 
+def return_parent_node_for_species_grouping(dendro_u_to_species_dict,shallow_copy_of_tanglegram_species):
+    '''
+    '''
+    output_dict=dict()
+    # nx.draw(shallow_copy_of_tanglegram_species,with_labels=True)
+    # plt.show()
+    for temp_key in dendro_u_to_species_dict.keys():
+        #get all common ancestor pairs
+        #choose the output that is closest to the root
+        #literally cant believe that LCA of {n} isnt available
+        print('^'*50)
+        print(dendro_u_to_species_dict[temp_key])
+        pairs=list(combinations([str(element) for element in dendro_u_to_species_dict[temp_key]],2))
+        print('the pairs are')
+        print(pairs)
+        #print(shallow_copy_of_tanglegram_species.nodes[pairs[0][0]])
+        if len(pairs)==0:
+            #output_dict[temp_key]='skip_single_species'
+            output_dict[temp_key]=str(dendro_u_to_species_dict[temp_key].pop())
+        else:
+            temp_lcas=dict(
+                nx.tree_all_pairs_lowest_common_ancestor(
+                    shallow_copy_of_tanglegram_species,
+                    pairs=pairs
+                )
+            )
+            print(dict(temp_lcas))
+            #node_id_list=[element[1] for element in list(temp_lcas)]
+            node_id_list=list(temp_lcas.values())
+            distance_from_root=[len(nx.shortest_path(shallow_copy_of_tanglegram_species,source='1',target=element)) for element in node_id_list]
+            print('distance from root')
+            print(distance_from_root)
+            index_of_highest_up=distance_from_root.index(min(distance_from_root))
+            print(index_of_highest_up)
+            node_id_of_highest_up=node_id_list[index_of_highest_up]
+            output_dict[temp_key]=node_id_of_highest_up
+
+    print('~!@'*50)
+    pprint(output_dict)
+    output_dict_strings=dict()
+    for temp_element in output_dict.keys():
+        output_dict_strings[temp_element]=shallow_copy_of_tanglegram_species.nodes[output_dict[temp_element]]['rank']+': '+shallow_copy_of_tanglegram_species.nodes[output_dict[temp_element]]['scientific_name']
+
+    return output_dict_strings
+    #print(output_dict)
+
+
+def return_leaf_elements_for_each_dendro_u(
+    u_to_linkage_mapping_dict,
+    linkage_matrix,
+    singleton_elements
+):
+    
+    
+    
+
+    top_half_of_linkage=np.array(
+        [
+            [int(element),int(element),-1,1] for element in singleton_elements
+        ]
+    )
+
+    number_of_singletons=len(singleton_elements)
+    #we need to boost the u_to_linkage_mapping_dict by number of singletons when we combine to full linkage
+    u_to_linkage_mapping_dict_boosted=dict()
+    for temp_key in u_to_linkage_mapping_dict:
+        u_to_linkage_mapping_dict[temp_key]=number_of_singletons+u_to_linkage_mapping_dict[temp_key]
+    #u_to_linkage_mapping_dict_boosted={temp_key:=(number_of_singletons+u_to_linkage_mapping_dict[temp_key] for temp_key in u_to_linkage_mapping_dict}
+    print(u_to_linkage_mapping_dict_boosted)
+
+    full_linkage_matrix=np.vstack((top_half_of_linkage,linkage_matrix))
+    full_linkage_matrix=full_linkage_matrix.astype(int)
+    output_dict=dict()    
+
+    print('about to find out what the linkage elements are')
+    pprint(full_linkage_matrix)
+    pprint(u_to_linkage_mapping_dict)
+
+
+
+    for temp_key in u_to_linkage_mapping_dict.keys():
+        current_linkage_row=u_to_linkage_mapping_dict[temp_key]
+        current_u_key_singletons=list()
+
+        print(f'about to hop into recursion to find the children of {current_linkage_row}')
+        output_dict[temp_key]=set(recursively_determine_membership_for_single_cluster(full_linkage_matrix,current_u_key_singletons,current_linkage_row))
+
+    pprint(output_dict)
+    print('~!hi~!'*10)
+    return output_dict
+
+
+def recursively_determine_membership_for_single_cluster(full_linkage,result_list,row_to_check):
+    '''
+    faulty but we can use set() to clean up dupes
+    '''
+    #if we reach a core singleton
+    if full_linkage[row_to_check][3]==1:
+        #print(result_list)
+        #print(full_linkage[row_to_check][0])
+        #result_list+=[full_linkage[row_to_check][0]]
+        print(result_list)
+        return [full_linkage[row_to_check][0]]
+
+    else:
+        print('doing recursion')
+        print(f'we are checking row {row_to_check}')
+        result_list+=recursively_determine_membership_for_single_cluster(full_linkage,result_list,full_linkage[row_to_check][0])
+        result_list+=recursively_determine_membership_for_single_cluster(full_linkage,result_list,full_linkage[row_to_check][1])
+        return result_list
 
 @callback(
     [
