@@ -867,16 +867,18 @@ def return_leaf_elements_for_each_dendro_u(
         current_u_key_singletons=list()
 
         print(f'about to hop into recursion to find the children of {current_linkage_row}')
-        output_dict[temp_key]=set(recursively_determine_membership_for_single_cluster(full_linkage_matrix,current_u_key_singletons,current_linkage_row))
+        current_u_key_singletons=set(recursively_determine_membership_for_single_cluster(full_linkage_matrix,current_u_key_singletons,current_linkage_row,number_of_singletons))
+        output_dict[temp_key]=current_u_key_singletons
+        result_list=list()
 
     pprint(output_dict)
     print('~!hi~!'*10)
     return output_dict
 
 
-def recursively_determine_membership_for_single_cluster(full_linkage,result_list,row_to_check):
+def recursively_determine_membership_for_single_cluster(full_linkage,result_list,row_to_check,number_of_singletons):
     '''
-    faulty but we can use set() to clean up dupes
+    
     '''
     #if we reach a core singleton
     if full_linkage[row_to_check][3]==1:
@@ -884,14 +886,20 @@ def recursively_determine_membership_for_single_cluster(full_linkage,result_list
         #print(full_linkage[row_to_check][0])
         #result_list+=[full_linkage[row_to_check][0]]
         print(result_list)
-        return [full_linkage[row_to_check][0]]
+        #return [full_linkage[row_to_check][0]]
+        result_list+=[full_linkage[row_to_check][0]]
+        return result_list
 
     else:
         print('doing recursion')
         print(f'we are checking row {row_to_check}')
-        result_list+=recursively_determine_membership_for_single_cluster(full_linkage,result_list,full_linkage[row_to_check][0])
-        result_list+=recursively_determine_membership_for_single_cluster(full_linkage,result_list,full_linkage[row_to_check][1])
+        # result_list+=recursively_determine_membership_for_single_cluster(full_linkage,result_list,full_linkage[row_to_check][0],number_of_singletons)
+        # result_list+=recursively_determine_membership_for_single_cluster(full_linkage,result_list,full_linkage[row_to_check][1],number_of_singletons)
+        # return result_list
+        result_list=recursively_determine_membership_for_single_cluster(full_linkage,result_list,full_linkage[row_to_check][0],number_of_singletons)
+        result_list=recursively_determine_membership_for_single_cluster(full_linkage,result_list,full_linkage[row_to_check][1],number_of_singletons)
         return result_list
+
 
 @callback(
     [
