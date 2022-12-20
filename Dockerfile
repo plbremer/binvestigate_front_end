@@ -1,14 +1,13 @@
 FROM continuumio/miniconda3
 
-COPY binvestigate_gui.yml .
+COPY binvestigate_gui_2.yml .
 
-RUN conda env create -f binvestigate_gui.yml
+RUN conda env create -f binvestigate_gui_2.yml \
+    &&  mkdir -p /newer_frontend/assets \
+    &&  mkdir -p /newer_frontend/pages \
+    &&  mkdir -p /newer_datasets/ \
+    &&  conda clean -afy
 
-RUN mkdir -p /newer_frontend/assets
-
-RUN mkdir -p /newer_frontend/pages
-
-RUN mkdir -p /newer_datasets/
 
 COPY ./newer_frontend/app.py /newer_frontend/
 

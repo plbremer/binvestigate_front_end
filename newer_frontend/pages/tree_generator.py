@@ -28,13 +28,65 @@ from matplotlib import pyplot as plt
 import io
 import base64
 
-import tanglegram as tg
+#import tanglegram as tg
+from . import tangle_modified
+
+
+from pprint import pprint
+
+# import pydot
+# from networkx.drawing.nx_pydot import graphviz_layout
+# def visualize_nodes_on_a_list(temp_nx,temp_list,temp_attribute_name):
+#     '''
+#     temp_attribute_name=None when you dont want to use an attribute name, rather the 
+#     node names themselves
+#     '''
+#     '''
+#     temp_attribute_name=None when you dont want to use an attribute name, rather the 
+#     node names themselves
+#     '''
+#     if temp_attribute_name != None:
+#         print('here!!!!!!!!!!!!!!!!!!')
+#         color_list=list()
+#         for temp_node in temp_nx.nodes:
+#             if temp_nx.nodes[temp_node][temp_attribute_name] in temp_list:
+#                 color_list.append('#ffa500')
+#             else:
+#                 color_list.append('#00ff00')
+#         pos = graphviz_layout(temp_nx, prog="dot")
+#         labels = nx.get_node_attributes(temp_nx, 'scientific_name') 
+#         nx.draw(temp_nx, pos,with_labels=labels,node_color=color_list)
+#         plt.show()    
+
+#     elif temp_attribute_name == None:
+#         print('there!!!!!!!!!!!!!!!!!!')
+#         color_list=list()
+#         for temp_node in temp_nx.nodes:
+#             if temp_node in temp_list:
+#                 color_list.append('#ffa500')
+#             else:
+#                 color_list.append('#00ff00')
+
+        
+#         pos = nx.nx_agraph.pygraphviz_layout(temp_nx, prog='dot')
+
+#         labels = nx.get_node_attributes(temp_nx, 'scientific_name') 
+#         print(labels)
+#         nx.draw(temp_nx, pos,labels=labels)#,node_color=color_list)
+#         #nx.draw(temp_nx, pos,with_labels=True,node_color=color_list)
+#         plt.show()  
+
+
+
+
+
+
 
 from pprint import pprint
 dash.register_page(__name__)
 
-#base_url_api = f"http://api_alias:4999/"
-base_url_api = f"http://127.0.0.1:4999/"
+base_url_api = f"http://api_alias:4999/"
+#base_url_api = f"http://127.0.0.1:4999/"
 
 ########get things from helper script########
 species_networkx,species_node_dict=hierarchical_differential_analysis_helper.extract_networkx_selections_species()
@@ -133,7 +185,7 @@ layout=html.Div(
         ),
         dbc.Row(
             children=[
-                dbc.Col(width=1),
+                dbc.Col(width=3),
                 dbc.Col(
                     children=[
                         #html.H2("From Triplet", className='text-center'),
@@ -293,7 +345,7 @@ layout=html.Div(
 
 
 
-                        dbc.Row(html.H2("Tanglegram"),style={'textAlign': 'center'}),
+                        dbc.Row(html.H2("Species Tanglegram"),style={'textAlign': 'center'}),
                         dbc.Row(
                             html.Div(className="venn-thumbnail-container",
                                 children=[
@@ -535,10 +587,19 @@ def query_table(
     start=time()
     response = requests.post(base_url_api + "/treeresource/", json=tree_output)
     end=time()
+    raw_data_clustergram_panda=pd.read_json(response.json(),orient='records')
+
     clustergram_panda=pd.read_json(response.json(),orient='records')
+    clustergram_panda=clustergram_panda.loc[
+        :,
+        (clustergram_panda.max()-clustergram_panda.min())>200
+    ]
+    clustergram_panda=clustergram_panda/clustergram_panda.max()
+    clustergram_panda=np.log(clustergram_panda)
+
     clustergram_panda.index=input_metadata.triplet_id.tolist()
 
-    print(compound_bin_translator_dict)
+    #print(compound_bin_translator_dict)
     clustergram_panda.rename(mapper=compound_bin_translator_dict, axis='columns',inplace=True)
     print(clustergram_panda)
     print([column_name for column_name in clustergram_panda.columns.tolist() if ( str(column_name).isnumeric()==True )])
@@ -576,19 +637,161 @@ def query_table(
     #rows = list(clustergram_panda.index)
     rows=input_metadata.triplet_id.tolist()
 
+    print(clustergram_panda)
+
     print('about to make clustergram')
     clustergram_figure = dashbio.Clustergram(
-        data=clustergram_panda.loc[rows].values,
-        row_labels=rows,
+        # data=clustergram_panda.loc[rows].values,
+        data=np.where(
+            clustergram_panda.loc[rows].values<=-4,
+            0,
+            4+clustergram_panda.loc[rows].values,
+        ),
+        row_labels=[element[0:40] for element in rows],
         column_labels=columns,
         #height=40*len(rows),
         height=1000,
         width=2000,
-        #cluster='row'
+        #cluster='row',
+        optimal_leaf_order=False,
+        standardize='none',
+        center_values=False,
+        # color_map= [
+        #     [0.0, '#FFFFFF'],
+        #     [1.0, '#008B8B']
+        #     # [0.0, '#008B8B'],
+        #     # [1.0, '#FFFFFF']
+        # ]
+        color_map=[
+            [0.0,"#05061b"],
+            [0.010101010101010102,"#08081e"],
+            [0.020202020202020204,"#0b0920"],
+            [0.030303030303030304,"#100b23"],
+            [0.04040404040404041,"#130d25"],
+            [0.05050505050505051,"#170f28"],
+            [0.06060606060606061,"#1a102a"],
+            [0.07070707070707072,"#1e122d"],
+            [0.08080808080808081,"#211330"],
+            [0.09090909090909091,"#251433"],
+            [0.10101010101010102,"#281535"],
+            [0.11111111111111112,"#2d1738"],
+            [0.12121212121212122,"#30173a"],
+            [0.13131313131313133,"#34193d"],
+            [0.14141414141414144,"#381a40"],
+            [0.15151515151515152,"#3c1a42"],
+            [0.16161616161616163,"#401b44"],
+            [0.17171717171717174,"#431c46"],
+            [0.18181818181818182,"#481c48"],
+            [0.19191919191919193,"#4b1d4a"],
+            [0.20202020202020204,"#501d4c"],
+            [0.21212121212121213,"#531e4d"],
+            [0.22222222222222224,"#581e4f"],
+            [0.23232323232323235,"#5b1e51"],
+            [0.24242424242424243,"#601f52"],
+            [0.25252525252525254,"#631f53"],
+            [0.26262626262626265,"#681f55"],
+            [0.27272727272727276,"#6b1f56"],
+            [0.2828282828282829,"#701f57"],
+            [0.29292929292929293,"#751f58"],
+            [0.30303030303030304,"#781f59"],
+            [0.31313131313131315,"#7d1f5a"],
+            [0.32323232323232326,"#811e5a"],
+            [0.33333333333333337,"#861e5b"],
+            [0.3434343434343435,"#891e5b"],
+            [0.3535353535353536,"#8e1d5b"],
+            [0.36363636363636365,"#921c5b"],
+            [0.37373737373737376,"#971c5b"],
+            [0.38383838383838387,"#9a1b5b"],
+            [0.393939393939394,"#9f1a5b"],
+            [0.4040404040404041,"#a3195b"],
+            [0.4141414141414142,"#a8185a"],
+            [0.42424242424242425,"#ab185a"],
+            [0.43434343434343436,"#b01759"],
+            [0.4444444444444445,"#b51657"],
+            [0.4545454545454546,"#b91657"],
+            [0.4646464646464647,"#bd1655"],
+            [0.4747474747474748,"#c11754"],
+            [0.48484848484848486,"#c51852"],
+            [0.494949494949495,"#c81951"],
+            [0.5050505050505051,"#cd1c4e"],
+            [0.5151515151515152,"#cf1e4d"],
+            [0.5252525252525253,"#d3214b"],
+            [0.5353535353535354,"#d62449"],
+            [0.5454545454545455,"#d92847"],
+            [0.5555555555555556,"#dc2b46"],
+            [0.5656565656565657,"#df2f44"],
+            [0.5757575757575758,"#e23442"],
+            [0.5858585858585859,"#e43841"],
+            [0.595959595959596,"#e73d3f"],
+            [0.6060606060606061,"#e8403e"],
+            [0.6161616161616162,"#eb463e"],
+            [0.6262626262626263,"#ec4a3e"],
+            [0.6363636363636365,"#ed503e"],
+            [0.6464646464646465,"#ee543f"],
+            [0.6565656565656566,"#ef5a41"],
+            [0.6666666666666667,"#f05e42"],
+            [0.6767676767676768,"#f16445"],
+            [0.686868686868687,"#f26747"],
+            [0.696969696969697,"#f26d4b"],
+            [0.7070707070707072,"#f3714d"],
+            [0.7171717171717172,"#f37651"],
+            [0.7272727272727273,"#f47c55"],
+            [0.7373737373737375,"#f47f58"],
+            [0.7474747474747475,"#f4845d"],
+            [0.7575757575757577,"#f58860"],
+            [0.7676767676767677,"#f58d64"],
+            [0.7777777777777778,"#f59067"],
+            [0.787878787878788,"#f5966c"],
+            [0.797979797979798,"#f59970"],
+            [0.8080808080808082,"#f69e75"],
+            [0.8181818181818182,"#f6a178"],
+            [0.8282828282828284,"#f6a67e"],
+            [0.8383838383838385,"#f6a981"],
+            [0.8484848484848485,"#f6ae87"],
+            [0.8585858585858587,"#f6b18b"],
+            [0.8686868686868687,"#f6b691"],
+            [0.8787878787878789,"#f6bb97"],
+            [0.888888888888889,"#f6be9b"],
+            [0.8989898989898991,"#f7c2a2"],
+            [0.9090909090909092,"#f7c6a6"],
+            [0.9191919191919192,"#f7caac"],
+            [0.9292929292929294,"#f7cdb1"],
+            [0.9393939393939394,"#f8d1b8"],
+            [0.9494949494949496,"#f8d4bc"],
+            [0.9595959595959597,"#f8d9c3"],
+            [0.9696969696969697,"#f8dcc7"],
+            [0.9797979797979799,"#f9e0cd"],
+            [0.98989898989899,"#f9e3d2"],
+            [1.0,"#fae8d8"],
+
+
+        ]
     )
     print('made clustergram')
+    #print(clu)
+    # pprint(clustergram_figure.to_dict())
+    #clustergram_figure.update_coloraxes(colorbar_dtick = 1)
+
+    # clustergram_figure.update_layout(yaxis11=dict(coloraxis_colorbar=dict(
+    #     title="Population",
+    #     tickvals=[0,1,2,3,4],
+    #     ticktext=["1M", "10M", "100M", "1B",'10b'],
+    # )))
+    heatmap_trace=clustergram_figure.data[-1]
+    pprint(heatmap_trace)
+    heatmap_trace.update(
+        colorbar_tickvals=[0,1,2,3,4],
+        colorbar_ticktext=['<=Max/10,000','Max/1,000','Max/100','Max/10','Compound Max']
+    )
 
 
+    # clustergram_figure.update_layout(
+    #     coloraxis_colorbar=dict(
+    #         title="Your Title",
+    #     ),        
+    # )
+
+    #hold=input('hold')
     #dcc.Graph(id='tree_clustergram_graph',figure=clustergram_figure)
 
     #output_children=                  
@@ -702,29 +905,39 @@ def query_table(
     )
 
 
-
-
+    #visualize_nodes_on_a_list(shallow_copy_of_tanglegram_species,[],None)
+    #nx.draw(shallow_copy_of_tanglegram_species,with_labels=True)
+    #plt.show()
     #fig = plt.figure(figsize=(5, 5),dpi=200)
     #fig,ax=plt.subplots(figsize=(5,5),dpi=200)
     #metabolomics_oriented_dendrogram=dendrogram(metabolomics_oriented_linkage_matrix,ax=ax)
     start=time()
-    fig,RHS_dendro_R,RHS_linkage,RHS_linkage_pre_sort,ax2=tg.plot(
+    fig,RHS_dendro_R,RHS_linkage,RHS_linkage_pre_sort,ax2=tangle_modified.plot(
         metabolomics_oriented_distance_matrix_panda, 
         subgraph_with_multiple_instance_of_same_species, 
-        sort='step2side',
+        #sort='step2side',
+        sort='random',
         figsize=(20,10),
-        leaf_rotation=45,
+        leaf_rotation=0,
         dend_kwargs={
             'color_threshold':0,
             'truncate_mode':None,
+            'count_sort':'ascending'
             #'leaf_rotation':45
         },
         sort_kwargs={
-            'max_n_iterations':100
-        }        
+            #'max_n_iterations':300
+            'R':300
+        },
+        link_kwargs={
+            'method':'average',
+            #'optimal_ordering':True
+        }       
         )
 
-    ax2.text(1,1,'hi there')
+
+
+    #ax2.text(1,1,'hi there')
 
     pprint(RHS_dendro_R)
     for temp_key in RHS_dendro_R.keys():
@@ -743,7 +956,7 @@ def query_table(
 
 
     dendro_u_to_species_dict=return_leaf_elements_for_each_dendro_u(
-        dict_2,
+        dict_1,
         RHS_linkage,
         incoming_species_as_ids
     )
@@ -758,12 +971,17 @@ def query_table(
     #we want dict 1
     #for each u element (icoord,dcoor paired lists)
     #access the proper row in the linkage matrix
-
+    far_right_x_value=0
+    for element in RHS_dendro_R['dcoord']:
+        if max(element)>far_right_x_value:
+            far_right_x_value=max(element)
     for i in range(len(RHS_dendro_R['dcoord'])):
+        if RHS_dendro_R['dcoord'][i][1]==far_right_x_value and RHS_dendro_R['dcoord'][i][2]==far_right_x_value:
+            continue
         x_value=RHS_dendro_R['dcoord'][i][1]
         y_value=(RHS_dendro_R['icoord'][i][1]+RHS_dendro_R['icoord'][i][2])/2
         ax2.text(x_value,y_value,dendro_u_to_parent_node_dict[i])
-
+    #plt.show()
 
     print('=====================================================')
 
@@ -775,11 +993,11 @@ def query_table(
     #plt.clf()
     data = base64.b64encode(buf.getbuffer()).decode("utf8") # encode to html elements
     plotly_fig="data:image/png;base64,{}".format(data)
-
+    buf.close()
 
     clustergram_panda.index=input_metadata.triplet_id.tolist()
     print(clustergram_panda)
-    return [clustergram_figure,plotly_fig,plotly_fig,clustergram_panda.to_dict(orient='index')]
+    return [clustergram_figure,plotly_fig,plotly_fig,raw_data_clustergram_panda.to_dict(orient='index')]
 
 
 def return_parent_node_for_species_grouping(dendro_u_to_species_dict,shallow_copy_of_tanglegram_species):
@@ -926,8 +1144,8 @@ def download_leaf_datatable(
 #         print(pd.DataFrame.from_records(table_data).to_excel)
 
         downloaded_panda=pd.DataFrame.from_dict(store_tree_data,orient='index')
-        print(store_tree_data)
-        print(downloaded_panda)
+        # print(store_tree_data)
+        # print(downloaded_panda)
 
 #         if radio_items_bin_type_value!='class':
 #             downloaded_panda['english_name']=downloaded_panda['english_name'].str.extract('\[(.*)\]')

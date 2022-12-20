@@ -52,7 +52,7 @@ def create_upset(temp_panda):
     #plt.clf()
     data = base64.b64encode(buf.getbuffer()).decode("utf8") # encode to html elements
     plotly_fig="data:image/png;base64,{}".format(data)
-
+    buf.close()
     return plotly_fig
 ####################################################################
 

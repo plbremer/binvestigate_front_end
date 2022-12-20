@@ -18,11 +18,11 @@ app = dash.Dash(__name__, use_pages=True, external_stylesheets=[local_stylesheet
 # print('!'*50)
 my_page_link_list=[
     dbc.NavItem(dbc.NavLink('Home', href='/')),
-    dbc.NavItem(dbc.NavLink('Ontological Differential Analysis', href='/hierarchical-differential-analysis')),
-    dbc.NavItem(dbc.NavLink('Differential Analysis', href='/differential-analysis')),
+    dbc.NavItem(dbc.NavLink('Ontological Dif. Analysis', href='/hierarchical-differential-analysis')),
+    dbc.NavItem(dbc.NavLink('Dif. Analysis', href='/differential-analysis')),
     dbc.NavItem(dbc.NavLink('Sunburst', href='/sunburst/2')),
     dbc.NavItem(dbc.NavLink('Upset Plot', href='/upset')),
-    dbc.NavItem(dbc.NavLink('Tree Generator', href='/tree-generator')),
+    dbc.NavItem(dbc.NavLink('Phylo Trees', href='/tree-generator')),
     dbc.NavItem(dbc.NavLink('Bin Browser', href='/bin-browser/2')),
 ]
 app.layout = html.Div([
@@ -70,5 +70,5 @@ app.layout = html.Div([
 
 
 if __name__ == "__main__":
-    #app.run(debug=False, host='0.0.0.0')
-    app.run(debug=True)
+    app.run(debug=False, host='0.0.0.0')
+    #app.run(debug=True)
