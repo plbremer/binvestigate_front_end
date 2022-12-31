@@ -12,15 +12,25 @@ import xlsxwriter
 import plotly.express as px
 import plotly.graph_objects as go
 from dash import callback_context
+import json
 
-base_url_api = f"http://api_alias:4999/"
-#base_url_api = "http://127.0.0.1:4999/"
+from dash.exceptions import PreventUpdate
+
+#base_url_api = f"http://api_alias:4999/"
+base_url_api = "http://127.0.0.1:4999/"
 #base_url_api = "http://172.18.0.3:4999/"
 dash.register_page(__name__,path_template="/sunburst/<linked_compound>")
 
 #compound_dropdown_options=sunburst_helper.create_compound_selection_labels("../newer_datasets/compounds_#networkx.bin",'../newer_datasets/compound_curations.tsv')
 #compound_final_curations=sunburst_helper.create_compound_selection_labels("../newer_datasets/compounds_networkx.bin")
 compound_dropdown_options=sunburst_helper.create_compound_selection_labels("../newer_datasets/compound_list_for_sun_and_bin_new.bin")
+compound_dropdown_options_sorted=sorted(
+                                compound_dropdown_options,
+                                key=lambda x:x['label']
+                            )
+sunburst_compound_translation_dict={
+    element['value']:element['label'] for element in compound_dropdown_options_sorted
+}
 
 #layout=dbc.Container(
 layout=html.Div(
@@ -44,16 +54,15 @@ layout=html.Div(
                 dbc.Col(width=3),
                 dbc.Col(
                     children=[
-                        html.H2("Compounds", className='text-center'),
+                        html.H2("Compound Options", className='text-center'),
                         dcc.Dropdown(
                             id='compound_selection',
-                            options=sorted(
-                                compound_dropdown_options,
-                                key=lambda x:x['label']
-                            ),
+                            #options=compound_dropdown_options_sorted,
                             multi=False,
+                            placeholder='Type compound name to search',
                         ),
                         html.Br(),
+
                     ],
                     width={'size':3}
                 ),
@@ -109,7 +118,7 @@ layout=html.Div(
             ],
         ),
         html.Br(),
-        html.Br(),
+        # html.Br(),
         html.Br(),
         dbc.Row(
             children=[
@@ -129,6 +138,28 @@ layout=html.Div(
                 )
             ],
             justify='center'
+        ),
+        html.Br(),
+        dbc.Spinner(
+            children=[
+                dbc.Row(
+                    children=[
+                        #dbc.Col(width=2),
+                        dbc.Col(
+                            children=[
+                                html.H3(
+                                    #children='Compound:',
+                                    children=' ',
+                                    id='compound_selected_sunburst',
+                                    style={'textAlign': 'center'}
+                                )
+                            ],
+                            #width={'size':6}#,'justify':'center'}
+                        ),
+                        #dbc.Col(width=2)
+                    ]
+                ),
+            ]
         ),
         dbc.Row(
             children=[
@@ -267,11 +298,30 @@ layout=html.Div(
 )
 
 @callback(
+    #Output("compound_selection", "options"),
+    Output(component_id='compound_selection',component_property='options'),
+    #],
+    #[
+    Input("compound_selection", "search_value")
+    #    Input(component_id='compound_selection',component_property='search_value')
+    #],
+    #[compound_dropdown_options_sorted]
+)
+def update_options(search_value):
+    if not search_value:
+        raise PreventUpdate
+    return [o for o in compound_dropdown_options_sorted if search_value in o["label"]]
+
+
+
+@callback(
     [
         Output(component_id="sunburst_table", component_property="columns"),
         Output(component_id="sunburst_table", component_property="data"),
         Output(component_id='url2', component_property='pathname'),
-        Output(component_id='compound_selection',component_property='value')
+        #Output(component_id='compound_selection',component_property='value')
+        Output(component_id='compound_selected_sunburst',component_property='children')
+        #id='compound_selected_sunburst',
     ],
     [
         Input(component_id='button_query', component_property='n_clicks'),
@@ -301,6 +351,10 @@ def query_table(button_query_n_clicks,url_pathname,compound_selection_value,radi
     # }
 
     response = requests.post(base_url_api + "/sunburstresource/", json=sunburst_output)
+    # temp_output=open('fixed_input.json','w')
+    # json.dump(response,temp_output,index=4)
+    # temp_output.close()
+    
     total_panda = pd.read_json(response.json(), orient="records")
     total_panda['binvestigate']='binvestigate'
 
@@ -327,7 +381,11 @@ def query_table(button_query_n_clicks,url_pathname,compound_selection_value,radi
 
     data = total_panda.to_dict(orient='records')
 
-    return [column_list,data,'/'+url_pathname.split('/')[1]+'/'+str(output_url),sunburst_output['compound']]
+    #
+    # print(compound_dropdown_options_sorted)
+    output_compound_name=sunburst_compound_translation_dict[sunburst_output['compound']].split(': ')[1]
+
+    return [column_list,data,'/'+url_pathname.split('/')[1]+'/'+str(output_url),'Compound: ' +output_compound_name]
 
 @callback(
     [

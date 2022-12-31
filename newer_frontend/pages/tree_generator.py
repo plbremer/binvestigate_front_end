@@ -85,8 +85,8 @@ from pprint import pprint
 from pprint import pprint
 dash.register_page(__name__)
 
-base_url_api = f"http://api_alias:4999/"
-#base_url_api = f"http://127.0.0.1:4999/"
+#base_url_api = f"http://api_alias:4999/"
+base_url_api = f"http://127.0.0.1:4999/"
 
 ########get things from helper script########
 species_networkx,species_node_dict=hierarchical_differential_analysis_helper.extract_networkx_selections_species()
@@ -368,7 +368,7 @@ layout=html.Div(
                         dbc.Modal(
                             children=[
                                 #dbc.ModalHeader
-                                dbc.ModalHeader(dbc.ModalTitle("Right Click + Copy Image Address for High-Res"),close_button=True),
+                                dbc.ModalHeader(dbc.ModalTitle("Right Click + Save for High-Res"),close_button=True),
                                 dbc.ModalBody(
                                 #    html.Div(className="modal-body-container",children=[
                                     html.Img(
@@ -588,14 +588,24 @@ def query_table(
     response = requests.post(base_url_api + "/treeresource/", json=tree_output)
     end=time()
     raw_data_clustergram_panda=pd.read_json(response.json(),orient='records')
+    raw_data_clustergram_panda.index=input_metadata.triplet_id.tolist()
+    raw_data_clustergram_panda.rename(mapper=compound_bin_translator_dict, axis='columns',inplace=True)
+
 
     clustergram_panda=pd.read_json(response.json(),orient='records')
+    #####PLB end of year
+    # clustergram_panda=clustergram_panda.loc[
+    #     :,
+    #     (clustergram_panda.max()-clustergram_panda.min())>1000
+    # ]
     clustergram_panda=clustergram_panda.loc[
         :,
-        (clustergram_panda.max()-clustergram_panda.min())>200
+        (clustergram_panda.max())>0.05
     ]
-    clustergram_panda=clustergram_panda/clustergram_panda.max()
-    clustergram_panda=np.log(clustergram_panda)
+    #####PLB end of year
+    # clustergram_panda=clustergram_panda/clustergram_panda.max()
+    #####PLB end of year
+    # clustergram_panda=np.log(clustergram_panda)
 
     clustergram_panda.index=input_metadata.triplet_id.tolist()
 
@@ -641,12 +651,13 @@ def query_table(
 
     print('about to make clustergram')
     clustergram_figure = dashbio.Clustergram(
-        # data=clustergram_panda.loc[rows].values,
-        data=np.where(
-            clustergram_panda.loc[rows].values<=-4,
-            0,
-            4+clustergram_panda.loc[rows].values,
-        ),
+        data=clustergram_panda.loc[rows].values,
+        #####PLB end of year
+        # data=np.where(
+        #     clustergram_panda.loc[rows].values<=-4,
+        #     0,
+        #     4+clustergram_panda.loc[rows].values,
+        # ),
         row_labels=[element[0:40] for element in rows],
         column_labels=columns,
         #height=40*len(rows),
@@ -656,6 +667,7 @@ def query_table(
         optimal_leaf_order=False,
         standardize='none',
         center_values=False,
+        link_method='average',
         # color_map= [
         #     [0.0, '#FFFFFF'],
         #     [1.0, '#008B8B']
@@ -779,10 +791,10 @@ def query_table(
     # )))
     heatmap_trace=clustergram_figure.data[-1]
     pprint(heatmap_trace)
-    heatmap_trace.update(
-        colorbar_tickvals=[0,1,2,3,4],
-        colorbar_ticktext=['<=Max/10,000','Max/1,000','Max/100','Max/10','Compound Max']
-    )
+    # heatmap_trace.update(
+    #     colorbar_tickvals=[0,1,2,3,4],
+    #     colorbar_ticktext=['<=Max/10,000','Max/1,000','Max/100','Max/10','Compound Max']
+    # )
 
 
     # clustergram_figure.update_layout(
@@ -980,7 +992,8 @@ def query_table(
             continue
         x_value=RHS_dendro_R['dcoord'][i][1]
         y_value=(RHS_dendro_R['icoord'][i][1]+RHS_dendro_R['icoord'][i][2])/2
-        ax2.text(x_value,y_value,dendro_u_to_parent_node_dict[i])
+        #ended up not working. or at least seeming weird to end users. so took it out via comment for the moment
+        #ax2.text(x_value,y_value,dendro_u_to_parent_node_dict[i])
     #plt.show()
 
     print('=====================================================')

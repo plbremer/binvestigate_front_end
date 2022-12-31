@@ -15,14 +15,23 @@ import plotly.graph_objects as go
 from dash import callback_context
 from pprint import pprint
 
+from dash.exceptions import PreventUpdate
+
 dash.register_page(__name__,path_template="/bin-browser/<linked_compound>")
 
-base_url_api = f"http://api_alias:4999/"
-#base_url_api = "http://127.0.0.1:4999/"
+#base_url_api = f"http://api_alias:4999/"
+base_url_api = "http://127.0.0.1:4999/"
 #base_url_api = "http://172.18.0.3:4999/"
 
 ########get things from helper script########
 bins_dict=bin_browser_helper.generate_bin_dropdown_options()
+# compound_dropdown_options_sorted=sorted(
+#     bins_dict,
+#     key=lambda x:x['label']
+# ),
+
+
+
 compound_classes=bin_browser_helper.generate_compound_classes()
 compound_translation_panda=pd.read_pickle('../newer_datasets/compound_list_for_differential_new.bin')
 compound_translation_dict=dict(zip(compound_translation_panda.compound_identifier.tolist(),compound_translation_panda.english_name.tolist()))
@@ -52,7 +61,7 @@ layout=html.Div(
                 dbc.Col(width=1),
                 dbc.Col(
                     children=[
-                        html.H2("Explore Single Compound", className='text-center'),
+                        html.H2("Compound options", className='text-center'),
                         html.Br(),
                     ],
                     width={'size':5}
@@ -78,10 +87,7 @@ layout=html.Div(
                             # options=sorted([
                             #     {'label': temp.title(), 'value':unique_sod_combinations_dict[temp]} for temp in unique_sod_combinations_dict
                             # ],key=lambda x:x['label']),
-                            options=sorted(
-                                bins_dict,
-                                key=lambda x:x['label']
-                            ),
+                            placeholder='Type compound name to search',
                             multi=False,
                             #placeholder='Known: alanine'
                             #value=2
@@ -91,6 +97,14 @@ layout=html.Div(
                             # }
                         ),  
                         html.Br(),
+                        html.Br(),
+                        html.Div(
+                            dbc.Button(
+                                'Query and Visualize',
+                                id='button_bin_visualize',
+                            ),
+                            className="d-grid gap-2 col-4 mx-auto",
+                        ),
                     ],
                     width={'size':3}
                 ),
@@ -119,44 +133,33 @@ layout=html.Div(
                 #dbc.Col(width=3)
             ]
         ),
-        dbc.Row(
-            children=[
-                dbc.Col(width=2),
-                dbc.Col(
-                    children=[
-                        #html.H2("Result Datatable", className='text-center'),
-                        html.Div(
-                            dbc.Button(
-                                'Query and Visualize',
-                                id='button_bin_visualize',
-                            ),
-                            className="d-grid gap-2 col-4 mx-auto",
-                        ),
-                    ],
-                    width=3
-                ),            
-            ]
-        ),
+        # dbc.Row(
+        #     children=[
+        #         dbc.Col(width=2),
+        #         dbc.Col(
+        #             children=[
+        #                 #html.H2("Result Datatable", className='text-center'),
+        #                 html.Div(
+        #                     dbc.Button(
+        #                         'Query and Visualize',
+        #                         id='button_bin_visualize',
+        #                     ),
+        #                     className="d-grid gap-2 col-4 mx-auto",
+        #                 ),
+        #             ],
+        #             width=3
+        #         ),            
+        #     ]
+        # ),
         dbc.Row(
             children=[
                 dbc.Col(width=1),
                 dbc.Col(
-                    dcc.Graph(
-                        id='figure_bin'
-                    ) 
-                ),
-                dbc.Col(width=5)
-            ]
-        ),
-        dbc.Row(
-            children=[
-                dbc.Col(width=2),
-                dbc.Col(
                     children=[
                         html.Br(),
                         html.Br(),
-                        html.Br(),
-                        html.Br(),
+                        # html.Br(),
+                        # html.Br(),
                         html.Div(
                             dbc.Button(
                                 'Download as .xlsx',
@@ -172,31 +175,21 @@ layout=html.Div(
                                 {'name': 'Value', 'id': 'value'}, 
                             ],
                             data=[],
-                            # page_current=0,
-                            # page_size=10,
-                            # #page_action='custom',
-                            # page_action='native',
-                            # #sort_action='custom',
-                            # sort_action='native',
-                            # sort_mode='multi',
-                            # #sort_by=[],
-                            # #filter_action='custom',
-                            # filter_action='native',
-                            # row_deletable=False,
-                            #filter_query='',
+                            style_table={'overflowX': 'scroll'},
                             style_cell={
                                 'fontSize': 17,
                                 'padding': '8px',
-                                'textAlign': 'center'
+                                #'textAlign': 'left',
+                                #'minWidth': '180px', 'width': '180px', 'maxWidth': '180px'
                             },
                             style_header={
                                 'font-family': 'arial',
                                 'fontSize': 15,
                                 'fontWeight': 'bold',
-                                'textAlign': 'center'
+                                #'textAlign': 'center'
                             },
                             style_data={
-                                'textAlign': 'center',
+                                'textAlign': 'left',
                                 'fontWeight': 'bold',
                                 'font-family': 'Roboto',
                                 'fontSize': 15,
@@ -204,24 +197,90 @@ layout=html.Div(
                         )
                     ],
                     width=3
-                ),
-                # dbc.Col(
-                #     width=1
-                # ), 
+                ),        
+                dbc.Col(width=1),           
                 dbc.Col(
-                    children=[
-                        html.Br(),
-                        html.Br(),
-                        html.Br(),
-                        
-                        # dcc.Graph(
-                        #     id='figure_bin'
-                        # )                        
-                    ],
-                    width=5
-                ),                
+                    dcc.Graph(
+                        id='figure_bin'
+                    ) 
+                ),
+                dbc.Col(width=1)
             ]
         ),
+        # dbc.Row(
+        #     children=[
+        #         dbc.Col(width=2),
+        #         dbc.Col(
+        #             children=[
+        #                 html.Br(),
+        #                 html.Br(),
+        #                 html.Br(),
+        #                 html.Br(),
+        #                 html.Div(
+        #                     dbc.Button(
+        #                         'Download as .xlsx',
+        #                         id='button_download_msp',
+        #                     ),
+        #                     className="d-grid gap-2 col-4 mx-auto",
+        #                 ),
+        #                 dcc.Download(id="download_download_msp"),
+        #                 dash_table.DataTable(
+        #                     id='table_bin',
+        #                     columns=[
+        #                         {'name': 'Attribute', 'id': 'attribute'},
+        #                         {'name': 'Value', 'id': 'value'}, 
+        #                     ],
+        #                     data=[],
+        #                     # page_current=0,
+        #                     # page_size=10,
+        #                     # #page_action='custom',
+        #                     # page_action='native',
+        #                     # #sort_action='custom',
+        #                     # sort_action='native',
+        #                     # sort_mode='multi',
+        #                     # #sort_by=[],
+        #                     # #filter_action='custom',
+        #                     # filter_action='native',
+        #                     # row_deletable=False,
+        #                     #filter_query='',
+        #                     style_cell={
+        #                         'fontSize': 17,
+        #                         'padding': '8px',
+        #                         'textAlign': 'center'
+        #                     },
+        #                     style_header={
+        #                         'font-family': 'arial',
+        #                         'fontSize': 15,
+        #                         'fontWeight': 'bold',
+        #                         'textAlign': 'center'
+        #                     },
+        #                     style_data={
+        #                         'textAlign': 'center',
+        #                         'fontWeight': 'bold',
+        #                         'font-family': 'Roboto',
+        #                         'fontSize': 15,
+        #                     },
+        #                 )
+        #             ],
+        #             width=3
+        #         ),
+        #         # dbc.Col(
+        #         #     width=1
+        #         # ), 
+        #         dbc.Col(
+        #             children=[
+        #                 html.Br(),
+        #                 html.Br(),
+        #                 html.Br(),
+                        
+        #                 # dcc.Graph(
+        #                 #     id='figure_bin'
+        #                 # )                        
+        #             ],
+        #             width=5
+        #         ),                
+        #     ]
+        # ),
         # html.Br(),
         # html.Br(),
         # dbc.Row(
@@ -235,6 +294,16 @@ layout=html.Div(
         # )
     ]
 )
+
+@callback(
+    Output("dropdown_bin", "options"),
+    Input("dropdown_bin", "search_value")
+)
+def update_options(search_value):
+    if not search_value:
+        raise PreventUpdate
+    return [o for o in bins_dict if search_value in o["label"]]
+
 
 
 @callback(

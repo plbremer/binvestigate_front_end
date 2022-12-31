@@ -23,6 +23,6 @@ EXPOSE 8050
 
 SHELL ["conda", "run", "-n", "binvestigate_gui", "/bin/bash", "-c"]
 
-ENTRYPOINT ["conda", "run", "--no-capture-output", "-n", "binvestigate_gui", "python", "./app.py"]
+ENTRYPOINT ["conda", "run", "--no-capture-output", "-n", "binvestigate_gui_2", "python", "./app.py"]
 
 
