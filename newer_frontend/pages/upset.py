@@ -11,8 +11,8 @@ from dash.dash_table.Format import Format, Scheme, Group
 import xlsxwriter
 
 
-#base_url_api = f"http://api_alias:4999/"
-base_url_api = "http://127.0.0.1:4999/"
+base_url_api = f"http://api_alias:4999/"
+#base_url_api = "http://127.0.0.1:4999/"
 #base_url_api = "http://172.17.0.3:4999/"
 #172.17.0.3:4999/"
 dash.register_page(__name__)
@@ -231,7 +231,7 @@ layout=html.Div(
                             dbc.Modal(
                                 children=[
                                     #dbc.ModalHeader
-                                    dbc.ModalHeader(dbc.ModalTitle("Right Click + Copy Image Address for High-Res"),close_button=True),
+                                    dbc.ModalHeader(dbc.ModalTitle("Right Click + Save for High-Res"),close_button=True),
                                     dbc.ModalBody(
                                     #    html.Div(className="modal-body-container",children=[
                                         html.Img(

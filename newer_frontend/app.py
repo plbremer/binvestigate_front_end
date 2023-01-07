@@ -12,10 +12,7 @@ local_stylesheet = {
 
 app = dash.Dash(__name__, use_pages=True, external_stylesheets=[local_stylesheet, dbc.themes.BOOTSTRAP])
 
-# using these, we manually created a list of links
-# print([x['path'] for x in dash.page_registry.values()])
-# print([x['name'] for x in dash.page_registry.values()])
-# print('!'*50)
+#prefer custom order
 my_page_link_list=[
     dbc.NavItem(dbc.NavLink('Home', href='/')),
     dbc.NavItem(dbc.NavLink('Ontological Dif. Analysis', href='/hierarchical-differential-analysis')),
@@ -25,16 +22,11 @@ my_page_link_list=[
     dbc.NavItem(dbc.NavLink('Phylo Trees', href='/tree-generator')),
     dbc.NavItem(dbc.NavLink('Bin Browser', href='/bin-browser/2')),
 ]
+
 app.layout = html.Div([
-        # this stuff appears on every page
-        # we should have some logo stuff
-        # and then some stuff that handles links (probably the top button navbar thing)
-        #html.Div("Python Multipage App with Dash", style={'fontSize':50, 'textAlign':'center'}),
 
 
         dbc.Navbar(
-            #,#+
-            #[dbc.Container() for i in range(10)]+
             dbc.Container(
                 children=[
                     html.A(
@@ -49,20 +41,13 @@ app.layout = html.Div([
                         style={"textDecoration": "none"},
                     )
                 # the earlier viersion that was alphabetized
-                # ]+[dbc.NavItem(dbc.NavLink(page['name'], href=page['path'])) for page in dash.page_registry.values()],
                 ]+my_page_link_list,
                 
                 style={"height": "50px"}, 
             ), 
-            #color="dark", 
-            #dark=True,
-            #links_left=True
         ),
 
         html.Hr(),
-
-
-
         # content of each page
         dash.page_container
     ]
@@ -70,5 +55,5 @@ app.layout = html.Div([
 
 
 if __name__ == "__main__":
-    #app.run(debug=False, host='0.0.0.0')
-    app.run(debug=True)
+    app.run(debug=False, host='0.0.0.0')
+    #app.run(debug=True)

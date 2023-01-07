@@ -19,8 +19,8 @@ from dash.exceptions import PreventUpdate
 
 dash.register_page(__name__,path_template="/bin-browser/<linked_compound>")
 
-#base_url_api = f"http://api_alias:4999/"
-base_url_api = "http://127.0.0.1:4999/"
+base_url_api = f"http://api_alias:4999/"
+#base_url_api = "http://127.0.0.1:4999/"
 #base_url_api = "http://172.18.0.3:4999/"
 
 ########get things from helper script########
