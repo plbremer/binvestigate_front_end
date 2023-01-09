@@ -148,7 +148,7 @@ layout=html.Div(
         dbc.Spinner(
             children=[
                 html.Div(
-                    id='div_metadata_selection',
+                    id='div_metadata_selection_onto',
                     children=[]
                 )
             ]
@@ -159,7 +159,7 @@ layout=html.Div(
         dbc.Spinner(
             children=[
                 html.Div(
-                    id='div_volcano',
+                    id='div_volcano_onto',
                     children=[]
                 )
             ]
@@ -324,7 +324,7 @@ def update_input_options_to(
 
 @callback(
     [
-        Output(component_id="div_metadata_selection", component_property="children")
+        Output(component_id="div_metadata_selection_onto", component_property="children")
     ],
     [
         Input(component_id="hgda_metadata_query", component_property="n_clicks"),
@@ -367,7 +367,7 @@ def perform_metadata_query(
     total_panda = pd.read_json(response.json(), orient="records")
     data = total_panda.to_dict(orient='records')
 
-    div_metadata_selection_children=dbc.Row(
+    div_metadata_selection_onto_children=dbc.Row(
         children=[
             dbc.Col(width=3),
             dbc.Col(
@@ -420,7 +420,7 @@ def perform_metadata_query(
         ]
     )
 
-    return [div_metadata_selection_children]
+    return [div_metadata_selection_onto_children]
 
 
 @callback(
@@ -470,53 +470,51 @@ def query_table(
             children=[
                 dbc.Col(width={'size':2}),
                 dbc.Col(
-                    dbc.Spinner(
-                        children=[
-                            html.H2("Result Datatable", className='text-center'),
-                            html.Div(
-                                dbc.Button(
-                                    'Download Datatable as .xlsx',
-                                    id='button_download',
-                                ),
-                                className="d-grid gap-2 col-3 mx-auto",
+                    children=[
+                        html.H2("Result Datatable", className='text-center'),
+                        html.Div(
+                            dbc.Button(
+                                'Download Datatable as .xlsx',
+                                id='button_download',
                             ),
-                            dcc.Download(id="download_hgda_datatable"),
-                            dash_table.DataTable(
-                                id='hgda_table',
-                                columns=[
-                                    {"name": "English Name", "id": "english_name",'presentation':'markdown'},
-                                    {"name": "Identifier", "id": "identifier",'presentation':'markdown'},
-                                    {"name": "Fold Average", "id": "fold_change_average","type": "numeric","format": Format(group=Group.yes, precision=2, scheme=Scheme.exponent)},
-                                    {"name": "Significance Welch", "id": "significance_welch","type": "numeric","format": Format(group=Group.yes, precision=2, scheme=Scheme.exponent)},
-                                ],
-                                markdown_options={"link_target": "_blank"},
-                                data=data,
-                                page_current=0,
-                                page_size=50,
-                                page_action='native',
-                                sort_action='native',
-                                sort_mode='multi',
-                                filter_action='native',
-                                style_cell={
-                                    'fontSize': 17,
-                                    'padding': '8px',
-                                    'textAlign': 'center'
-                                },
-                                style_header={
-                                    'font-family': 'arial',
-                                    'fontSize': 15,
-                                    'fontWeight': 'bold',
-                                    'textAlign': 'center'
-                                },
-                                style_data={
-                                    'textAlign': 'center',
-                                    'fontWeight': 'bold',
-                                    'font-family': 'Roboto',
-                                    'fontSize': 15,
-                                },
-                            )
-                        ],
-                    ),
+                            className="d-grid gap-2 col-3 mx-auto",
+                        ),
+                        dcc.Download(id="download_hgda_datatable"),
+                        dash_table.DataTable(
+                            id='hgda_table',
+                            columns=[
+                                {"name": "English Name", "id": "english_name",'presentation':'markdown'},
+                                {"name": "Identifier", "id": "identifier",'presentation':'markdown'},
+                                {"name": "Fold Average", "id": "fold_change_average","type": "numeric","format": Format(group=Group.yes, precision=2, scheme=Scheme.exponent)},
+                                {"name": "Significance Welch", "id": "significance_welch","type": "numeric","format": Format(group=Group.yes, precision=2, scheme=Scheme.exponent)},
+                            ],
+                            markdown_options={"link_target": "_blank"},
+                            data=data,
+                            page_current=0,
+                            page_size=50,
+                            page_action='native',
+                            sort_action='native',
+                            sort_mode='multi',
+                            filter_action='native',
+                            style_cell={
+                                'fontSize': 17,
+                                'padding': '8px',
+                                'textAlign': 'center'
+                            },
+                            style_header={
+                                'font-family': 'arial',
+                                'fontSize': 15,
+                                'fontWeight': 'bold',
+                                'textAlign': 'center'
+                            },
+                            style_data={
+                                'textAlign': 'center',
+                                'fontWeight': 'bold',
+                                'font-family': 'Roboto',
+                                'fontSize': 15,
+                            },
+                        )
+                    ],
                     width={'size':8}
                 ),
                 dbc.Col(width={'size':2}),
@@ -529,7 +527,7 @@ def query_table(
 
 @callback(
     [
-        Output(component_id='div_volcano', component_property='children'),
+        Output(component_id='div_volcano_onto', component_property='children'),
     ],
     [
         Input(component_id='hgda_table', component_property='derived_virtual_data'),
@@ -586,7 +584,7 @@ def query_figure(
     )
     volcano.update_layout(showlegend=False)
 
-    div_volcano_children=[
+    div_volcano_onto_children=[
         dbc.Row(
             children=[
                 dbc.Col(width={'size':2}),
@@ -615,7 +613,7 @@ def query_figure(
             ],
         ),
     ]
-    return [div_volcano_children]
+    return [div_volcano_onto_children]
 
 
 @callback(
