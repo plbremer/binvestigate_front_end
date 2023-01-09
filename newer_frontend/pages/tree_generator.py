@@ -392,20 +392,28 @@ layout=html.Div(
                             style={"max-width": "none", "width": "90%"}
                         ),
                         html.H2("Clustergram", className='text-center'),
-                        html.Div(
-                            dbc.Button(
-                                'Download Clustergram Core Matrix',
-                                id='button_tree_download',
-                            ),
-                            className="d-grid gap-2 col-3 mx-auto",
+                        dbc.Row(
+                            children=[
+                                html.Div(
+                                    dbc.Button(
+                                        'Download Clustergram Core Matrix',
+                                        id='button_tree_download',
+                                    ),
+                                    className="d-grid gap-2 col-3 mx-auto",
+                                ),
+                                html.Div(
+                                    dbc.Button(
+                                        'Download Matrix and Include Unknowns (slower)',
+                                        id='button_tree_download_all_compounds',
+                                    ),
+                                    className="d-grid gap-2 col-3 mx-auto",
+                                ),
+                            ]
                         ),
                         dcc.Download(id="download_tree"),
+                        dcc.Download(id="download_tree_all_compounds"),
                         dcc.Store(id='store_tree'),
                         dcc.Graph(id='tree_clustergram_graph')
-
-
-
-
                     ],
                 )
             ]
@@ -579,7 +587,9 @@ def query_table(
     #    "triplet_to":dropdown_triplet_selection_to_value
         "metadata_triplets":input_metadata.triplet_id.tolist(),
         "bin_type":'knowns',
-        "data_type":'average'
+        #average as opposed to median, so not connection type
+        "data_type":'percent_present'
+        #"data_type":'complete'
     }
     #print(table_metadata_derived_virtual_data)
     #leaf_output=table_metadata_derived_virtual_data
@@ -667,7 +677,8 @@ def query_table(
         optimal_leaf_order=False,
         standardize='none',
         center_values=False,
-        link_method='average',
+        #link_method='average',
+        link_method='complete',
         # color_map= [
         #     [0.0, '#FFFFFF'],
         #     [1.0, '#008B8B']
@@ -943,6 +954,7 @@ def query_table(
         },
         link_kwargs={
             'method':'average',
+            #'method':'complete',
             #'optimal_ordering':True
         }       
         )
@@ -1172,6 +1184,105 @@ def download_leaf_datatable(
         return [dcc.send_data_frame(
             downloaded_panda.to_excel, "binvestigate_phylo_metabolomic_datatable.xlsx", sheet_name="sheet_1"
         )]
+
+
+@callback(
+    [
+        Output(component_id="download_tree_all_compounds", component_property="data"),
+    ],
+    [
+        Input(component_id="button_tree_download_all_compounds", component_property="n_clicks"),
+    ],
+    # [
+    #     #State(component_id="leaf_table",component_property="data"),
+    #     State(component_id='store_tree',component_property='data')
+    # ],
+    [
+        #State(component_id='dropdown_triplet_selection_from',component_property='value'),
+        #State(component_id='dropdown_triplet_selection_to',component_property='value'),
+        #State(component_id='radio_items_bin_type',component_property='value'),
+        State(component_id='tree_table_metadata', component_property='derived_virtual_data'),
+    ],
+    prevent_initial_call=True
+)
+def download_leaf_datatable_all_compounds(
+    button_tree_download_n_clicks,
+    #store_tree_data
+    tree_table_metadata_derived_virtual_data
+    ):
+#         """
+#         """
+#         #print(pd.DataFrame.from_records(table_derived_virtual_data).drop(['compound','bin'],axis='columns'))
+
+#         #temp_img=venn_helper.make_venn_figure_from_panda(pd.DataFrame.from_records(table_derived_virtual_data).drop(['compound','bin'],axis='columns'))
+#         print(pd.DataFrame.from_records(table_data).to_excel)
+
+    input_metadata=pd.DataFrame.from_records(tree_table_metadata_derived_virtual_data)
+
+
+
+    tree_output={
+    #    "triplet_from":dropdown_triplet_selection_from_value,
+    #    "triplet_to":dropdown_triplet_selection_to_value
+        "metadata_triplets":input_metadata.triplet_id.tolist(),
+        "bin_type":'all',
+        #average as opposed to median, so not connection type
+        "data_type":'percent_present'
+        #"data_type":'complete'
+    }
+    #print(table_metadata_derived_virtual_data)
+    #leaf_output=table_metadata_derived_virtual_data
+
+    start=time()
+    response = requests.post(base_url_api + "/treeresource/", json=tree_output)
+    end=time()
+    raw_data_clustergram_panda=pd.read_json(response.json(),orient='records')
+    raw_data_clustergram_panda.index=input_metadata.triplet_id.tolist()
+    raw_data_clustergram_panda.rename(mapper=compound_bin_translator_dict, axis='columns',inplace=True)
+
+
+    raw_data_clustergram_panda=raw_data_clustergram_panda.T
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        #downloaded_panda=pd.DataFrame.from_dict(store_tree_data,orient='index')
+        # print(store_tree_data)
+        # print(downloaded_panda)
+
+#         if radio_items_bin_type_value!='class':
+#             downloaded_panda['english_name']=downloaded_panda['english_name'].str.extract('\[(.*)\]')
+#             downloaded_panda['identifier']=downloaded_panda['identifier'].str.extract('\[(.*)\]')
+#             # total_panda['english_name']='['+total_panda['english_name']+'](/sunburst/'+total_panda['compound_id'].astype(str)+')'
+#             # total_panda['identifier']='['+total_panda['identifier']+'](/bin-browser/'+total_panda['compound_id'].astype(str)+')'
+
+    
+#         # temp['english_name']=temp['english_name'].str.extract('\[(.*)\]')
+
+    return [dcc.send_data_frame(
+        raw_data_clustergram_panda.to_excel, "binvestigate_phylo_metabolomic_datatable.xlsx", sheet_name="sheet_1"
+    )]
+
 
 
 
