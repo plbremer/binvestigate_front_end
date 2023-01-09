@@ -5,38 +5,9 @@ import pandas as pd
 
 ######### HELPER FUNCTIONS ################
 def create_compound_selection_labels(final_curations_address):
-    # compound_dropdown_options=list()
-    # compound_networkx=nx.read_gpickle(nx_address)
-
-    # final_curations=pd.read_csv(final_curations_address,sep='\t')
-    # final_curations=final_curations.loc[
-    #     final_curations['english_name_curated']!='DELETE'
-    # ]
-    # final_curation_valid_bin_set=set(final_curations.integer_representation.unique())
-    # final_curation_map=dict(zip(
-    #     final_curations['integer_representation'],final_curations['english_name_curated']
-    # ))
-    # print(final_curation_valid_bin_set)
-    # print(compound_networkx.nodes)
-    
-    # for temp_node in compound_networkx.nodes:
-
-    #     if compound_networkx.nodes[temp_node]['type_of_node']=='from_binvestigate':
-    #         #i believe that this is checcking for an integer name
-    #         if bool(re.search('^([\s\d]+)$',compound_networkx.nodes[temp_node]['common_name'])):
-    #             compound_dropdown_options.append(
-    #                 {'label': 'Unknown: Bin ID '+compound_networkx.nodes[temp_node]['common_name'], 'value': temp_node}
-    #             )
-    #         # else:
-    #         #     #print(temp_node)
-    #         #     if int(temp_node) in final_curation_valid_bin_set:
-    #         #         compound_dropdown_options.append(
-    #         #             {
-    #         #                 'label': 'Known: '+final_curation_map[temp_node],#compound_networkx.nodes[temp_node]['common_name'], 
-    #         #                 'value': temp_node
-    #         #             }
-    #         #         )
-           
+    '''
+    reads in labels and transforms them by last-minute curations
+    '''
     # return compound_dropdown_options
     final_curations=pd.read_pickle(final_curations_address)
     final_curations.loc[final_curations.bin_type=='known','english_name']='Known: '+final_curations.loc[final_curations.bin_type=='known']['english_name'].astype(str)
@@ -50,7 +21,10 @@ def create_compound_selection_labels(final_curations_address):
 
 
 def coerce_full_panda(df,value_column,column_list):
-    #df=df.round({value_column:6})
+    '''
+    the plotly express sunburst was not appropriate for our goals, so we coerce the data to the form
+    requested by the go object
+    '''
     pandas_list=list()
     for i in range(len(column_list),0,-1):
         pandas_list.append(
@@ -59,7 +33,6 @@ def coerce_full_panda(df,value_column,column_list):
                     'count':df.groupby(by=column_list[0:i]).size().to_list(),
                     'sum':df.groupby(by=column_list[0:i])[value_column].sum().to_list(),
                     'parent':['/'.join(group[0][:i-1]) for group in df.groupby(by=column_list[0:i])],
-                    #'id':df[column_list[0:i]].T.agg('/'.join).unique(),
                     'id':['/'.join(group[0][:i]) for group in df.groupby(by=column_list[0:i])],
                     'name':df.groupby(by=column_list[0:i])[column_list[i-1]].unique().map(lambda x: x[0]).values
                 }
@@ -69,7 +42,7 @@ def coerce_full_panda(df,value_column,column_list):
     tree_panda.reset_index(inplace=True,drop=True)
     tree_panda.at[len(tree_panda.index)-1,'id']='binvestigate'
     tree_panda['average']=tree_panda['sum']/tree_panda['count']
-    ###########################################################
+
     #there is a known bug in the way that branch totals works
     #https://community.plotly.com/t/plotly-sunburst-returning-empty-chart-with-branchvalues-total/26582/8
     #no matter what i tried, i could not get the branch total thing to work for me
@@ -78,15 +51,11 @@ def coerce_full_panda(df,value_column,column_list):
     first_parent_index=len(df.index)
     tree_panda.loc[first_parent_index:,'sum']=0
 
-    # print('*********************************')
-    # print(tree_panda)
-
     if value_column=='average':
         tree_panda=tree_panda.round(decimals=0)
         tree_panda['average']=tree_panda['average'].astype(int)
 
     elif value_column=='percent_present':
         tree_panda=tree_panda.round(decimals=3)
-        #tree_panda['average']=tree_panda['average'].astype(int)
     
     return tree_panda
