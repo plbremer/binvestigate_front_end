@@ -2,8 +2,6 @@ import dash
 from dash import html, dcc
 import dash_bootstrap_components as dbc
 
-from pprint import pprint
-
 local_stylesheet = {
     "href": "https://fonts.googleapis.com/css2?"
             "family=Lato:wght@400;700&display=swap",
@@ -12,11 +10,12 @@ local_stylesheet = {
 
 app = dash.Dash(__name__, use_pages=True, external_stylesheets=[local_stylesheet, dbc.themes.BOOTSTRAP])
 
-#prefer custom order
+#custom ordering of navbar
 my_page_link_list=[
     dbc.NavItem(dbc.NavLink('Home', href='/')),
     dbc.NavItem(dbc.NavLink('Ontological Dif. Analysis', href='/hierarchical-differential-analysis')),
     dbc.NavItem(dbc.NavLink('Dif. Analysis', href='/differential-analysis')),
+    #default compound for sunburst to make linkin from differential datatables work
     dbc.NavItem(dbc.NavLink('Sunburst', href='/sunburst/2')),
     dbc.NavItem(dbc.NavLink('Upset Plot', href='/upset')),
     dbc.NavItem(dbc.NavLink('Phylo Trees', href='/tree-generator')),
@@ -24,8 +23,6 @@ my_page_link_list=[
 ]
 
 app.layout = html.Div([
-
-
         dbc.Navbar(
             dbc.Container(
                 children=[
@@ -35,7 +32,7 @@ app.layout = html.Div([
                             dbc.Col(html.Img(src='https://avatars.githubusercontent.com/u/45467465?s=200&v=4', height="50px")),
                             dbc.Col(dbc.NavbarBrand(id="header", children="Binvestigate, a FiehnLab Production")),#, className="ms-2")),
                             ], 
-                            align="center", #className="g-0",
+                            align="center",
                         ),
                         href="https://fiehnlab.ucdavis.edu/",
                         style={"textDecoration": "none"},
@@ -46,7 +43,6 @@ app.layout = html.Div([
                 style={"height": "50px"}, 
             ), 
         ),
-
         html.Hr(),
         # content of each page
         dash.page_container
