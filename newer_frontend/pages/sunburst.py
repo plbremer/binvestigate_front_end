@@ -119,7 +119,7 @@ layout=html.Div(
                         #html.H2("Execute or Update Query", className='text-center'),
                         html.Div(
                             dbc.Button(
-                                'Update Data',
+                                'Search Compound',
                                 id='button_query',
                             ),
                             className="d-grid gap-2 col-6 mx-auto",
