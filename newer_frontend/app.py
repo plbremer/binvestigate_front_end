@@ -12,7 +12,7 @@ app = dash.Dash(__name__, use_pages=True, external_stylesheets=[local_stylesheet
 
 #custom ordering of navbar
 my_page_link_list=[
-    dbc.NavItem(dbc.NavLink('Home', href='/')),
+    dbc.NavItem(dbc.NavLink('Home', href='/',style = {'color': 'black'})),
     dbc.NavItem(dbc.NavLink('Ontological Dif. Analysis', href='/hierarchical-differential-analysis')),
     dbc.NavItem(dbc.NavLink('Dif. Analysis', href='/differential-analysis')),
     #default compound for sunburst to make linkin from differential datatables work

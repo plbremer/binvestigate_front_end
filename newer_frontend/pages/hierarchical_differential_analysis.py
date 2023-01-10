@@ -10,6 +10,7 @@ import requests
 import pandas as pd
 import networkx as nx
 from . import hierarchical_differential_analysis_helper
+import datetime
 
 dash.register_page(__name__)
 #when containerized, the url is not the local 127.0.0.1
@@ -152,6 +153,10 @@ layout=html.Div(
                     children=[]
                 )
             ]
+        ),
+        html.Div(
+            id='div_metadata_time_estimator',
+            children=[]
         ),
         html.Br(),
         html.Br(),
@@ -421,6 +426,52 @@ def perform_metadata_query(
     )
 
     return [div_metadata_selection_onto_children]
+
+
+@callback(
+    [
+        Output(component_id="div_metadata_time_estimator", component_property="children")
+    ],
+    [
+        Input(component_id='radio_items_bin_type',component_property='value'),
+        Input(component_id='hgda_table_metadata', component_property='derived_virtual_data')
+    ],
+    prevent_initial_call=True
+)
+def update_time_requirement_estimate(radio_items_bin_type_value,hgda_table_metadata_derived_virtual_data):
+    
+    multiple_metadata_panda=pd.DataFrame.from_dict(hgda_table_metadata_derived_virtual_data)
+    number_from=multiple_metadata_panda.from_or_to.value_counts()['from']
+    number_to=multiple_metadata_panda.from_or_to.value_counts()['to']
+
+    if radio_items_bin_type_value=='known':
+        seconds_per=1
+    elif radio_items_bin_type_value=='class':
+        seconds_per=0.3
+    elif radio_items_bin_type_value=='unknown':
+        seconds_per=7
+    total_time=number_from*number_to*seconds_per
+    total_time/=60
+    total_time=str(datetime.timedelta(minutes=total_time))
+    total_string=f'The estimated duration of this query is {total_time} hours, minutes, and seconds.'
+
+    div_metadata_time_estimator_children=[
+        dbc.Row(
+            children=[
+                dbc.Col(width={'size':2}),
+                dbc.Col(
+                    children=[
+                        html.Br(),
+                        html.H4(total_string, className='text-center'),
+                    ],
+                    width={'size':8}
+                ),
+                dbc.Col(width={'size':2}),
+            ],
+        ),
+    ]    
+
+    return [div_metadata_time_estimator_children]
 
 
 @callback(
