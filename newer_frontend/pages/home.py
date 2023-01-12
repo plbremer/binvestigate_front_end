@@ -13,28 +13,39 @@ layout = html.Div(
     children=[
         html.Br(),
         html.Br(),
-        html.Br(),
-        html.Br(),
         dbc.Row(
             children=[
-                dbc.Col(width=3),
+                dbc.Col(width=2),
                 dbc.Col(
                     children=[
-                        html.Div(
-                            [
-                                html.Img(src=r'assets/graphical_abstract.png',alt='image')
-                            ],
-                            style={'textAlign':'center'}
-                        ),
+                        # html.Div(
+                        #     [
+                        #         html.Img(src=r'assets/graphical_abstract.png',alt='image')
+                        #     ],
+                        #     #style={'textAlign':'center'}
+                        # ),
+                        html.H3('Publications:'),
+                        html.H5('Forthecoming'),
                         html.Br(),
                         html.Br(),
+                        html.H3('What is this tool?'),
+                        html.H5('BinDiscover enables the easy exploration of data from twenty years of Gas-Chromatograph/Mass-Spectrometry metabolomics performed at the West Coast Metabolomics Center at the  University of California, Davis. We hope that this tool enables rapid hypothesis generation from these data.'),
                         html.Br(),
-                        html.Br(),   
-                        html.H3('In the past decade, the field of metabolomics has transformed from an obscure specialty into a major “-omics” platform for studying metabolic processes and biomolecular characterization. However, as a whole the field is still very fractured, as the nature of the instrumentation and of the information produced by the platform essentially creates incompatible “islands” of datasets. This lack of data coherency results in the inability to accumulate a critical mass of metabolomics data that has enabled other –omics platforms to make impactful discoveries and meaningful advances.\n-Titus Mak'),
+                        html.Br(), 
+                        html.H3('What are the different components?'),
+                        html.H5('Ontological differential analysis and Phylometabolomic trees effectively visualize all compounds for many metadata combinations simultaneously.'),
+                        html.H5('Differential analysis and upset plots are good for visualizing all compounds for several metadata combinations.'),
+                        html.H5('The sunburst diagrams are good for focusing on single compound against all metadata combinations.'),
+                        html.H5('The BinBrowser tool is good for exploring chemical metadata and downloading BinDiscover .msp files.'),
+                        #html.H3('In the past decade, the field of metabolomics has transformed from an obscure specialty into a major “-omics” platform for studying metabolic processes and biomolecular characterization. However, as a whole the field is still very fractured, as the nature of the instrumentation and of the information produced by the platform essentially creates incompatible “islands” of datasets. This lack of data coherency results in the inability to accumulate a critical mass of metabolomics data that has enabled other –omics platforms to make impactful discoveries and meaningful advances.\n-Titus Mak'),
                         html.Br(),
                         html.Br(),
+                        html.H3('What is a Bin?'),
+                        html.H5('For the user, a bin is roughly a compound. The word derives from the computational-science algorithm \"Bin Sorting\". This algorithm places detected chromatographic peaks and their corresponding spectra into Bins, each of which have been previously identified as a particular compound. In this way, previous identifications can be propagated on newer studies, which allows the West Coast Metabolomics Center to very efficiently annotate studies.'),
                         html.Br(),
-                        html.Br(),                        
+                        html.Br(),    
+                        html.H3('Acknowledgements:'),
+                        html.H5('The authors would like to thank everyone who has contributed samples to the West Coast Metabolomics Center, which has enabled the synchronization of such diverse data. We would also like to thank the Core lab members who contributed to the instrument collection of this dataset.')
                         # html.Div(
                         #     [
                         #         html.Img(src=r'assets/mana_cover.png',alt='image')
@@ -46,10 +57,14 @@ layout = html.Div(
                         #html.Br(),
                         #html.H3('We also enable “ontologically-grouped differential analysis”. The user only needs to express a comparison query involving groups (e.g., “Human Gut” vs. “Bacterial Cells”) and they will receive tabular and visual results that describe the trends coming from all of the studies involving those sample metadata. This is made possible by using ontologies to transform generic terms like “Bacterial” into sets of species for which we have data.')
                     ],
-                    width=6
+                    width=8
                 ),
-                dbc.Col(width=3)
+                dbc.Col(width=2)
             ]
         )
-    ]
+    ],
+    # style={
+    #     'color':'red',
+    #     'backgroundColor':'blue'
+    # }
 )

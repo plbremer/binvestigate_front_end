@@ -14,8 +14,8 @@ import datetime
 
 dash.register_page(__name__)
 #when containerized, the url is not the local 127.0.0.1
-#base_url_api = f"http://api_alias:4999/"
-base_url_api = "http://127.0.0.1:4999/"
+base_url_api = f"http://api_alias:4999/"
+#base_url_api = "http://127.0.0.1:4999/"
 
 #populate constants for functionality#########
 #used for dropdown values and dropdown filtering logic (pick a species, get a reduced set of organ options)
@@ -33,6 +33,8 @@ hyperlink_translation_dict=dict(zip(compound_translation_panda.integer_represent
 
 layout=html.Div(
     children=[
+        html.Br(),
+        html.Br(),
         dbc.Row(
             children=[
                 html.H2('Ontological Nodes and Compound Types'),
@@ -522,6 +524,8 @@ def query_table(
                 dbc.Col(width={'size':2}),
                 dbc.Col(
                     children=[
+                        html.Br(),
+                        html.Br(),
                         html.H2("Result Datatable", className='text-center'),
                         html.Div(
                             dbc.Button(

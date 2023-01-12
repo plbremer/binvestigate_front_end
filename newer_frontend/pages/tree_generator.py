@@ -26,8 +26,8 @@ from . import tangle_modified
 dash.register_page(__name__)
 
 #when containerized, the url is not the local 127.0.0.1
-#base_url_api = f"http://api_alias:4999/"
-base_url_api = f"http://127.0.0.1:4999/"
+base_url_api = f"http://api_alias:4999/"
+#base_url_api = f"http://127.0.0.1:4999/"
 
 #populate constants for functionality#########
 species_networkx,species_node_dict=hierarchical_differential_analysis_helper.extract_networkx_selections_species()
@@ -51,6 +51,8 @@ compound_bin_translator_dict=dict(zip(final_curations.loc[final_curations.bin_ty
 
 layout=html.Div(
     children=[
+        html.Br(),
+        html.Br(),
         dbc.Row(
             children=[
                 html.H2('Ontological Nodes and/or Metadata Triplets'),
@@ -114,7 +116,7 @@ layout=html.Div(
                     children=[
                         html.Div(
                             dbc.Button(
-                                'Get Results',
+                                'Determine Valid Triplets',
                                 id='tree_metadata_query',
                             ),
                             className="d-grid gap-2 col-3 mx-auto",
@@ -324,7 +326,7 @@ def perform_metadata_query(
                         html.Br(),
                         html.Div(
                             dbc.Button(
-                                'Get Results',
+                                'Perform Phylometabolomic Analysis',
                                 id='tree_query',
                             ),
                             className="d-grid gap-2 col-3 mx-auto",
@@ -688,26 +690,47 @@ def query_table(
         html.H2("Clustergram", className='text-center'),
         dbc.Row(
             children=[
-                html.Div(
-                    dbc.Button(
-                        'Download Clustergram Core Matrix',
-                        id='button_tree_download',
-                    ),
-                    className="d-grid gap-2 col-3 mx-auto",
+                dbc.Col(width=3),
+                dbc.Col(
+                    children=[
+                        html.Div(
+                            dbc.Button(
+                                'Download Clustergram Matrix',
+                                id='button_tree_download',
+                            ),
+                            className="d-grid gap-2 col-5 mx-auto",
+                        )
+                    ],
+                    width=3
                 ),
-                html.Div(
-                    dbc.Button(
-                        'Download Matrix and Include Unknowns (slower)',
-                        id='button_tree_download_all_compounds',
-                    ),
-                    className="d-grid gap-2 col-3 mx-auto",
+                # dbc.Col(
+                #     children=[
+
+                #     ],
+                #     width=2
+                # ),
+                dbc.Col(
+                    children=[
+                        html.Div(
+                            dbc.Button(
+                                'Download Matrix and Include Unknowns',
+                                id='button_tree_download_all_compounds',
+                            ),
+                            className="d-grid gap-2 col-5 mx-auto",
+                        ),
+                    ],
+                    width=3
                 ),
+            ]
+        ),
+        dbc.Row(
+            children=[
                 dcc.Graph(
                     id='tree_clustergram_graph',
                     figure=clustergram_figure
                 )
             ]
-        ),
+        )
     ]
 
     return [div_clustergram_tanglegram_children,raw_data_clustergram_panda.to_dict(orient='index')]
@@ -730,6 +753,9 @@ def download_leaf_datatable(
     button_tree_download_n_clicks,
     store_tree_data
     ):
+        if button_tree_download_n_clicks==None:
+            raise PreventUpdate
+        
         downloaded_panda=pd.DataFrame.from_dict(store_tree_data,orient='index')
 
         return [dcc.send_data_frame(

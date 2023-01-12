@@ -11,8 +11,8 @@ from dash.dash_table.Format import Format, Scheme, Group
 import xlsxwriter
 
 #when containerized, the url is not the local 127.0.0.1
-#base_url_api = f"http://api_alias:4999/"
-base_url_api = "http://127.0.0.1:4999/"
+base_url_api = f"http://api_alias:4999/"
+#base_url_api = "http://127.0.0.1:4999/"
 
 dash.register_page(__name__)
 
@@ -22,6 +22,7 @@ unique_sod_combinations_dict=venn_helper.get_unique_sod_combinations()
 
 layout=html.Div(
     children=[
+        html.Br(),
         dbc.Row(
             children=[
                 dbc.Col(

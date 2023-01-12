@@ -1,5 +1,3 @@
-#from msilib.schema import Component
-
 import dash
 from dash import dcc, html, dash_table, callback
 import dash_bootstrap_components as dbc
@@ -18,8 +16,8 @@ from . import bin_browser_helper
 
 dash.register_page(__name__,path_template="/bin-browser/<linked_compound>")
 
-#base_url_api = f"http://api_alias:4999/"
-base_url_api = "http://127.0.0.1:4999/"
+base_url_api = f"http://api_alias:4999/"
+#base_url_api = "http://127.0.0.1:4999/"
 
 
 ########get things from helper script########
@@ -34,6 +32,8 @@ final_curations.set_index('compound_identifier',drop=True,inplace=True)
 
 layout=html.Div(
     children=[
+        html.Br(),
+        html.Br(),
         dcc.Location(id='url',refresh=False),
         dcc.Download(
             id='download_msp_known'
@@ -173,13 +173,18 @@ def query_figure(button_bin_visualize_n_clicks,url_pathname,dropdown_bin_value):
             marker=dict(color="rgb(220, 53, 69)")
         )
     )
+    #spectrum_figure.update_title(title="Relative Intensity")
     spectrum_figure.update_yaxes(title="Relative Intensity")
     spectrum_figure.update_xaxes(title="m/z")
     spectrum_figure.update_traces(width=1, hovertemplate="m/z: %{x}<br>Intensity: %{y}<br>")
     spectrum_figure.update_layout(showlegend=False,font=dict(size=18))
+    compound_name=total_panda.at[0,'english_name']
+    spectrum_figure.update_layout(title={'text':compound_name,'x':0.5})
 
     total_panda=total_panda[['english_name','compound_identifier','retentionIndex','kovats','spectrum','quantMass','uniqueMass','splash']]
     
+    
+    #print(compound_name)
     total_panda.rename(
         {
             'english_name':'Name',
@@ -233,13 +238,18 @@ def query_figure(button_bin_visualize_n_clicks,url_pathname,dropdown_bin_value):
     ]
 
     bin_viewer_div_children=[
+        html.Br(),
+        html.Br(),
         dbc.Row(
             children=[
                 dbc.Col(width=1),
+                dbc.Col(width=1), 
                 dbc.Col(
                     children=[
+                        
                         html.Br(),
                         html.Br(),
+                        html.H3('Chemical Metadata', className='text-center'),
                         html.Div(
                             dbc.Button(
                                 'Download as .xlsx',
@@ -247,6 +257,7 @@ def query_figure(button_bin_visualize_n_clicks,url_pathname,dropdown_bin_value):
                             ),
                             className="d-grid gap-2 col-4 mx-auto",
                         ),
+                        html.Br(),
                         dcc.Download(id="download_download_msp"),
                         dash_table.DataTable(
                             id='table_bin',
@@ -261,6 +272,7 @@ def query_figure(button_bin_visualize_n_clicks,url_pathname,dropdown_bin_value):
                                 'font-family': 'arial',
                                 'fontSize': 15,
                                 'fontWeight': 'bold',
+                                'textAlign':'left'
                             },
                             style_data={
                                 'textAlign': 'left',
@@ -272,12 +284,17 @@ def query_figure(button_bin_visualize_n_clicks,url_pathname,dropdown_bin_value):
                     ],
                     width=3
                 ),        
-                dbc.Col(width=1),           
+                #dbc.Col(width=1),           
                 dbc.Col(
-                    dcc.Graph(
-                        id='figure_bin',
-                        figure=spectrum_figure
-                    ) 
+                    children=[
+                        html.Br(),
+                        html.Br(),
+                        html.H3('Mass Spectrum', className='text-center'),
+                        dcc.Graph(
+                            id='figure_bin',
+                            figure=spectrum_figure
+                        )                     
+                    ]
                 ),
                 dbc.Col(width=1)
             ]

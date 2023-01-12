@@ -135,3 +135,18 @@ p {
     margin-bottom: 0;
     text-align : center;
  }
+
+/*https://community.plotly.com/t/backgroundcolor-dash/8694/2*/
+/*body { margin-bottom: '-17%'; height: 100%;border: 1px solid red; max-height: 2000px; background-color: lightblue;}*/
+body { background-color: #fff4e4;}
+
+
+.navbar-brand{
+    font-size: 50px;
+}
+
+.nav-link{
+    color: red;
+}
+
+/*.hr{ color:#1A3E68}*/

@@ -14,8 +14,8 @@ import pandas as pd
 from . import sunburst_helper
 
 #when containerized, the url is not the local 127.0.0.1
-#base_url_api = f"http://api_alias:4999/"
-base_url_api = "http://127.0.0.1:4999/"
+base_url_api = f"http://api_alias:4999/"
+#base_url_api = "http://127.0.0.1:4999/"
 dash.register_page(__name__,path_template="/sunburst/<linked_compound>")
 
 #populate constants for functionality#########
@@ -162,6 +162,8 @@ layout=html.Div(
                                     )
                                 ]
                             ),
+                            html.Br(),
+                            html.Br(),
                             html.H2("Result Datatable", className='text-center'),
                             html.Div(
                                 dbc.Button(
