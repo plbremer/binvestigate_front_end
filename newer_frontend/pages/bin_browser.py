@@ -88,7 +88,7 @@ layout=html.Div(
                     children=[
                         html.Div(
                             dbc.Button(
-                                'Download Identified .msp',
+                                'Download All Identified Compounds .msp',
                                 id='button_download_msp_identified',
                             ),
                             className="d-grid gap-2 col-4 mx-auto",
@@ -97,7 +97,7 @@ layout=html.Div(
                         html.Br(),
                         html.Div(
                             dbc.Button(
-                                'Download Unknown .msp',
+                                'Download All Unidentified Compounds .msp',
                                 id='button_download_msp_unknown',
                             ),
                             className="d-grid gap-1 col-4 mx-auto",

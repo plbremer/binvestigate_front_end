@@ -14,8 +14,8 @@ from . import venn_helper
 dash.register_page(__name__)
 
 #when containerized, the url is not the local 127.0.0.1
-base_url_api = f"http://api_alias:4999/"
-#base_url_api = "http://127.0.0.1:4999/"
+#base_url_api = f"http://api_alias:4999/"
+base_url_api = "http://127.0.0.1:4999/"
 
 #populate constants for functionality#########
 unique_sod_combinations_dict=venn_helper.get_unique_sod_combinations()
@@ -258,13 +258,28 @@ def query_figure(leaf_table_derived_virtual_data,dropdown_triplet_selection_from
 
     p='significance_welch'
     effect_size='fold_change_average'
+
+
+    #done so that we can have symmetric labels
+    if len(dropdown_triplet_selection_from_value[0].title()) < len(dropdown_triplet_selection_to_value[0].title()):
+        shorter_length=len(dropdown_triplet_selection_from_value[0].title())
+        #title=dropdown_triplet_selection_from_value[0][:shorter_length].title()+'             vs.               '+dropdown_triplet_selection_to_value[0][:shorter_length].title()
+        x_axis_label='log2 Fold Change<br>Increased in \"'+dropdown_triplet_selection_from_value[0].title()+'\"                                                                      Increased in \"'+dropdown_triplet_selection_to_value[0][:shorter_length].title()+'...\"<br><br>.'
+
+    elif len(dropdown_triplet_selection_from_value[0].title()) > len(dropdown_triplet_selection_to_value[0].title()):
+        shorter_length=len(dropdown_triplet_selection_to_value[0].title())   
+        x_axis_label='log2 Fold Change<br>Increased in \"'+dropdown_triplet_selection_from_value[0][:shorter_length].title()+'...\"                                                                      Increased in \"'+dropdown_triplet_selection_to_value[0].title()+'\"<br><br>.' 
+
+    elif len(dropdown_triplet_selection_from_value[0].title()) == len(dropdown_triplet_selection_to_value[0].title()):
+        x_axis_label='log2 Fold Change<b    r>Increased in \"'+dropdown_triplet_selection_from_value[0].title()+'\"                                                                      Increased in \"'+dropdown_triplet_selection_to_value[0].title()+'\"<br><br>.' 
+
     volcano = dashbio.VolcanoPlot(
         dataframe=temp,
         snp="english_name",
         p=p,
         effect_size=effect_size,
         gene=None,
-        xlabel='log2 Fold Change - negative values are decreases from \"'+dropdown_triplet_selection_from_value[0].title()+'\" to \"'+dropdown_triplet_selection_to_value[0].title()+'\"',
+        xlabel=x_axis_label,
         genomewideline_value=2,
         title=dropdown_triplet_selection_from_value[0].title()+'             vs.               '+dropdown_triplet_selection_to_value[0].title(),
         title_x=0.5
@@ -351,8 +366,8 @@ def query_table(leaf_query_n_clicks,radio_items_bin_type_value,table_metadata_de
                                 columns=[
                                     {"name": "English Name", "id": "english_name",'presentation':'markdown'},
                                     {"name": "Identifier", "id": "identifier",'presentation':'markdown'},
-                                    {"name": "Fold Average", "id": "fold_change_average","type": "numeric","format": Format(group=Group.yes, precision=2, scheme=Scheme.exponent)},
-                                    {"name": "Significance Welch", "id": "significance_welch","type": "numeric","format": Format(group=Group.yes, precision=2, scheme=Scheme.exponent)},
+                                    {"name": "log2 Fold Change", "id": "fold_change_average","type": "numeric","format": Format(group=Group.yes, precision=2)},#, scheme=Scheme.exponent)},
+                                    {"name": "Significance Welch", "id": "significance_welch","type": "numeric","format": Format(group=Group.yes, precision=2)},#, scheme=Scheme.exponent)},
                                 ],
                                 markdown_options={"link_target": "_blank"},
                                 data=data,

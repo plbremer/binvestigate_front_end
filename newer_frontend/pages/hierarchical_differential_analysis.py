@@ -14,8 +14,8 @@ import datetime
 
 dash.register_page(__name__)
 #when containerized, the url is not the local 127.0.0.1
-base_url_api = f"http://api_alias:4999/"
-#base_url_api = "http://127.0.0.1:4999/"
+#base_url_api = f"http://api_alias:4999/"
+base_url_api = "http://127.0.0.1:4999/"
 
 #populate constants for functionality#########
 #used for dropdown values and dropdown filtering logic (pick a species, get a reduced set of organ options)
@@ -540,7 +540,7 @@ def query_table(
                             columns=[
                                 {"name": "English Name", "id": "english_name",'presentation':'markdown'},
                                 {"name": "Identifier", "id": "identifier",'presentation':'markdown'},
-                                {"name": "Fold Average", "id": "fold_change_average","type": "numeric","format": Format(group=Group.yes, precision=2, scheme=Scheme.exponent)},
+                                {"name": "log2 Fold Change", "id": "fold_change_average","type": "numeric","format": Format(group=Group.yes, precision=2, scheme=Scheme.exponent)},
                                 {"name": "Significance Welch", "id": "significance_welch","type": "numeric","format": Format(group=Group.yes, precision=2, scheme=Scheme.exponent)},
                             ],
                             markdown_options={"link_target": "_blank"},
@@ -626,13 +626,28 @@ def query_figure(
     title_string_from=' - '.join([species_node_dict[dropdown_from_species_value],organ_node_dict[dropdown_from_organ_value].split(' - ')[0],disease_node_dict[dropdown_from_disease_value].split(' - ')[0]])
     title_string_to=' - '.join([species_node_dict[dropdown_to_species_value],organ_node_dict[dropdown_to_organ_value].split(' - ')[0],disease_node_dict[dropdown_to_disease_value].split(' - ')[0]])
 
+    #done so that we can have symmetric labels
+    if len(title_string_from) < len(title_string_to):
+        shorter_length=len(title_string_from)
+        #title=dropdown_triplet_selection_from_value[0][:shorter_length].title()+'             vs.               '+dropdown_triplet_selection_to_value[0][:shorter_length].title()
+        x_axis_label='log2 Fold Change<br>Increased in \"'+title_string_from.title()+'\"                                                                      Increased in \"'+title_string_to[:shorter_length].title()+'...\"<br><br>.'
+
+    elif len(title_string_from) > len(title_string_to):
+        shorter_length=len(title_string_to.title())   
+        x_axis_label='log2 Fold Change<br>Increased in \"'+title_string_from[:shorter_length].title()+'...\"                                                                      Increased in \"'+title_string_to.title()+'\"<br><br>.' 
+
+    elif len(title_string_from) == len(title_string_to):
+        x_axis_label='log2 Fold Change<br>Increased in \"'+title_string_from.title()+'\"                                                                      Increased in \"'+title_string_to.title()+'\"<br><br>.' 
+
+
+
     volcano = dashbio.VolcanoPlot(
         dataframe=temp,
         snp="english_name",
         p=p,
         effect_size=effect_size,
         gene=None,
-        xlabel='log2 Fold Change - negative values are decreases from \"'+title_string_from+'\" to \"'+title_string_to+'\"',
+        xlabel=x_axis_label,
         genomewideline_value=2,
         title=title_string_from+'        vs.       '+title_string_to,
         title_x=0.5

@@ -14,8 +14,8 @@ import pandas as pd
 from . import sunburst_helper
 
 #when containerized, the url is not the local 127.0.0.1
-base_url_api = f"http://api_alias:4999/"
-#base_url_api = "http://127.0.0.1:4999/"
+#base_url_api = f"http://api_alias:4999/"
+base_url_api = "http://127.0.0.1:4999/"
 dash.register_page(__name__,path_template="/sunburst/<linked_compound>")
 
 #populate constants for functionality#########
@@ -247,8 +247,15 @@ def update_options(search_value):
 def query_table(button_query_n_clicks,url_pathname,compound_selection_value,radio_items_sunburst_value_value):
     '''
     '''
+    print(callback_context.triggered[0]['prop_id'])
+    print(compound_selection_value)
 
-    if callback_context.triggered[0]['prop_id']=='.':
+    if callback_context.triggered[0]['prop_id']=='.' :
+        sunburst_output={
+            "compound":url_pathname.split('/')[-1]
+        }
+        output_url=url_pathname.split('/')[-1]
+    elif callback_context.triggered[0]['prop_id']=='button_query.n_clicks' and compound_selection_value==None:
         sunburst_output={
             "compound":url_pathname.split('/')[-1]
         }
@@ -302,7 +309,10 @@ def query_figure(sunburst_table_derived_virtual_data,radio_items_sod_order_value
     #coerce it into sunburst form with helper function
     temp_in_sunburst_form=sunburst_helper.coerce_full_panda(temp,radio_items_sunburst_value_value,radio_items_sod_order_value.split(','))
 
-    my_hovertext_values=(temp_in_sunburst_form['id'].str.split('/').str[1:].str.join(' - '))+': '+(temp_in_sunburst_form['average'].astype(str))
+    if radio_items_sunburst_value_value=='percent_present':
+        my_hovertext_values=(temp_in_sunburst_form['id'].str.split('/').str[1:].str.join(' - '))+': '+((temp_in_sunburst_form['average']).astype(str))
+    else:
+        my_hovertext_values=(temp_in_sunburst_form['id'].str.split('/').str[1:].str.join(' - '))+': '+(temp_in_sunburst_form['average'].map('{:,.0f}'.format))
     current_figure=go.Figure(
         go.Sunburst(
             parents=temp_in_sunburst_form['parent'].to_list(),
@@ -316,7 +326,8 @@ def query_figure(sunburst_table_derived_virtual_data,radio_items_sod_order_value
     )
     current_figure.update_layout(
         margin = dict(t=0, l=0, r=0, b=0),
-        hoverlabel=dict(font_size=24)
+        hoverlabel=dict(font_size=24),
+        #values=dict(separatethousands=True)
     )
     return [current_figure]
 
