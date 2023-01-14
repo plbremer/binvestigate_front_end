@@ -7,8 +7,6 @@ import dash_bootstrap_components as dbc
 
 dash.register_page(__name__, path='/')
 
-#df = px.data.gapminder()
-
 layout = html.Div(
     children=[
         html.Br(),
@@ -18,12 +16,6 @@ layout = html.Div(
                 dbc.Col(width=2),
                 dbc.Col(
                     children=[
-                        # html.Div(
-                        #     [
-                        #         html.Img(src=r'assets/graphical_abstract.png',alt='image')
-                        #     ],
-                        #     #style={'textAlign':'center'}
-                        # ),
                         html.H3('Publications:'),
                         html.H5('Forthecoming'),
                         html.Br(),
@@ -46,16 +38,6 @@ layout = html.Div(
                         html.Br(),    
                         html.H3('Acknowledgements:'),
                         html.H5('The authors would like to thank everyone who has contributed samples to the West Coast Metabolomics Center, which has enabled the synchronization of such diverse data. We would also like to thank the Core lab members who contributed to the instrument collection of this dataset.')
-                        # html.Div(
-                        #     [
-                        #         html.Img(src=r'assets/mana_cover.png',alt='image')
-                        #     ],
-                        #     style={'textAlign':'center'}
-                        # )
-                        #html.H3('Here is a webapp that enables the exploration of A database query interface across 160,000 metabolomic samples in GC-TOF mass spectrometryon a 160,000-sample dataset from the UC Davis/West Coast Metabolomics Center. We enable common techniques such as venn, sunburst, and differential diagrams.'),
-                        #html.Br(),
-                        #html.Br(),
-                        #html.H3('We also enable “ontologically-grouped differential analysis”. The user only needs to express a comparison query involving groups (e.g., “Human Gut” vs. “Bacterial Cells”) and they will receive tabular and visual results that describe the trends coming from all of the studies involving those sample metadata. This is made possible by using ontologies to transform generic terms like “Bacterial” into sets of species for which we have data.')
                     ],
                     width=8
                 ),
@@ -63,8 +45,4 @@ layout = html.Div(
             ]
         )
     ],
-    # style={
-    #     'color':'red',
-    #     'backgroundColor':'blue'
-    # }
 )

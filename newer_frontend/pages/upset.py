@@ -6,7 +6,6 @@ import requests
 from . import venn_helper
 import pandas as pd
 from dash.dependencies import Input, Output, State
-from pprint import pprint
 from dash.dash_table.Format import Format, Scheme, Group
 import xlsxwriter
 
@@ -204,8 +203,8 @@ def perform_query_table(
         #prepare columns and data for the table
         column_list = [
             {"name": "Bin", "id": "bin"},
-            {"name": "English Name", "id":"english_name"},
-            {"name": "InChIKey","id":"identifier"}
+            {"name": "English Name", "id":"english_name",'presentation':'markdown'},
+            {"name": "InChIKey","id":"identifier",'presentation':'markdown'}
 
         ]
         sod_column_list=[
@@ -219,7 +218,10 @@ def perform_query_table(
             :,
             temp_column_names
         ].copy()
-        
+
+        total_panda['english_name']='['+total_panda['english_name']+'](/sunburst/'+total_panda['bin'].astype(str)+')'
+        total_panda['identifier']='['+total_panda['identifier']+'](/bin-browser/'+total_panda['bin'].astype(str)+')'
+
         data = total_panda.to_dict(orient='records')
 
         del total_panda
@@ -243,6 +245,7 @@ def perform_query_table(
                                 id='table',
                                 columns=column_list,
                                 data=data,
+                                markdown_options={"link_target": "_blank"},
                                 page_current=0,
                                 page_size=50,
                                 page_action='native',

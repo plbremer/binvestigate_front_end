@@ -26,8 +26,8 @@ from . import tangle_modified
 dash.register_page(__name__)
 
 #when containerized, the url is not the local 127.0.0.1
-#base_url_api = f"http://api_alias:4999/"
-base_url_api = f"http://127.0.0.1:4999/"
+base_url_api = f"http://api_alias:4999/"
+#base_url_api = f"http://127.0.0.1:4999/"
 
 #populate constants for functionality#########
 species_networkx,species_node_dict=hierarchical_differential_analysis_helper.extract_networkx_selections_species()
@@ -86,7 +86,8 @@ layout=html.Div(
                                 {'label':disease_node_dict[temp], 'value':temp} for temp in disease_node_dict
                             ],key=lambda x:x['label']),
                             multi=False,
-                            placeholder='Select disease ontology node'
+                            placeholder='Select disease ontology node',
+                            value='No Disease'
                         ), 
                         html.Br(),
                     ],
@@ -149,22 +150,6 @@ layout=html.Div(
                 )
             ]
         ),
-        # dbc.Spinner(
-        #     children=[
-        #         html.Div(
-        #             id='div_clustergram',
-        #             children=[]
-        #         )
-        #     ]
-        # )
-
-
-
-
-
-
-
-
         dcc.Download(id="download_tree"),
         dcc.Download(id="download_tree_all_compounds"),
         dcc.Store(id='store_tree'),
@@ -383,7 +368,7 @@ def query_table(
         :,
         #a paramter to simplify the clustergram. dont show any compounds where the greatest
         #percent present is less than 5%
-        (clustergram_panda.max())>0.05
+        (clustergram_panda.max())>0.5
     ]
 
     clustergram_panda.index=input_metadata.triplet_id.tolist()

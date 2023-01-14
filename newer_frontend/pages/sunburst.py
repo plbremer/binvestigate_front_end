@@ -14,8 +14,8 @@ import pandas as pd
 from . import sunburst_helper
 
 #when containerized, the url is not the local 127.0.0.1
-#base_url_api = f"http://api_alias:4999/"
-base_url_api = "http://127.0.0.1:4999/"
+base_url_api = f"http://api_alias:4999/"
+#base_url_api = "http://127.0.0.1:4999/"
 dash.register_page(__name__,path_template="/sunburst/<linked_compound>")
 
 #populate constants for functionality#########
@@ -182,7 +182,11 @@ layout=html.Div(
                                     {"name": "Metric", "id": "metric"}
                                 ],
                                 data=[],
-                                page_current=0,
+                                page_current=0,                                
+                                filter_options={
+                                    'case':'insensitive',
+                                    'placeholder_text':'Type here to filter'
+                                },
                                 page_size=50,
                                 page_action='native',
                                 sort_action='native',

@@ -51,7 +51,6 @@ def coerce_full_panda(df,value_column,column_list):
     first_parent_index=len(df.index)
     tree_panda.loc[first_parent_index:,'sum']=0
 
-    print(value_column)
     if value_column=='intensity_average':
         tree_panda=tree_panda.round(decimals=0)
         tree_panda['average']=tree_panda['average'].astype(int)

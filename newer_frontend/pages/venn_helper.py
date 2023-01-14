@@ -26,8 +26,11 @@ def create_upset(temp_panda):
     temp_panda.index.set_names(names=temp_panda.columns,inplace=True)
 
     fig = plt.figure(figsize=(5, 5),dpi=200)
-    my_UpSet = UpSet(temp_panda,subset_size='count')
-    UpSet.plot(my_UpSet,fig=fig)
+    my_UpSet = UpSet(temp_panda,subset_size='count',min_degree=1)
+    #my_UpSet._plot_stacked_bars(title="hello")
+    upset_subplot_dict=UpSet.plot(my_UpSet,fig=fig)
+    #print(asdf)
+    upset_subplot_dict['intersections'].set_ylabel('Compound Count')
     buf = io.BytesIO() # in-memory files
 
     plt.savefig(buf, format = "png") # save to the above file object

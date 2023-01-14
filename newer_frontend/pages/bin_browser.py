@@ -184,7 +184,6 @@ def query_figure(button_bin_visualize_n_clicks,url_pathname,dropdown_bin_value):
     total_panda=total_panda[['english_name','compound_identifier','retentionIndex','kovats','spectrum','quantMass','uniqueMass','splash']]
     
     
-    #print(compound_name)
     total_panda.rename(
         {
             'english_name':'Name',
