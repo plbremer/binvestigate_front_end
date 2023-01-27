@@ -10,8 +10,8 @@ from dash.dash_table.Format import Format, Scheme, Group
 import xlsxwriter
 
 #when containerized, the url is not the local 127.0.0.1
-#base_url_api = f"http://api_alias:4999/"
-base_url_api = "http://127.0.0.1:4999/"
+base_url_api = f"http://api_alias:4999/"
+#base_url_api = "http://127.0.0.1:4999/"
 
 dash.register_page(__name__)
 
@@ -195,22 +195,16 @@ def perform_query_table(
         response = requests.post(base_url_api + "/venntableresource/", json=venn_data_table_output)
         total_panda = pd.read_json(response.json(), orient="records")
 
-        print(total_panda)
-
         total_panda=total_panda.loc[
             total_panda['bin_type']==radio_items_bin_type_upset_value,
             :
         ]
 
-        print(total_panda)
-
         if radio_items_bin_type_upset_value=='known':
             total_panda['english_name']=total_panda['bin'].map(compound_bin_translator_dict.get)
-            print(total_panda.english_name.value_counts())
             total_panda=total_panda.loc[
                 total_panda['english_name'].isnull()==False
             ]
-            print(total_panda)
 
         total_panda.drop(['compound','bin_type','compound_identifier'],axis='columns',inplace=True)
 

@@ -11,7 +11,7 @@ def create_compound_selection_labels(final_curations_address):
     # return compound_dropdown_options
     final_curations=pd.read_pickle(final_curations_address)
     final_curations.loc[final_curations.bin_type=='known','english_name']='Known: '+final_curations.loc[final_curations.bin_type=='known']['english_name'].astype(str)
-    final_curations.drop(['bin_type','identifier'],axis='columns',inplace=True)
+    final_curations.drop(['bin_type','identifier','integer_representation'],axis='columns',inplace=True)
     final_curations.rename(columns={'compound_identifier':'value','english_name':'label'},inplace=True)
     
     #compound_dropdown_options=
