@@ -2,9 +2,9 @@ from enum import unique
 import pandas as pd
 
 def generate_bin_dropdown_options():
-    final_curations=pd.read_pickle('../newer_datasets/compound_list_for_sun_and_bin_new.bin')
+    final_curations=pd.read_pickle('../newer_datasets/compound_translation_for_all_components.bin')
     final_curations.loc[final_curations.bin_type=='known','english_name']='Known: '+final_curations.loc[final_curations.bin_type=='known']['english_name'].astype(str)
-    final_curations.drop(['bin_type','identifier'],axis='columns',inplace=True)
+    final_curations.drop(['bin_type','identifier','integer_representation'],axis='columns',inplace=True)
     final_curations.rename(columns={'compound_identifier':'value','english_name':'label'},inplace=True)
     return final_curations.to_dict(
         'records'

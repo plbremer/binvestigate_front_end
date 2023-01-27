@@ -14,12 +14,12 @@ import pandas as pd
 from . import sunburst_helper
 
 #when containerized, the url is not the local 127.0.0.1
-base_url_api = f"http://api_alias:4999/"
-#base_url_api = "http://127.0.0.1:4999/"
+#base_url_api = f"http://api_alias:4999/"
+base_url_api = "http://127.0.0.1:4999/"
 dash.register_page(__name__,path_template="/sunburst/<linked_compound>")
 
 #populate constants for functionality#########
-compound_dropdown_options=sunburst_helper.create_compound_selection_labels("../newer_datasets/compound_list_for_sun_and_bin_new.bin")
+compound_dropdown_options=sunburst_helper.create_compound_selection_labels("../newer_datasets/compound_translation_for_all_components.bin")
 compound_dropdown_options_sorted=sorted(
                                 compound_dropdown_options,
                                 key=lambda x:x['label']
@@ -182,11 +182,12 @@ layout=html.Div(
                                     {"name": "Metric", "id": "metric"}
                                 ],
                                 data=[],
-                                page_current=0,                                
-                                filter_options={
-                                    'case':'insensitive',
-                                    'placeholder_text':'Type here to filter'
-                                },
+                                page_current=0,  
+                                #for whatever reason, case insensitive breaks the magnitude filter                              
+                                # filter_options={
+                                #     'case':'insensitive',
+                                #     'placeholder_text':'Type here to filter'
+                                # },
                                 page_size=50,
                                 page_action='native',
                                 sort_action='native',
@@ -251,8 +252,6 @@ def update_options(search_value):
 def query_table(button_query_n_clicks,url_pathname,compound_selection_value,radio_items_sunburst_value_value):
     '''
     '''
-    print(callback_context.triggered[0]['prop_id'])
-    print(compound_selection_value)
 
     if callback_context.triggered[0]['prop_id']=='.' :
         sunburst_output={

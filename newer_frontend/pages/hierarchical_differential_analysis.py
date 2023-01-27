@@ -14,8 +14,8 @@ import datetime
 
 dash.register_page(__name__)
 #when containerized, the url is not the local 127.0.0.1
-base_url_api = f"http://api_alias:4999/"
-#base_url_api = "http://127.0.0.1:4999/"
+#base_url_api = f"http://api_alias:4999/"
+base_url_api = "http://127.0.0.1:4999/"
 
 #populate constants for functionality#########
 #used for dropdown values and dropdown filtering logic (pick a species, get a reduced set of organ options)
@@ -27,7 +27,7 @@ index_panda=pd.read_pickle('../newer_datasets/index_panda.bin')
 index_panda=index_panda.sort_index()
 index_panda['species']=index_panda['species'].astype(str)
 #translate compound names
-compound_translation_panda=pd.read_pickle('../newer_datasets/compound_translation_panda.bin')
+compound_translation_panda=pd.read_pickle('../newer_datasets/compound_translation_for_all_components.bin')
 hyperlink_translation_dict=dict(zip(compound_translation_panda.integer_representation.tolist(),compound_translation_panda.compound_identifier.tolist()))
 ##############################################
 

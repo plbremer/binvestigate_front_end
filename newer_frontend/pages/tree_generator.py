@@ -26,8 +26,8 @@ from . import tangle_modified
 dash.register_page(__name__)
 
 #when containerized, the url is not the local 127.0.0.1
-base_url_api = f"http://api_alias:4999/"
-#base_url_api = f"http://127.0.0.1:4999/"
+#base_url_api = f"http://api_alias:4999/"
+base_url_api = f"http://127.0.0.1:4999/"
 
 #populate constants for functionality#########
 species_networkx,species_node_dict=hierarchical_differential_analysis_helper.extract_networkx_selections_species()
@@ -44,7 +44,7 @@ unique_sod_combinations_dict={
     temp_key:unique_sod_combinations_dict[temp_key] for temp_key in unique_sod_combinations_dict.keys() if (unique_sod_combinations_dict[temp_key].split(' - ')[0] not in species_to_disallow_for_tanglegram)
 }
 tanglegram_species_nx=nx.read_gpickle('../newer_datasets/tanglegram_species_networkx.bin')
-final_curations=pd.read_pickle('../newer_datasets/compound_list_for_sun_and_bin_new.bin')
+final_curations=pd.read_pickle('../newer_datasets/compound_translation_for_all_components.bin')
 compound_bin_translator_dict=dict(zip(final_curations.loc[final_curations.bin_type=='known']['compound_identifier'].astype(int).tolist(),final_curations.loc[final_curations.bin_type=='known']['english_name'].tolist()))
 ##############################################
 

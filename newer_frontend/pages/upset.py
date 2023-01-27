@@ -10,13 +10,15 @@ from dash.dash_table.Format import Format, Scheme, Group
 import xlsxwriter
 
 #when containerized, the url is not the local 127.0.0.1
-base_url_api = f"http://api_alias:4999/"
-#base_url_api = "http://127.0.0.1:4999/"
+#base_url_api = f"http://api_alias:4999/"
+base_url_api = "http://127.0.0.1:4999/"
 
 dash.register_page(__name__)
 
 #populate constants for functionality#########
 unique_sod_combinations_dict=venn_helper.get_unique_sod_combinations()
+final_curations=pd.read_pickle('../newer_datasets/compound_translation_for_all_components.bin')
+compound_bin_translator_dict=dict(zip(final_curations.loc[final_curations.bin_type=='known']['compound_identifier'].astype(int).tolist(),final_curations.loc[final_curations.bin_type=='known']['english_name'].tolist()))
 #############################################
 
 layout=html.Div(
@@ -193,10 +195,22 @@ def perform_query_table(
         response = requests.post(base_url_api + "/venntableresource/", json=venn_data_table_output)
         total_panda = pd.read_json(response.json(), orient="records")
 
+        print(total_panda)
+
         total_panda=total_panda.loc[
             total_panda['bin_type']==radio_items_bin_type_upset_value,
             :
-        ].copy()
+        ]
+
+        print(total_panda)
+
+        if radio_items_bin_type_upset_value=='known':
+            total_panda['english_name']=total_panda['bin'].map(compound_bin_translator_dict.get)
+            print(total_panda.english_name.value_counts())
+            total_panda=total_panda.loc[
+                total_panda['english_name'].isnull()==False
+            ]
+            print(total_panda)
 
         total_panda.drop(['compound','bin_type','compound_identifier'],axis='columns',inplace=True)
 
@@ -365,16 +379,26 @@ def open_modal(Img_venn_n_clicks):
         Input(component_id="button_download", component_property="n_clicks"),
     ],
     [
-        State(component_id="table",component_property="data")
+        State(component_id="table",component_property="data"),
+        State(component_id='radio_items_bin_type_upset',component_property='value')
     ],
     prevent_initial_call=True
 )
 def download_datatable(
     download_click,
-    table_data
+    table_data,
+    radio_items_bin_type_upset_value
     ):
         '''
         '''
+
+        downloaded_panda=pd.DataFrame.from_records(table_data)
+
+        if radio_items_bin_type_upset_value!='class':
+            downloaded_panda['english_name']=downloaded_panda['english_name'].str.extract('\[(.*)\]')
+            downloaded_panda['identifier']=downloaded_panda['identifier'].str.extract('\[(.*)\]')
+
         return [dcc.send_data_frame(
-            pd.DataFrame.from_records(table_data).to_excel, "binvestigate_venn_datatable.xlsx", sheet_name="sheet_1"
+            downloaded_panda.to_excel, "binvestigate_upset_datatable.xlsx", sheet_name="sheet_1"
         )]
+

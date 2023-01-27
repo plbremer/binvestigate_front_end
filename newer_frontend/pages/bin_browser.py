@@ -16,16 +16,16 @@ from . import bin_browser_helper
 
 dash.register_page(__name__,path_template="/bin-browser/<linked_compound>")
 
-base_url_api = f"http://api_alias:4999/"
-#base_url_api = "http://127.0.0.1:4999/"
+#base_url_api = f"http://api_alias:4999/"
+base_url_api = "http://127.0.0.1:4999/"
 
 
 ########get things from helper script########
 bins_dict=bin_browser_helper.generate_bin_dropdown_options()
 compound_classes=bin_browser_helper.generate_compound_classes()
-compound_translation_panda=pd.read_pickle('../newer_datasets/compound_list_for_differential_new.bin')
+compound_translation_panda=pd.read_pickle('../newer_datasets/compound_translation_for_all_components.bin')
 compound_translation_dict=dict(zip(compound_translation_panda.compound_identifier.tolist(),compound_translation_panda.english_name.tolist()))
-final_curations=pd.read_pickle('../newer_datasets/compound_list_for_sun_and_bin_new.bin')
+final_curations=pd.read_pickle('../newer_datasets/compound_translation_for_all_components.bin')
 final_curations.drop(['bin_type','english_name'],axis='columns',inplace=True)
 final_curations.set_index('compound_identifier',drop=True,inplace=True)
 
