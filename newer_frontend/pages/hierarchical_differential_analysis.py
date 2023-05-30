@@ -14,8 +14,8 @@ import datetime
 
 dash.register_page(__name__)
 #when containerized, the url is not the local 127.0.0.1
-base_url_api = f"http://api_alias:4999/"
-#base_url_api = "http://127.0.0.1:4999/"
+# base_url_api = f"http://api_alias:4999/"
+base_url_api = "http://127.0.0.1:4999/"
 
 #populate constants for functionality#########
 #used for dropdown values and dropdown filtering logic (pick a species, get a reduced set of organ options)
@@ -370,6 +370,7 @@ def perform_metadata_query(
         "to_organ": to_organ_value,
         "to_disease": to_disease_value,
     }
+    print(metadata_json_output)
 
     #obtain results from api
     response = requests.post(base_url_api + "/hgdametadataresource/", json=metadata_json_output)
@@ -444,9 +445,15 @@ def perform_metadata_query(
 )
 def update_time_requirement_estimate(radio_items_bin_type_value,hgda_table_metadata_derived_virtual_data):
     
+    
+
     multiple_metadata_panda=pd.DataFrame.from_dict(hgda_table_metadata_derived_virtual_data)
-    number_from=multiple_metadata_panda.from_or_to.value_counts()['from']
-    number_to=multiple_metadata_panda.from_or_to.value_counts()['to']
+    if len(multiple_metadata_panda.index)==0:
+        raise PreventUpdate
+    print('----------------------------')
+    print(multiple_metadata_panda)
+    number_from=multiple_metadata_panda['from_or_to'].value_counts()['from']
+    number_to=multiple_metadata_panda['from_or_to'].value_counts()['to']
 
     if radio_items_bin_type_value=='known':
         seconds_per=1

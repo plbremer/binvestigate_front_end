@@ -1,0 +1,29 @@
+.. BinDiscover
+
+BinDiscover
+==============================================
+
+Programmatic Meta Analysis
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Ontological Differential Analysis
+
+   ontological_differential_analysis
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Differential Analysis
+
+   differential_analysis
+
+
+
+
+
+Indices and tables
+==================
+
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`
