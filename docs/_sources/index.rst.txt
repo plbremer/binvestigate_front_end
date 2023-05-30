@@ -7,7 +7,7 @@ Programmatic Meta Analysis
 
 .. toctree::
    :maxdepth: 1
-   :caption: Ontological Differential Analysis
+   :caption: API
 
    ontological_differential_analysis
    phylo_trees
@@ -15,6 +15,14 @@ Programmatic Meta Analysis
    sunburst
    upset
    binbrowser
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Value Tables
+
+   triplets
+   compounds
+
 
 
 Indices and tables
