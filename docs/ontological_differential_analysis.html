@@ -113,18 +113,46 @@
 <p>Making a post request to</p>
 <p><code class="docutils literal notranslate"><span class="pre">http://bindiscover.metabolomics.us:4999/hgdametadataresource/</span></code></p>
 <p>With the format</p>
-<p><code class="docutils literal notranslate"><span class="pre">{</span>&#160;&#160;&#160;&#160; <span class="pre">&quot;from_species&quot;:&quot;10114&quot;,</span>&#160;&#160;&#160;&#160; <span class="pre">&quot;from_organ&quot;:&quot;A03.620&quot;,</span>&#160;&#160;&#160;&#160; <span class="pre">&quot;from_disease&quot;:&quot;No</span> <span class="pre">Disease&quot;,</span>&#160;&#160;&#160;&#160; <span class="pre">&quot;to_species&quot;:&quot;314146&quot;,</span>&#160;&#160;&#160;&#160; <span class="pre">&quot;to_organ&quot;:&quot;A03.556.875.500&quot;,</span>&#160;&#160;&#160;&#160; <span class="pre">&quot;to_disease&quot;:&quot;No</span> <span class="pre">Disease&quot;</span> <span class="pre">}</span></code></p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>{
+    &quot;from_species&quot;:&quot;10114&quot;,
+    &quot;from_organ&quot;:&quot;A03.620&quot;,
+    &quot;from_disease&quot;:&quot;No Disease&quot;,
+    &quot;to_species&quot;:&quot;314146&quot;,
+    &quot;to_organ&quot;:&quot;A03.556.875.500&quot;,
+    &quot;to_disease&quot;:&quot;No Disease&quot;
+}
+</pre></div>
+</div>
 <p>Where values in this dictionary are nodes from the NCBI taxonomy and MeSH Hierarchies will yield a record-oriented metadata table, e.g.</p>
-<p><code class="docutils literal notranslate"><span class="pre">&quot;[{\&quot;from_or_to\&quot;:\&quot;from\&quot;,\&quot;triplet_id\&quot;:\&quot;rattus</span> <span class="pre">rattus</span> <span class="pre">-</span> <span class="pre">Liver</span> <span class="pre">-</span> <span class="pre">No</span> <span class="pre">Disease\&quot;,\&quot;sample_count\&quot;:221},{\&quot;from_or_to\&quot;:\&quot;to\&quot;,\&quot;triplet_id\&quot;:\&quot;mus</span> <span class="pre">musculus</span> <span class="pre">-</span> <span class="pre">Esophagus</span> <span class="pre">-</span> <span class="pre">No</span> <span class="pre">Disease\&quot;,\&quot;sample_count\&quot;:24}]&quot;</span></code></p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>&quot;[
+    {\&quot;from_or_to\&quot;:\&quot;from\&quot;,\&quot;triplet_id\&quot;:\&quot;rattus rattus - Liver - No Disease\&quot;,\&quot;sample_count\&quot;:221},
+    {\&quot;from_or_to\&quot;:\&quot;to\&quot;,\&quot;triplet_id\&quot;:\&quot;mus musculus - Esophagus - No Disease\&quot;,\&quot;sample_count\&quot;:24}
+]&quot;
+</pre></div>
+</div>
 </section>
 <section id="Step-2--">
 <h2>Step 2 -<a class="headerlink" href="#Step-2--" title="Permalink to this headline"></a></h2>
 <p>Making a post request to</p>
 <p><code class="docutils literal notranslate"><span class="pre">http://bindiscover.metabolomics.us:4999/hgdaresource/</span></code></p>
 <p>with the format</p>
-<p><code class="docutils literal notranslate"><span class="pre">{</span>&#160;&#160;&#160;&#160; <span class="pre">&quot;metadata_datatable&quot;:[{&quot;from_or_to&quot;:</span> <span class="pre">&quot;from&quot;,</span> <span class="pre">&quot;triplet_id&quot;:</span> <span class="pre">&quot;citrus</span> <span class="pre">reticulata</span> <span class="pre">-</span> <span class="pre">Plant</span> <span class="pre">Leaves</span> <span class="pre">-</span> <span class="pre">No</span> <span class="pre">Disease&quot;,</span> <span class="pre">&quot;sample_count&quot;:</span> <span class="pre">43},</span> <span class="pre">{&quot;from_or_to&quot;:</span> <span class="pre">&quot;to&quot;,</span> <span class="pre">&quot;triplet_id&quot;:</span> <span class="pre">&quot;malus</span> <span class="pre">x</span> <span class="pre">domestica</span> <span class="pre">-</span> <span class="pre">Fruit</span> <span class="pre">-</span> <span class="pre">No</span> <span class="pre">Disease&quot;,</span> <span class="pre">&quot;sample_count&quot;:</span> <span class="pre">17}],</span>&#160;&#160;&#160;&#160; <span class="pre">&quot;bin_type&quot;:&quot;known&quot;</span> <span class="pre">}</span></code></p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>{
+    &quot;metadata_datatable&quot;:
+        [
+            {&quot;from_or_to&quot;: &quot;from&quot;, &quot;triplet_id&quot;: &quot;citrus reticulata - Plant Leaves - No Disease&quot;, &quot;sample_count&quot;: 43},
+            {&quot;from_or_to&quot;: &quot;to&quot;, &quot;triplet_id&quot;: &quot;malus x domestica - Fruit - No Disease&quot;, &quot;sample_count&quot;: 17}
+        ],
+    &quot;bin_type&quot;:&quot;known&quot;
+}
+</pre></div>
+</div>
 <p>will yield the core information for the differential analysis, eg</p>
-<p><code class="docutils literal notranslate"><span class="pre">&quot;[{\&quot;compound_id\&quot;:</span> <span class="pre">14717,</span> <span class="pre">\&quot;identifier\&quot;:</span> <span class="pre">\&quot;OOWQBDFWEXAXPB-UHFFFAOYSA-N\&quot;,</span> <span class="pre">\&quot;english_name\&quot;:</span> <span class="pre">\&quot;hexadecylglycerol\&quot;,</span> <span class="pre">\&quot;bin_type_dict\&quot;:</span> <span class="pre">\&quot;known\&quot;,</span> <span class="pre">\&quot;significance_welch\&quot;:</span> <span class="pre">0.6109507199,</span> <span class="pre">\&quot;fold_change_average\&quot;:</span> <span class="pre">0.007302779200000001},</span> <span class="pre">{\&quot;compound_id\&quot;:</span> <span class="pre">2214,</span> <span class="pre">\&quot;identifier\&quot;:</span> <span class="pre">\&quot;LOLKAJARZKDJTD-UHFFFAOYSA-N\&quot;,</span> <span class="pre">\&quot;english_name\&quot;:</span> <span class="pre">\&quot;ethylsuccinate\&quot;,</span> <span class="pre">\&quot;bin_type_dict\&quot;:</span> <span class="pre">\&quot;known\&quot;,</span> <span class="pre">\&quot;significance_welch\&quot;:</span> <span class="pre">0.1504452139,</span> <span class="pre">\&quot;fold_change_average\&quot;:</span> <span class="pre">-0.031181263}...&quot;</span></code></p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>&quot;[
+    {\&quot;compound_id\&quot;: 14717, \&quot;identifier\&quot;: \&quot;OOWQBDFWEXAXPB-UHFFFAOYSA-N\&quot;, \&quot;english_name\&quot;: \&quot;hexadecylglycerol\&quot;, \&quot;bin_type_dict\&quot;: \&quot;known\&quot;, \&quot;significance_welch\&quot;: 0.6109507199, \&quot;fold_change_average\&quot;: 0.007302779200000001},
+    {\&quot;compound_id\&quot;: 2214, \&quot;identifier\&quot;: \&quot;LOLKAJARZKDJTD-UHFFFAOYSA-N\&quot;, \&quot;english_name\&quot;: \&quot;ethylsuccinate\&quot;, \&quot;bin_type_dict\&quot;: \&quot;known\&quot;, \&quot;significance_welch\&quot;: 0.1504452139, \&quot;fold_change_average\&quot;: -0.031181263}...
+&quot;
+</pre></div>
+</div>
 </section>
 </section>
 
