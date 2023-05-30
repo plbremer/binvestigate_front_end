@@ -13,11 +13,33 @@ Programmatic Meta Analysis
 
 .. toctree::
    :maxdepth: 1
+   :caption: Phylometabolomic Trees
+
+   phylo_trees
+
+.. toctree::
+   :maxdepth: 1
    :caption: Differential Analysis
 
    differential_analysis
 
+.. toctree::
+   :maxdepth: 1
+   :caption: Sunburst
 
+   sunburst
+   
+.. toctree::
+   :maxdepth: 1
+   :caption: Upset Plot
+
+   upset
+   
+.. toctree::
+   :maxdepth: 1
+   :caption: Bin Browser
+
+   binbrowser
 
 
 

@@ -21,8 +21,8 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="API" href="phylo_trees.html" />
-    <link rel="prev" title="BinDiscover" href="index.html" /> 
+    <link rel="next" title="API" href="differential_analysis.html" />
+    <link rel="prev" title="API" href="ontological_differential_analysis.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -41,17 +41,17 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Ontological Differential Analysis</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="ontological_differential_analysis.html">API</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Phylometabolomic Trees</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">API</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#Summary">Summary</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#Step-1---Triplets">Step 1 - Triplets</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#Step-2---OGDA">Step 2 - OGDA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Step-2---Phylometabolomic-Matrices">Step 2 - Phylometabolomic Matrices</a></li>
 </ul>
 </li>
-</ul>
-<p class="caption" role="heading"><span class="caption-text">Phylometabolomic Trees</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="phylo_trees.html">API</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Differential Analysis</span></p>
 <ul>
@@ -74,7 +74,7 @@
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
       <li>API</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="_sources/ontological_differential_analysis.ipynb.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/phylo_trees.ipynb.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -110,55 +110,48 @@
 <h1>API<a class="headerlink" href="#API" title="Permalink to this headline"></a></h1>
 <section id="Summary">
 <h2>Summary<a class="headerlink" href="#Summary" title="Permalink to this headline"></a></h2>
-<p>Doing OGDA programatically is a two-step process. In the first step, sets of metadata triplets are created. In the second step, those sets are used as input to the actual calculator.</p>
+<p>Generating matrices for phylometabolomic analysis is a two-step process. In the first step, sets of metadata triplets are created. In the second step, those sets are used as input to the actual calculator.</p>
 </section>
 <section id="Step-1---Triplets">
 <h2>Step 1 - Triplets<a class="headerlink" href="#Step-1---Triplets" title="Permalink to this headline"></a></h2>
 <p>Making a post request to</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>http://bindiscover.metabolomics.us:4999/hgdametadataresource/
-</pre></div>
-</div>
-<p>With the format</p>
+```
+http://bindiscover.metabolomics.us:4999/treemetadataresource/
+```<p>With the format</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>{
-    &quot;from_species&quot;:&quot;10114&quot;,
-    &quot;from_organ&quot;:&quot;A03.620&quot;,
-    &quot;from_disease&quot;:&quot;No Disease&quot;,
-    &quot;to_species&quot;:&quot;314146&quot;,
-    &quot;to_organ&quot;:&quot;A03.556.875.500&quot;,
-    &quot;to_disease&quot;:&quot;No Disease&quot;
+    &quot;species&quot;:&quot;10114&quot;,
+    &quot;organ&quot;:&quot;A03.620&quot;,
+    &quot;disease&quot;:&quot;No Disease&quot;,
+    &quot;species_organ_disease&quot;:[&quot;arabidopsis thaliana - Plant Roots - No Disease&quot;]
 }
 </pre></div>
 </div>
-<p>Where values in this dictionary are nodes from the NCBI taxonomy and MeSH Hierarchies will yield a record-oriented metadata table, e.g.</p>
+<p>Where values in this dictionary are nodes from the NCBI taxonomy and MeSH Hierarchies AND/OR individual triplets will yield a record-oriented metadata table, e.g.</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>&quot;[
-    {\&quot;from_or_to\&quot;:\&quot;from\&quot;,\&quot;triplet_id\&quot;:\&quot;rattus rattus - Liver - No Disease\&quot;,\&quot;sample_count\&quot;:221},
-    {\&quot;from_or_to\&quot;:\&quot;to\&quot;,\&quot;triplet_id\&quot;:\&quot;mus musculus - Esophagus - No Disease\&quot;,\&quot;sample_count\&quot;:24}
+    {\&quot;triplet_id\&quot;:\&quot;rattus rattus - Liver - No Disease\&quot;,\&quot;sample_count\&quot;:221},
+    {\&quot;triplet_id\&quot;:\&quot;arabidopsis thaliana - Plant Roots - No Disease\&quot;,\&quot;sample_count\&quot;:408}
 ]&quot;
 </pre></div>
 </div>
 </section>
-<section id="Step-2---OGDA">
-<h2>Step 2 - OGDA<a class="headerlink" href="#Step-2---OGDA" title="Permalink to this headline"></a></h2>
+<section id="Step-2---Phylometabolomic-Matrices">
+<h2>Step 2 - Phylometabolomic Matrices<a class="headerlink" href="#Step-2---Phylometabolomic-Matrices" title="Permalink to this headline"></a></h2>
 <p>Making a post request to</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>http://bindiscover.metabolomics.us:4999/hgdaresource/
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>http://bindiscover.metabolomics.us:4999/treeresource/
 </pre></div>
 </div>
 <p>with the format</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>{
-    &quot;metadata_datatable&quot;:
-        [
-            {&quot;from_or_to&quot;: &quot;from&quot;, &quot;triplet_id&quot;: &quot;citrus reticulata - Plant Leaves - No Disease&quot;, &quot;sample_count&quot;: 43},
-            {&quot;from_or_to&quot;: &quot;to&quot;, &quot;triplet_id&quot;: &quot;malus x domestica - Fruit - No Disease&quot;, &quot;sample_count&quot;: 17}
-        ],
-    &quot;bin_type&quot;:&quot;known&quot;
+    &quot;metadata_triplets&quot;:[&quot;salmonella enterica - Cells - No Disease&quot;, &quot;faecalibacterium prausnitzii - Cells - No Disease&quot;, &quot;mycoplasma - Cells - No Disease&quot;],
+    &quot;data_type&quot;:&quot;percent_present&quot;,
+    &quot;bin_type&quot;:&quot;knowns&quot;
 }
 </pre></div>
 </div>
-<p>will yield the core information for the differential analysis, eg</p>
+<p>will yield the core information for the phylometabolomic trees, eg</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>&quot;[
-    {\&quot;compound_id\&quot;: 14717, \&quot;identifier\&quot;: \&quot;OOWQBDFWEXAXPB-UHFFFAOYSA-N\&quot;, \&quot;english_name\&quot;: \&quot;hexadecylglycerol\&quot;, \&quot;bin_type_dict\&quot;: \&quot;known\&quot;, \&quot;significance_welch\&quot;: 0.6109507199, \&quot;fold_change_average\&quot;: 0.007302779200000001},
-    {\&quot;compound_id\&quot;: 2214, \&quot;identifier\&quot;: \&quot;LOLKAJARZKDJTD-UHFFFAOYSA-N\&quot;, \&quot;english_name\&quot;: \&quot;ethylsuccinate\&quot;, \&quot;bin_type_dict\&quot;: \&quot;known\&quot;, \&quot;significance_welch\&quot;: 0.1504452139, \&quot;fold_change_average\&quot;: -0.031181263}...
-&quot;
+    {\&quot;2\&quot;:0.9848484848,\&quot;3\&quot;:0.8484848485,\&quot;4\&quot;:0.8787878788,\&quot;5\&quot;:0.9848484848,\&quot;6\&quot;:0.9090909091,\&quot;8\&quot;:0.6363636364,\&quot;9\&quot;:0.2272727273,\&quot;10\&quot;:0.9242424242,...
+]&quot;
 </pre></div>
 </div>
 </section>
@@ -168,8 +161,8 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="index.html" class="btn btn-neutral float-left" title="BinDiscover" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="phylo_trees.html" class="btn btn-neutral float-right" title="API" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="ontological_differential_analysis.html" class="btn btn-neutral float-left" title="API" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="differential_analysis.html" class="btn btn-neutral float-right" title="API" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>BinDiscover &mdash; BinDiscover 0.0 documentation</title>
+  <title>API &mdash; BinDiscover 0.0 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -16,10 +16,11 @@
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+        <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="API" href="ontological_differential_analysis.html" /> 
+    <link rel="search" title="Search" href="search.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -27,7 +28,7 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="#" class="icon icon-home"> BinDiscover
+            <a href="index.html" class="icon icon-home"> BinDiscover
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -49,18 +50,6 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="differential_analysis.html">API</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">Sunburst</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="sunburst.html">API</a></li>
-</ul>
-<p class="caption" role="heading"><span class="caption-text">Upset Plot</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="upset.html">API</a></li>
-</ul>
-<p class="caption" role="heading"><span class="caption-text">Bin Browser</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="binbrowser.html">API</a></li>
-</ul>
 
         </div>
       </div>
@@ -68,17 +57,17 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="#">BinDiscover</a>
+          <a href="index.html">BinDiscover</a>
       </nav>
 
       <div class="wy-nav-content">
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="#" class="icon icon-home"></a> &raquo;</li>
-      <li>BinDiscover</li>
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>API</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/upset.ipynb.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -110,61 +99,39 @@
     text-align: unset;
 }
 </style>
-<section id="bindiscover">
-<h1>BinDiscover<a class="headerlink" href="#bindiscover" title="Permalink to this headline"></a></h1>
-<p>Programmatic Meta Analysis</p>
-<div class="toctree-wrapper compound">
-<p class="caption" role="heading"><span class="caption-text">Ontological Differential Analysis</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="ontological_differential_analysis.html">API</a></li>
-</ul>
+<section id="API">
+<h1>API<a class="headerlink" href="#API" title="Permalink to this headline"></a></h1>
+<section id="Summary-and-Format">
+<h2>Summary and Format<a class="headerlink" href="#Summary-and-Format" title="Permalink to this headline"></a></h2>
+<p>Generating the data for upset plots is a one step process.</p>
+<p>Making a post request to</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>http://bindiscover.metabolomics.us:4999/venntableresource/
+</pre></div>
 </div>
-<div class="toctree-wrapper compound">
-<p class="caption" role="heading"><span class="caption-text">Phylometabolomic Trees</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="phylo_trees.html">API</a></li>
-</ul>
+<p>With the format</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>{
+    &quot;dropdown_triplet_selection_value&quot;: [&quot;homo sapiens - Serum - No Disease&quot;,&quot;homo sapiens - Plasma - No Disease&quot;],
+    &quot;slider_percent_present_value&quot;: 80,
+    &quot;toggle_average_true_value&quot;: &quot;True&quot;,
+    &quot;radio_items_filter_value&quot;:&quot;no_filter&quot;
+}
+</pre></div>
 </div>
-<div class="toctree-wrapper compound">
-<p class="caption" role="heading"><span class="caption-text">Differential Analysis</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="differential_analysis.html">API</a></li>
-</ul>
-</div>
-<div class="toctree-wrapper compound">
-<p class="caption" role="heading"><span class="caption-text">Sunburst</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="sunburst.html">API</a></li>
-</ul>
-</div>
-<div class="toctree-wrapper compound">
-<p class="caption" role="heading"><span class="caption-text">Upset Plot</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="upset.html">API</a></li>
-</ul>
-</div>
-<div class="toctree-wrapper compound">
-<p class="caption" role="heading"><span class="caption-text">Bin Browser</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="binbrowser.html">API</a></li>
-</ul>
+<p>will yield the core information for the sunburst diagram, eg</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>&quot;[
+    {\&quot;bin\&quot;: 2, \&quot;compound\&quot;: \&quot;alanine\&quot;, \&quot;homo sapiens - Serum - No Disease\&quot;: 69575947.69588457, \&quot;homo sapiens - Plasma - No Disease\&quot;: 81540624.82164448, \&quot;compound_identifier\&quot;: 2, \&quot;bin_type\&quot;: \&quot;known\&quot;, \&quot;english_name\&quot;: \&quot;alanine\&quot;, \&quot;identifier\&quot;: \&quot;QNAYBMKLOCPYGJ-REOHCLBHSA-N\&quot;},
+    {\&quot;bin\&quot;: 3, \&quot;compound\&quot;: \&quot;valine\&quot;, \&quot;homo sapiens - Serum - No Disease\&quot;: 37329254.94725463, \&quot;homo sapiens - Plasma - No Disease\&quot;: 37080214.40829862, \&quot;compound_identifier\&quot;: 3, \&quot;bin_type\&quot;: \&quot;known\&quot;, \&quot;english_name\&quot;: \&quot;valine\&quot;, \&quot;identifier\&quot;: \&quot;KZSNJWFQEVHDMF-BYPYZUCNSA-N\&quot;},
+    ...
+]
+</pre></div>
 </div>
 </section>
-<section id="indices-and-tables">
-<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline"></a></h1>
-<ul class="simple">
-<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
-<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
-<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
-</ul>
 </section>
 
 
            </div>
           </div>
-          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="ontological_differential_analysis.html" class="btn btn-neutral float-right" title="API" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
-    </div>
+          <footer>
 
   <hr/>
 
