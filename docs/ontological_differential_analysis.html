@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Ontological Differential Analysis &mdash; BinDiscover 0.0 documentation</title>
+  <title>API &mdash; BinDiscover 0.0 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -42,7 +42,7 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Ontological Differential Analysis</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Ontological Differential Analysis</a><ul>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">API</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#Summary">Summary</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#Step-1---Triplets">Step 1 - Triplets</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#Step-2--">Step 2 -</a></li>
@@ -68,7 +68,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>Ontological Differential Analysis</li>
+      <li>API</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/ontological_differential_analysis.ipynb.txt" rel="nofollow"> View page source</a>
       </li>
@@ -80,252 +80,6 @@
              
   
 <style>
-/* CSS for nbsphinx extension */
-
-/* remove conflicting styling from Sphinx themes */
-div.nbinput.container div.prompt *,
-div.nboutput.container div.prompt *,
-div.nbinput.container div.input_area pre,
-div.nboutput.container div.output_area pre,
-div.nbinput.container div.input_area .highlight,
-div.nboutput.container div.output_area .highlight {
-    border: none;
-    padding: 0;
-    margin: 0;
-    box-shadow: none;
-}
-
-div.nbinput.container > div[class*=highlight],
-div.nboutput.container > div[class*=highlight] {
-    margin: 0;
-}
-
-div.nbinput.container div.prompt *,
-div.nboutput.container div.prompt * {
-    background: none;
-}
-
-div.nboutput.container div.output_area .highlight,
-div.nboutput.container div.output_area pre {
-    background: unset;
-}
-
-div.nboutput.container div.output_area div.highlight {
-    color: unset;  /* override Pygments text color */
-}
-
-/* avoid gaps between output lines */
-div.nboutput.container div[class*=highlight] pre {
-    line-height: normal;
-}
-
-/* input/output containers */
-div.nbinput.container,
-div.nboutput.container {
-    display: -webkit-flex;
-    display: flex;
-    align-items: flex-start;
-    margin: 0;
-    width: 100%;
-}
-@media (max-width: 540px) {
-    div.nbinput.container,
-    div.nboutput.container {
-        flex-direction: column;
-    }
-}
-
-/* input container */
-div.nbinput.container {
-    padding-top: 5px;
-}
-
-/* last container */
-div.nblast.container {
-    padding-bottom: 5px;
-}
-
-/* input prompt */
-div.nbinput.container div.prompt pre {
-    color: #307FC1;
-}
-
-/* output prompt */
-div.nboutput.container div.prompt pre {
-    color: #BF5B3D;
-}
-
-/* all prompts */
-div.nbinput.container div.prompt,
-div.nboutput.container div.prompt {
-    width: 4.5ex;
-    padding-top: 5px;
-    position: relative;
-    user-select: none;
-}
-
-div.nbinput.container div.prompt > div,
-div.nboutput.container div.prompt > div {
-    position: absolute;
-    right: 0;
-    margin-right: 0.3ex;
-}
-
-@media (max-width: 540px) {
-    div.nbinput.container div.prompt,
-    div.nboutput.container div.prompt {
-        width: unset;
-        text-align: left;
-        padding: 0.4em;
-    }
-    div.nboutput.container div.prompt.empty {
-        padding: 0;
-    }
-
-    div.nbinput.container div.prompt > div,
-    div.nboutput.container div.prompt > div {
-        position: unset;
-    }
-}
-
-/* disable scrollbars on prompts */
-div.nbinput.container div.prompt pre,
-div.nboutput.container div.prompt pre {
-    overflow: hidden;
-}
-
-/* input/output area */
-div.nbinput.container div.input_area,
-div.nboutput.container div.output_area {
-    -webkit-flex: 1;
-    flex: 1;
-    overflow: auto;
-}
-@media (max-width: 540px) {
-    div.nbinput.container div.input_area,
-    div.nboutput.container div.output_area {
-        width: 100%;
-    }
-}
-
-/* input area */
-div.nbinput.container div.input_area {
-    border: 1px solid #e0e0e0;
-    border-radius: 2px;
-    /*background: #f5f5f5;*/
-}
-
-/* override MathJax center alignment in output cells */
-div.nboutput.container div[class*=MathJax] {
-    text-align: left !important;
-}
-
-/* override sphinx.ext.imgmath center alignment in output cells */
-div.nboutput.container div.math p {
-    text-align: left;
-}
-
-/* standard error */
-div.nboutput.container div.output_area.stderr {
-    background: #fdd;
-}
-
-/* ANSI colors */
-.ansi-black-fg { color: #3E424D; }
-.ansi-black-bg { background-color: #3E424D; }
-.ansi-black-intense-fg { color: #282C36; }
-.ansi-black-intense-bg { background-color: #282C36; }
-.ansi-red-fg { color: #E75C58; }
-.ansi-red-bg { background-color: #E75C58; }
-.ansi-red-intense-fg { color: #B22B31; }
-.ansi-red-intense-bg { background-color: #B22B31; }
-.ansi-green-fg { color: #00A250; }
-.ansi-green-bg { background-color: #00A250; }
-.ansi-green-intense-fg { color: #007427; }
-.ansi-green-intense-bg { background-color: #007427; }
-.ansi-yellow-fg { color: #DDB62B; }
-.ansi-yellow-bg { background-color: #DDB62B; }
-.ansi-yellow-intense-fg { color: #B27D12; }
-.ansi-yellow-intense-bg { background-color: #B27D12; }
-.ansi-blue-fg { color: #208FFB; }
-.ansi-blue-bg { background-color: #208FFB; }
-.ansi-blue-intense-fg { color: #0065CA; }
-.ansi-blue-intense-bg { background-color: #0065CA; }
-.ansi-magenta-fg { color: #D160C4; }
-.ansi-magenta-bg { background-color: #D160C4; }
-.ansi-magenta-intense-fg { color: #A03196; }
-.ansi-magenta-intense-bg { background-color: #A03196; }
-.ansi-cyan-fg { color: #60C6C8; }
-.ansi-cyan-bg { background-color: #60C6C8; }
-.ansi-cyan-intense-fg { color: #258F8F; }
-.ansi-cyan-intense-bg { background-color: #258F8F; }
-.ansi-white-fg { color: #C5C1B4; }
-.ansi-white-bg { background-color: #C5C1B4; }
-.ansi-white-intense-fg { color: #A1A6B2; }
-.ansi-white-intense-bg { background-color: #A1A6B2; }
-
-.ansi-default-inverse-fg { color: #FFFFFF; }
-.ansi-default-inverse-bg { background-color: #000000; }
-
-.ansi-bold { font-weight: bold; }
-.ansi-underline { text-decoration: underline; }
-
-
-div.nbinput.container div.input_area div[class*=highlight] > pre,
-div.nboutput.container div.output_area div[class*=highlight] > pre,
-div.nboutput.container div.output_area div[class*=highlight].math,
-div.nboutput.container div.output_area.rendered_html,
-div.nboutput.container div.output_area > div.output_javascript,
-div.nboutput.container div.output_area:not(.rendered_html) > img{
-    padding: 5px;
-    margin: 0;
-}
-
-/* fix copybtn overflow problem in chromium (needed for 'sphinx_copybutton') */
-div.nbinput.container div.input_area > div[class^='highlight'],
-div.nboutput.container div.output_area > div[class^='highlight']{
-    overflow-y: hidden;
-}
-
-/* hide copybtn icon on prompts (needed for 'sphinx_copybutton') */
-.prompt a.copybtn {
-    display: none;
-}
-
-/* Some additional styling taken form the Jupyter notebook CSS */
-div.rendered_html table {
-  border: none;
-  border-collapse: collapse;
-  border-spacing: 0;
-  color: black;
-  font-size: 12px;
-  table-layout: fixed;
-}
-div.rendered_html thead {
-  border-bottom: 1px solid black;
-  vertical-align: bottom;
-}
-div.rendered_html tr,
-div.rendered_html th,
-div.rendered_html td {
-  text-align: right;
-  vertical-align: middle;
-  padding: 0.5em 0.5em;
-  line-height: normal;
-  white-space: normal;
-  max-width: none;
-  border: none;
-}
-div.rendered_html th {
-  font-weight: bold;
-}
-div.rendered_html tbody tr:nth-child(odd) {
-  background: #f5f5f5;
-}
-div.rendered_html tbody tr:hover {
-  background: rgba(66, 165, 245, 0.2);
-}
-
 /* CSS overrides for sphinx_rtd_theme */
 
 /* 24px margin */
@@ -348,8 +102,8 @@ div.rendered_html tbody tr:hover {
     text-align: unset;
 }
 </style>
-<section id="Ontological-Differential-Analysis">
-<h1>Ontological Differential Analysis<a class="headerlink" href="#Ontological-Differential-Analysis" title="Permalink to this headline"></a></h1>
+<section id="API">
+<h1>API<a class="headerlink" href="#API" title="Permalink to this headline"></a></h1>
 <section id="Summary">
 <h2>Summary<a class="headerlink" href="#Summary" title="Permalink to this headline"></a></h2>
 <p>Doing OGDA programatically is a two-step process. In the first step, sets of metadata triplets are created. In the second step, those sets are used as input to the actual calculator.</p>
@@ -359,107 +113,18 @@ div.rendered_html tbody tr:hover {
 <p>Making a post request to</p>
 <p><code class="docutils literal notranslate"><span class="pre">http://bindiscover.metabolomics.us:4999/hgdametadataresource/</span></code></p>
 <p>With the format</p>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="p">{</span>
-    <span class="s2">&quot;from_species&quot;</span><span class="p">:</span><span class="s2">&quot;10114&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;from_organ&quot;</span><span class="p">:</span><span class="s2">&quot;A03.620&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;from_disease&quot;</span><span class="p">:</span><span class="s2">&quot;No Disease&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;to_species&quot;</span><span class="p">:</span><span class="s2">&quot;314146&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;to_organ&quot;</span><span class="p">:</span><span class="s2">&quot;A03.556.875.500&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;to_disease&quot;</span><span class="p">:</span><span class="s2">&quot;No Disease&quot;</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
-</pre></div>
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-{&#39;from_species&#39;: &#39;10114&#39;,
- &#39;from_organ&#39;: &#39;A03.620&#39;,
- &#39;from_disease&#39;: &#39;No Disease&#39;,
- &#39;to_species&#39;: &#39;314146&#39;,
- &#39;to_organ&#39;: &#39;A03.556.875.500&#39;,
- &#39;to_disease&#39;: &#39;No Disease&#39;}
-</pre></div></div>
-</div>
+<p><code class="docutils literal notranslate"><span class="pre">{</span>&#160;&#160;&#160;&#160; <span class="pre">&quot;from_species&quot;:&quot;10114&quot;,</span>&#160;&#160;&#160;&#160; <span class="pre">&quot;from_organ&quot;:&quot;A03.620&quot;,</span>&#160;&#160;&#160;&#160; <span class="pre">&quot;from_disease&quot;:&quot;No</span> <span class="pre">Disease&quot;,</span>&#160;&#160;&#160;&#160; <span class="pre">&quot;to_species&quot;:&quot;314146&quot;,</span>&#160;&#160;&#160;&#160; <span class="pre">&quot;to_organ&quot;:&quot;A03.556.875.500&quot;,</span>&#160;&#160;&#160;&#160; <span class="pre">&quot;to_disease&quot;:&quot;No</span> <span class="pre">Disease&quot;</span> <span class="pre">}</span></code></p>
 <p>Where values in this dictionary are nodes from the NCBI taxonomy and MeSH Hierarchies will yield a record-oriented metadata table, e.g.</p>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="s2">&quot;[{</span><span class="se">\&quot;</span><span class="s2">from_or_to</span><span class="se">\&quot;</span><span class="s2">:</span><span class="se">\&quot;</span><span class="s2">from</span><span class="se">\&quot;</span><span class="s2">,</span><span class="se">\&quot;</span><span class="s2">triplet_id</span><span class="se">\&quot;</span><span class="s2">:</span><span class="se">\&quot;</span><span class="s2">rattus rattus - Liver - No Disease</span><span class="se">\&quot;</span><span class="s2">,</span><span class="se">\&quot;</span><span class="s2">sample_count</span><span class="se">\&quot;</span><span class="s2">:221},{</span><span class="se">\&quot;</span><span class="s2">from_or_to</span><span class="se">\&quot;</span><span class="s2">:</span><span class="se">\&quot;</span><span class="s2">to</span><span class="se">\&quot;</span><span class="s2">,</span><span class="se">\&quot;</span><span class="s2">triplet_id</span><span class="se">\&quot;</span><span class="s2">:</span><span class="se">\&quot;</span><span class="s2">mus musculus - Esophagus - No Disease</span><span class="se">\&quot;</span><span class="s2">,</span><span class="se">\&quot;</span><span class="s2">sample_count</span><span class="se">\&quot;</span><span class="s2">:24}]&quot;</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
-</pre></div>
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-&#39;[{&#34;from_or_to&#34;:&#34;from&#34;,&#34;triplet_id&#34;:&#34;rattus rattus - Liver - No Disease&#34;,&#34;sample_count&#34;:221},{&#34;from_or_to&#34;:&#34;to&#34;,&#34;triplet_id&#34;:&#34;mus musculus - Esophagus - No Disease&#34;,&#34;sample_count&#34;:24}]&#39;
-</pre></div></div>
-</div>
+<p><code class="docutils literal notranslate"><span class="pre">&quot;[{\&quot;from_or_to\&quot;:\&quot;from\&quot;,\&quot;triplet_id\&quot;:\&quot;rattus</span> <span class="pre">rattus</span> <span class="pre">-</span> <span class="pre">Liver</span> <span class="pre">-</span> <span class="pre">No</span> <span class="pre">Disease\&quot;,\&quot;sample_count\&quot;:221},{\&quot;from_or_to\&quot;:\&quot;to\&quot;,\&quot;triplet_id\&quot;:\&quot;mus</span> <span class="pre">musculus</span> <span class="pre">-</span> <span class="pre">Esophagus</span> <span class="pre">-</span> <span class="pre">No</span> <span class="pre">Disease\&quot;,\&quot;sample_count\&quot;:24}]&quot;</span></code></p>
 </section>
 <section id="Step-2--">
 <h2>Step 2 -<a class="headerlink" href="#Step-2--" title="Permalink to this headline"></a></h2>
 <p>Making a post request to</p>
 <p><code class="docutils literal notranslate"><span class="pre">http://bindiscover.metabolomics.us:4999/hgdaresource/</span></code></p>
 <p>with the format</p>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="p">{</span>
-    <span class="s2">&quot;metadata_datatable&quot;</span><span class="p">:[{</span><span class="s2">&quot;from_or_to&quot;</span><span class="p">:</span> <span class="s2">&quot;from&quot;</span><span class="p">,</span> <span class="s2">&quot;triplet_id&quot;</span><span class="p">:</span> <span class="s2">&quot;citrus reticulata - Plant Leaves - No Disease&quot;</span><span class="p">,</span> <span class="s2">&quot;sample_count&quot;</span><span class="p">:</span> <span class="mi">43</span><span class="p">},</span> <span class="p">{</span><span class="s2">&quot;from_or_to&quot;</span><span class="p">:</span> <span class="s2">&quot;to&quot;</span><span class="p">,</span> <span class="s2">&quot;triplet_id&quot;</span><span class="p">:</span> <span class="s2">&quot;malus x domestica - Fruit - No Disease&quot;</span><span class="p">,</span> <span class="s2">&quot;sample_count&quot;</span><span class="p">:</span> <span class="mi">17</span><span class="p">}],</span>
-    <span class="s2">&quot;bin_type&quot;</span><span class="p">:</span><span class="s2">&quot;known&quot;</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
-</pre></div>
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-{&#39;metadata_datatable&#39;: [{&#39;from_or_to&#39;: &#39;from&#39;,
-   &#39;triplet_id&#39;: &#39;citrus reticulata - Plant Leaves - No Disease&#39;,
-   &#39;sample_count&#39;: 43},
-  {&#39;from_or_to&#39;: &#39;to&#39;,
-   &#39;triplet_id&#39;: &#39;malus x domestica - Fruit - No Disease&#39;,
-   &#39;sample_count&#39;: 17}],
- &#39;bin_type&#39;: &#39;known&#39;}
-</pre></div></div>
-</div>
+<p><code class="docutils literal notranslate"><span class="pre">{</span>&#160;&#160;&#160;&#160; <span class="pre">&quot;metadata_datatable&quot;:[{&quot;from_or_to&quot;:</span> <span class="pre">&quot;from&quot;,</span> <span class="pre">&quot;triplet_id&quot;:</span> <span class="pre">&quot;citrus</span> <span class="pre">reticulata</span> <span class="pre">-</span> <span class="pre">Plant</span> <span class="pre">Leaves</span> <span class="pre">-</span> <span class="pre">No</span> <span class="pre">Disease&quot;,</span> <span class="pre">&quot;sample_count&quot;:</span> <span class="pre">43},</span> <span class="pre">{&quot;from_or_to&quot;:</span> <span class="pre">&quot;to&quot;,</span> <span class="pre">&quot;triplet_id&quot;:</span> <span class="pre">&quot;malus</span> <span class="pre">x</span> <span class="pre">domestica</span> <span class="pre">-</span> <span class="pre">Fruit</span> <span class="pre">-</span> <span class="pre">No</span> <span class="pre">Disease&quot;,</span> <span class="pre">&quot;sample_count&quot;:</span> <span class="pre">17}],</span>&#160;&#160;&#160;&#160; <span class="pre">&quot;bin_type&quot;:&quot;known&quot;</span> <span class="pre">}</span></code></p>
 <p>will yield the core information for the differential analysis, eg</p>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="s2">&quot;[{</span><span class="se">\&quot;</span><span class="s2">compound_id</span><span class="se">\&quot;</span><span class="s2">: 14717, </span><span class="se">\&quot;</span><span class="s2">identifier</span><span class="se">\&quot;</span><span class="s2">: </span><span class="se">\&quot;</span><span class="s2">OOWQBDFWEXAXPB-UHFFFAOYSA-N</span><span class="se">\&quot;</span><span class="s2">, </span><span class="se">\&quot;</span><span class="s2">english_name</span><span class="se">\&quot;</span><span class="s2">: </span><span class="se">\&quot;</span><span class="s2">hexadecylglycerol</span><span class="se">\&quot;</span><span class="s2">, </span><span class="se">\&quot;</span><span class="s2">bin_type_dict</span><span class="se">\&quot;</span><span class="s2">: </span><span class="se">\&quot;</span><span class="s2">known</span><span class="se">\&quot;</span><span class="s2">, </span><span class="se">\&quot;</span><span class="s2">significance_welch</span><span class="se">\&quot;</span><span class="s2">: 0.6109507199, </span><span class="se">\&quot;</span><span class="s2">fold_change_average</span><span class="se">\&quot;</span><span class="s2">: 0.007302779200000001}, {</span><span class="se">\&quot;</span><span class="s2">compound_id</span><span class="se">\&quot;</span><span class="s2">: 2214, </span><span class="se">\&quot;</span><span class="s2">identifier</span><span class="se">\&quot;</span><span class="s2">: </span><span class="se">\&quot;</span><span class="s2">LOLKAJARZKDJTD-UHFFFAOYSA-N</span><span class="se">\&quot;</span><span class="s2">, </span><span class="se">\&quot;</span><span class="s2">english_name</span><span class="se">\&quot;</span><span class="s2">: </span><span class="se">\&quot;</span><span class="s2">ethylsuccinate</span><span class="se">\&quot;</span><span class="s2">, </span><span class="se">\&quot;</span><span class="s2">bin_type_dict</span><span class="se">\&quot;</span><span class="s2">: </span><span class="se">\&quot;</span><span class="s2">known</span><span class="se">\&quot;</span><span class="s2">, </span><span class="se">\&quot;</span><span class="s2">significance_welch</span><span class="se">\&quot;</span><span class="s2">: 0.1504452139, </span><span class="se">\&quot;</span><span class="s2">fold_change_average</span><span class="se">\&quot;</span><span class="s2">: -0.031181263}...&quot;</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
-</pre></div>
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-&#39;[{&#34;compound_id&#34;: 14717, &#34;identifier&#34;: &#34;OOWQBDFWEXAXPB-UHFFFAOYSA-N&#34;, &#34;english_name&#34;: &#34;hexadecylglycerol&#34;, &#34;bin_type_dict&#34;: &#34;known&#34;, &#34;significance_welch&#34;: 0.6109507199, &#34;fold_change_average&#34;: 0.007302779200000001}, {&#34;compound_id&#34;: 2214, &#34;identifier&#34;: &#34;LOLKAJARZKDJTD-UHFFFAOYSA-N&#34;, &#34;english_name&#34;: &#34;ethylsuccinate&#34;, &#34;bin_type_dict&#34;: &#34;known&#34;, &#34;significance_welch&#34;: 0.1504452139, &#34;fold_change_average&#34;: -0.031181263}...&#39;
-</pre></div></div>
-</div>
+<p><code class="docutils literal notranslate"><span class="pre">&quot;[{\&quot;compound_id\&quot;:</span> <span class="pre">14717,</span> <span class="pre">\&quot;identifier\&quot;:</span> <span class="pre">\&quot;OOWQBDFWEXAXPB-UHFFFAOYSA-N\&quot;,</span> <span class="pre">\&quot;english_name\&quot;:</span> <span class="pre">\&quot;hexadecylglycerol\&quot;,</span> <span class="pre">\&quot;bin_type_dict\&quot;:</span> <span class="pre">\&quot;known\&quot;,</span> <span class="pre">\&quot;significance_welch\&quot;:</span> <span class="pre">0.6109507199,</span> <span class="pre">\&quot;fold_change_average\&quot;:</span> <span class="pre">0.007302779200000001},</span> <span class="pre">{\&quot;compound_id\&quot;:</span> <span class="pre">2214,</span> <span class="pre">\&quot;identifier\&quot;:</span> <span class="pre">\&quot;LOLKAJARZKDJTD-UHFFFAOYSA-N\&quot;,</span> <span class="pre">\&quot;english_name\&quot;:</span> <span class="pre">\&quot;ethylsuccinate\&quot;,</span> <span class="pre">\&quot;bin_type_dict\&quot;:</span> <span class="pre">\&quot;known\&quot;,</span> <span class="pre">\&quot;significance_welch\&quot;:</span> <span class="pre">0.1504452139,</span> <span class="pre">\&quot;fold_change_average\&quot;:</span> <span class="pre">-0.031181263}...&quot;</span></code></p>
 </section>
 </section>
 
