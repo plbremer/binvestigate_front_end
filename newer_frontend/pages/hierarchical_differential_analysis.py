@@ -151,17 +151,54 @@ layout=html.Div(
         html.Br(),
         html.Br(),
         dbc.Spinner(
+            dbc.Row(
+                children=[
+                    dbc.Col(
+                        children=[
+                            html.Div(
+                                id='div_metadata_selection_onto',
+                                children=[]
+                            )
+                        ],
+                        width=6
+                    ),
+                    dbc.Col(
+                        children=[
+                            html.Div(
+                                id='div_summary_statistics_onto',
+                                children=[html.H6('hi')]
+                            )
+                        ],
+                        width=6
+                    )
+                ]
+            )       
+        ),
+        dbc.Row(
             children=[
-                html.Div(
-                    id='div_metadata_selection_onto',
-                    children=[]
+                dbc.Col(
+                    children=[
+                        html.Div(
+                            id='div_metadata_time_estimator',
+                            children=[]
+                        ),
+                    ],
+                    width=6
+                ),
+                dbc.Col(
+                    children=[
+                        html.Div(
+                            
+                        )
+                    ],
+                    width=6
                 )
             ]
         ),
-        html.Div(
-            id='div_metadata_time_estimator',
-            children=[]
-        ),
+
+
+
+        
         html.Br(),
         html.Br(),
         html.Br(),
@@ -379,7 +416,7 @@ def perform_metadata_query(
 
     div_metadata_selection_onto_children=dbc.Row(
         children=[
-            dbc.Col(width=3),
+            dbc.Col(width=2),
             dbc.Col(
                 children=[
                     html.H2("Valid Triplets", className='text-center'),
@@ -416,17 +453,10 @@ def perform_metadata_query(
                         },
                         row_deletable=True,
                     ),
-                    html.Br(),
-                    html.Div(
-                        dbc.Button(
-                            'Perform Differential Analysis',
-                            id='hgda_query',
-                        ),
-                        className="d-grid gap-2 col-3 mx-auto",
-                    ),
+                    # html.Br(),
                 ],
             ),
-            dbc.Col(width=3),
+            dbc.Col(width=2),
         ]
     )
 
@@ -479,6 +509,14 @@ def update_time_requirement_estimate(radio_items_bin_type_value,hgda_table_metad
                 ),
                 dbc.Col(width={'size':2}),
             ],
+        ),
+        html.Br(),
+        html.Div(
+            dbc.Button(
+                'Perform Differential Analysis',
+                id='hgda_query',
+            ),
+            className="d-grid gap-2 col-3 mx-auto",
         ),
     ]    
 
