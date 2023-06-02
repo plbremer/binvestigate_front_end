@@ -550,6 +550,11 @@ def perform_metadata_query(
                         },
                         row_deletable=True,
                     ),
+                    html.Br(),
+                    dbc.Alert(
+                        "WARNING: Comparisons involving multiple types of organs are intrinsically semi-quantitative. Each organ's extraction method has a different sample amount, e.g., 20 µL of plasma or 4 mg of liver.",
+                        color='primary'
+                    ),
                     # html.Br(),
                 ],
                 width=11

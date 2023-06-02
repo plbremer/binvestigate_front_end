@@ -14,8 +14,8 @@ import pandas as pd
 from . import sunburst_helper
 
 #when containerized, the url is not the local 127.0.0.1
-base_url_api = f"http://api_alias:4999/"
-#base_url_api = "http://127.0.0.1:4999/"
+# base_url_api = f"http://api_alias:4999/"
+base_url_api = "http://127.0.0.1:4999/"
 dash.register_page(__name__,path_template="/sunburst/<linked_compound>")
 
 #populate constants for functionality#########
@@ -117,6 +117,16 @@ layout=html.Div(
                 dbc.Col(
                     children=[
                         #html.H2("Execute or Update Query", className='text-center'),
+                        
+                        html.Div(
+                            dbc.Alert(
+                                "WARNING: Comparisons involving multiple types of organs are intrinsically semi-quantitative. Each organ's extraction method has a different sample amount, e.g., 20 µL of plasma or 4 mg of liver.",
+                                color='primary'
+                            ),
+                            className="d-grid gap-2 col-6 mx-auto",
+                        ),
+                        
+                        html.Br(),
                         html.Div(
                             dbc.Button(
                                 'Search Compound',
