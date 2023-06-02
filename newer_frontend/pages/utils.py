@@ -113,17 +113,39 @@ def create_fold_hist(hist_panda):
 
     #remove duplicates
     fold_bin_edges=sorted(list(set(fold_bin_edges)))
-
     widths=[(fold_bin_edges[i+1]-fold_bin_edges[i]) for i in range(len(fold_bin_edges)-1)]
-
     x_positions=[(0.5*fold_bin_edges[i]+0.5*fold_bin_edges[i+1]) for i in range(len(fold_bin_edges)-1)]
-    # print(x_positions)
+
+
     marker_colors=[  "#FF0000" if ((temp_pos<-1) or (temp_pos>1)) else "#2884f4" for temp_pos in x_positions     ]
 
+    ######################
+    marker_colors_gfblp=[  "#2884f4" for temp_pos in x_positions     ]
+    good_fold_but_large_p_hist=hist_panda.loc[
+        (hist_panda['x'].abs()>1) & (hist_panda['y'].abs()<2)
+    ]
+
+    hist_panda=hist_panda.loc[
+        ~hist_panda.index.isin(good_fold_but_large_p_hist.index.tolist())
+    ]
+
+    fold_counts_gfblp,_=np.histogram(good_fold_but_large_p_hist['x'],bins=fold_bin_edges)
+    fold_counts_log_gfblp=np.log10(fold_counts_gfblp)#,where=[True if element!=0 else False for element in fold_counts])
+    fold_counts_0_removed_gfblp=[0.01 if (element==0) else element for element in fold_counts_log_gfblp]
+    fold_counts_log_neg_inf_removed_gfblp=[0 if (np.isneginf(element)==True) else element for element in fold_counts_0_removed_gfblp]
+    # fold_counts_log_2=fold_counts_log
+    
+    hovertext_values_gfblp=list()
+    for i in range(len(x_positions)):
+        hovertext_values_gfblp.append(
+            str(fold_bin_edges[i]).split('.')[0]+'.'+str(fold_bin_edges[i]).split('.')[1][:2]+' to '+str(fold_bin_edges[i+1]).split('.')[0]+'.'+str(fold_bin_edges[i+1]).split('.')[1][:2]+': '+str(fold_counts_gfblp[i])+' compounds'
+        )
+    #######################
+
+
+
     fold_counts,_=np.histogram(hist_panda['x'],bins=fold_bin_edges)
-
     fold_counts_log=np.log10(fold_counts)#,where=[True if element!=0 else False for element in fold_counts])
-
     fold_counts_0_removed=[0.01 if (element==0) else element for element in fold_counts_log]
     fold_counts_log_neg_inf_removed=[0 if (np.isneginf(element)==True) else element for element in fold_counts_0_removed]
     # fold_counts_log_2=fold_counts_log
@@ -133,10 +155,25 @@ def create_fold_hist(hist_panda):
         hovertext_values.append(
             str(fold_bin_edges[i]).split('.')[0]+'.'+str(fold_bin_edges[i]).split('.')[1][:2]+' to '+str(fold_bin_edges[i+1]).split('.')[0]+'.'+str(fold_bin_edges[i+1]).split('.')[1][:2]+': '+str(fold_counts[i])+' compounds'
         )
-    
-    
-    
+
+
+
     x_hist=go.Figure()
+
+    ###########################
+    x_hist.add_trace(
+        go.Bar(
+            x=x_positions,
+            y=fold_counts_log_neg_inf_removed_gfblp,
+            width=widths,
+            marker_color=marker_colors_gfblp,
+
+            hovertext=hovertext_values_gfblp,
+            hoverinfo='text'
+        )
+
+    )
+    #############################
 
 
 
@@ -152,6 +189,16 @@ def create_fold_hist(hist_panda):
         )
 
     )
+
+
+
+
+
+
+
+
+
+
     x_hist.update_layout(
         title_text='Fold Changes', 
         # title_x=0.5,
@@ -161,7 +208,8 @@ def create_fold_hist(hist_panda):
         yaxis_title_text='log10(Compound Count)',
         bargap=0,
         margin=dict(l=20, r=20, t=40, b=20),
-        font=dict(size=20,color='black',family='Roboto')
+        font=dict(size=20,color='black',family='Roboto'),
+        barmode='stack'
     )
 
     return x_hist
@@ -199,6 +247,33 @@ def create_pvalue_hist(hist_panda):
     # print(widths)
     y_positions=[(0.5*p_bin_edges[i]+0.5*p_bin_edges[i+1]) for i in range(len(p_bin_edges)-1)]
     # print(x_positions)
+
+    ######################
+    marker_colors_gpbsf=[  "#2884f4" for temp_pos in y_positions     ]
+    good_p_but_small_fold_hist=hist_panda.loc[
+        (hist_panda['x'].abs()<1) & (hist_panda['y'].abs()>2)
+    ]
+
+    hist_panda=hist_panda.loc[
+        ~hist_panda.index.isin(good_p_but_small_fold_hist.index.tolist())
+    ]
+
+    p_counts_gpbsf,_=np.histogram(good_p_but_small_fold_hist['y'],bins=p_bin_edges)
+    p_counts_log_gpbsf=np.log10(p_counts_gpbsf)#,where=[True if element!=0 else False for element in fold_counts])
+    p_counts_0_removed_gpbsf=[0.01 if (element==0) else element for element in p_counts_log_gpbsf]
+    p_counts_log_neg_inf_removed_gpbsf=[0 if (np.isneginf(element)==True) else element for element in p_counts_0_removed_gpbsf]
+    # fold_counts_log_2=fold_counts_log
+    
+    hovertext_values_gpbsf=list()
+    for i in range(len(y_positions)):
+        hovertext_values_gpbsf.append(
+            str(p_bin_edges[i]).split('.')[0]+'.'+str(p_bin_edges[i]).split('.')[1][:2]+' to '+str(p_bin_edges[i+1]).split('.')[0]+'.'+str(p_bin_edges[i+1]).split('.')[1][:2]+': '+str(p_counts_gpbsf[i])+' compounds'
+        )
+    #######################
+
+
+
+
     marker_colors=[  "#FF0000" if (temp_pos>1) else "#2884f4" for temp_pos in y_positions     ]
 
     p_counts,_=np.histogram(hist_panda['y'],bins=p_bin_edges)
@@ -219,6 +294,21 @@ def create_pvalue_hist(hist_panda):
 
     
     y_hist=go.Figure()
+
+
+    y_hist.add_trace(
+        go.Bar(
+            y=y_positions,
+            x=p_counts_log_neg_inf_removed_gpbsf,
+            width=widths,
+            marker_color=marker_colors_gpbsf,
+            orientation='h',
+            hovertext=hovertext_values_gpbsf,
+            hoverinfo='text'
+        )
+
+    )
+
 
     y_hist.add_trace(
         go.Bar(
@@ -241,7 +331,8 @@ def create_pvalue_hist(hist_panda):
         yaxis_title_text='log10(p-Value)',
         bargap=0,
         margin=dict(l=20, r=20, t=40, b=20),
-        font=dict(size=20,color='black',family='Roboto')
+        font=dict(size=20,color='black',family='Roboto'),
+        barmode='stack'
     )
 
     return y_hist

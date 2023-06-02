@@ -14,8 +14,8 @@ import pandas as pd
 from . import sunburst_helper
 
 #when containerized, the url is not the local 127.0.0.1
-# base_url_api = f"http://api_alias:4999/"
-base_url_api = "http://127.0.0.1:4999/"
+base_url_api = f"http://api_alias:4999/"
+# base_url_api = "http://127.0.0.1:4999/"
 dash.register_page(__name__,path_template="/sunburst/<linked_compound>")
 
 #populate constants for functionality#########
@@ -334,6 +334,8 @@ def query_figure(sunburst_table_derived_virtual_data,radio_items_sod_order_value
             ids=temp_in_sunburst_form['id'].to_list(),
             hovertext=my_hovertext_values,
             hoverinfo='text',
+            # scene={'bgcolor':'green'}
+            # bgcolor='#fff4e4'
         ),
         layout=go.Layout(height=1000,width=1000)
     )

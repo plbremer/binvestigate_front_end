@@ -18,8 +18,8 @@ from .utils import build_summary_statistics_div_children,create_fold_hist,create
 dash.register_page(__name__)
 
 #when containerized, the url is not the local 127.0.0.1
-# base_url_api = f"http://api_alias:4999/"
-base_url_api = "http://127.0.0.1:4999/"
+base_url_api = f"http://api_alias:4999/"
+# base_url_api = "http://127.0.0.1:4999/"
 
 #populate constants for functionality#########
 unique_sod_combinations_dict=venn_helper.get_unique_sod_combinations()
@@ -488,8 +488,8 @@ def query_table(leaf_query_n_clicks,radio_items_bin_type_value,table_metadata_de
                             dash_table.DataTable(
                                 id='leaf_table',
                                 columns=[
-                                    {"name": "English Name", "id": "english_name",'presentation':'markdown'},
-                                    {"name": "Identifier", "id": "identifier",'presentation':'markdown'},
+                                    {"name": "English Name (link to Sunburst)", "id": "english_name",'presentation':'markdown'},
+                                    {"name": "Identifier (link to BinBrowser)", "id": "identifier",'presentation':'markdown'},
                                     {"name": "log2 Fold Change", "id": "fold_change_average","type": "numeric","format": Format(group=Group.yes, precision=2)},#, scheme=Scheme.exponent)},
                                     {"name": "Significance Welch", "id": "significance_welch","type": "numeric","format": Format(group=Group.yes, precision=2)},#, scheme=Scheme.exponent)},
                                 ],

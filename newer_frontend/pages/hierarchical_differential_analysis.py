@@ -17,8 +17,8 @@ from .utils import build_summary_statistics_div_children,create_fold_hist,create
 
 dash.register_page(__name__)
 #when containerized, the url is not the local 127.0.0.1
-# base_url_api = f"http://api_alias:4999/"
-base_url_api = "http://127.0.0.1:4999/"
+base_url_api = f"http://api_alias:4999/"
+# base_url_api = "http://127.0.0.1:4999/"
 
 #populate constants for functionality#########
 #used for dropdown values and dropdown filtering logic (pick a species, get a reduced set of organ options)
