@@ -21,6 +21,8 @@ my_page_link_list=[
     dbc.NavLink('Upset Plot', href='/upset',style = {'color': 'white','font-weight':'bold'}),
     
     dbc.NavLink('BinBrowser', href='/bin-browser/2',style = {'color': 'white','font-weight':'bold'}),
+
+    dbc.NavLink('Tutorials/F.A.Q.', href='/tutorials',style = {'color': 'white','font-weight':'bold'}),
 ]
 
 app.layout = html.Div([
