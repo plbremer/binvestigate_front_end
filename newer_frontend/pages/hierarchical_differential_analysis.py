@@ -11,6 +11,9 @@ import pandas as pd
 import networkx as nx
 from . import hierarchical_differential_analysis_helper
 import datetime
+import plotly.graph_objects as go
+import numpy as np
+from .utils import build_summary_statistics_div_children,create_fold_hist,create_pvalue_hist,create_summary_stats
 
 dash.register_page(__name__)
 #when containerized, the url is not the local 127.0.0.1
@@ -75,7 +78,7 @@ layout=html.Div(
                         ), 
                         html.Br(),
                     ],
-                    width={'size':3}
+                    width={'size':4}
                 ),
                 dbc.Col(
                     children=[
@@ -106,7 +109,7 @@ layout=html.Div(
                         ), 
                         html.Br(),
                     ],
-                    width={'size':3}
+                    width={'size':4}
                 ),
                 dbc.Col(
                     children=[
@@ -150,51 +153,91 @@ layout=html.Div(
         html.Br(),
         html.Br(),
         html.Br(),
-        dbc.Spinner(
-            dbc.Row(
-                children=[
-                    dbc.Col(
-                        children=[
-                            html.Div(
-                                id='div_metadata_selection_onto',
-                                children=[]
-                            )
-                        ],
-                        width=6
-                    ),
-                    dbc.Col(
-                        children=[
-                            html.Div(
-                                id='div_summary_statistics_onto',
-                                children=[html.H6('hi')]
-                            )
-                        ],
-                        width=6
-                    )
-                ]
-            )       
-        ),
+
         dbc.Row(
             children=[
+                dbc.Col(width=1),
                 dbc.Col(
                     children=[
-                        html.Div(
-                            id='div_metadata_time_estimator',
-                            children=[]
+                        dbc.Row(
+                            children=[
+                                html.Div(
+                                    id='div_metadata_selection_onto',
+                                    children=[]
+                                )
+                            ]
+                        ),
+                        dbc.Row(
+                            children=[
+                                html.Div(
+                                    id='div_metadata_time_estimator',
+                                    children=[]
+                                )
+                            ]
                         ),
                     ],
-                    width=6
+                    width=4
                 ),
                 dbc.Col(
                     children=[
                         html.Div(
-                            
+                            id='div_summary_statistics_onto',
+                            children=[]
                         )
                     ],
                     width=6
-                )
+                ),
+                dbc.Col(width=1)
             ]
         ),
+
+
+
+        # dbc.Spinner(
+        #     dbc.Row(
+        #         children=[
+        #             dbc.Col(
+        #                 children=[
+        #                     html.Div(
+        #                         id='div_metadata_selection_onto',
+        #                         children=[]
+        #                     )
+        #                 ],
+        #                 width=6
+        #             ),
+        #             dbc.Col(
+        #                 children=[
+        #                     html.Div(
+        #                         id='div_summary_statistics_onto',
+        #                         children=[html.H6('hi')]
+        #                     )
+        #                 ],
+        #                 width=6
+        #             )
+        #         ]
+        #     )       
+        # ),
+        # dbc.Row(
+        #     children=[
+        #         dbc.Col(
+        #             children=[
+        #                 html.Div(
+        #                     id='div_metadata_time_estimator',
+        #                     children=[]
+        #                 ),
+        #             ],
+        #             width=6
+        #         ),
+        #         dbc.Col(
+        #             children=[
+        #                 html.Div(
+                            
+        #                 )
+        #             ],
+        #             width=6
+        #         )
+        #     ]
+        # ),
 
 
 
@@ -220,6 +263,60 @@ layout=html.Div(
         )
     ]
 )
+
+@callback(
+    [
+        Output(component_id='div_summary_statistics_onto', component_property='children'),
+        # Output(component_id="dropdown_from_organ", component_property="options"),
+        # Output(component_id="dropdown_from_disease", component_property="options"),
+    ],
+    [
+        Input(component_id="hgda_figure", component_property="selectedData"),
+        # Input(component_id="dropdown_from_organ", component_property="value"),
+        # Input(component_id="dropdown_from_disease", component_property="value"),
+    ],
+    [
+        State(component_id='hgda_table', component_property='derived_virtual_data')
+    ],
+    prevent_initial_call=True
+)
+def make_summary_stats_onto(
+    hgda_selectedData,
+    hgda_table_derived_virtual_data
+):
+    '''
+    
+    '''
+    if hgda_selectedData==None:
+        hist_panda=pd.DataFrame.from_records(hgda_table_derived_virtual_data)
+        hist_panda.rename(
+            {'significance_welch':'y','fold_change_average':'x'},
+            inplace=True,
+            axis='columns'
+        )
+        hist_panda['y']=-1*np.log10(hist_panda['y'])
+    else:
+        hist_panda=pd.DataFrame.from_records(hgda_selectedData['points'])
+
+
+    output_children=list()
+
+    #the basic idea to create the significant/not sig color scheme 
+    #as wellas the custom bins is to split the data as well as use the go.histogram
+
+    
+    x_hist=create_fold_hist(hist_panda)
+    y_hist=create_pvalue_hist(hist_panda)
+    summary_stats_table=create_summary_stats(hist_panda)
+    output_children=build_summary_statistics_div_children(x_hist,y_hist,summary_stats_table)
+
+
+
+
+
+
+
+    return [output_children]
 
 
 @callback(
@@ -416,7 +513,7 @@ def perform_metadata_query(
 
     div_metadata_selection_onto_children=dbc.Row(
         children=[
-            dbc.Col(width=2),
+            # dbc.Col(width=2),
             dbc.Col(
                 children=[
                     html.H2("Valid Triplets", className='text-center'),
@@ -455,12 +552,15 @@ def perform_metadata_query(
                     ),
                     # html.Br(),
                 ],
+                width=11
             ),
-            dbc.Col(width=2),
+            dbc.Col(width=1),
         ]
     )
 
     return [div_metadata_selection_onto_children]
+
+
 
 
 @callback(
@@ -499,25 +599,39 @@ def update_time_requirement_estimate(radio_items_bin_type_value,hgda_table_metad
     div_metadata_time_estimator_children=[
         dbc.Row(
             children=[
-                dbc.Col(width={'size':2}),
+                # dbc.Col(width={'size':2}),
                 dbc.Col(
                     children=[
                         html.Br(),
                         html.H4(total_string, className='text-center'),
                     ],
-                    width={'size':8}
+                    width={'size':11}
                 ),
-                dbc.Col(width={'size':2}),
+                dbc.Col(width={'size':1}),
+                # dbc.Col(width={'size':2}),
             ],
         ),
-        html.Br(),
-        html.Div(
-            dbc.Button(
-                'Perform Differential Analysis',
-                id='hgda_query',
-            ),
-            className="d-grid gap-2 col-3 mx-auto",
+        dbc.Row(
+            children=[
+                # dbc.Col(width={'size':2}),
+                dbc.Col(
+                    children=[
+                        html.Br(),
+                        html.Div(
+                            dbc.Button(
+                                'Perform Differential Analysis',
+                                id='hgda_query',
+                            ),
+                            className="d-grid gap-2 col-3 mx-auto",
+                        ),
+                    ],
+                    width={'size':11}
+                ),
+                dbc.Col(width={'size':1}),
+            ],
         ),
+
+        
     ]    
 
     return [div_metadata_time_estimator_children]
@@ -556,6 +670,9 @@ def query_table(
     #obtain results from api
     response = requests.post(base_url_api + "/hgdaresource/", json=json_output)
     total_panda = pd.read_json(response.json(), orient="records")
+
+    total_panda['significance_welch']=total_panda['significance_welch'].where(cond=(total_panda['significance_welch']>1e-300),other=1e-300)
+
 
     #compounds in datatable stored as integers. translate integers to english names
     if radio_items_bin_type_value!='class':
@@ -699,7 +816,13 @@ def query_figure(
         title=title_string_from+'        vs.       '+title_string_to,
         title_x=0.5
     )
-    volcano.update_layout(showlegend=False)
+    volcano.update_layout(
+        showlegend=False,
+        dragmode='select',
+        # bargap=0,
+        margin=dict(l=20, r=20, t=60, b=0),
+        font=dict(size=20,color='black',family='Roboto')
+    )
 
     div_volcano_onto_children=[
         dbc.Row(
