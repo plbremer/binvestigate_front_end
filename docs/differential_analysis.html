@@ -57,6 +57,11 @@
 <li class="toctree-l1"><a class="reference internal" href="upset.html">Upset Plot</a></li>
 <li class="toctree-l1"><a class="reference internal" href="binbrowser.html">BinBrowser</a></li>
 </ul>
+<p class="caption" role="heading"><span class="caption-text">Value Tables</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="triplets.html">Triplets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="compounds.html">Compounds</a></li>
+</ul>
 
         </div>
       </div>
@@ -120,7 +125,7 @@
 </div>
 <p>With the format</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>{
-    &quot;triplet_from&quot;: [&quot;zea mays - Plant Roots - No Disease&quot;,&quot;citrus sinensis - Plant Roots - No Disease&quot;],
+    &quot;triplet_from&quot;: [&quot;zea mays - Plant Roots - No Disease&quot;,&quot;citrus sinensis - Plant Roots - No Disease&quot;], #any triplet from our data
     &quot;triplet_to&quot;: [&quot;arabidopsis thaliana - Plant Roots - No Disease&quot;]
 }
 </pre></div>
@@ -150,7 +155,7 @@
             {\&quot;from_or_to\&quot;:\&quot;from\&quot;,\&quot;triplet_id\&quot;:\&quot;zea mays - Plant Roots - No Disease\&quot;,\&quot;sample_count\&quot;:359},{\&quot;from_or_to\&quot;:\&quot;from\&quot;,\&quot;triplet_id\&quot;:\&quot;citrus sinensis - Plant Roots - No Disease\&quot;,\&quot;sample_count\&quot;:12},
             {\&quot;from_or_to\&quot;:\&quot;to\&quot;,\&quot;triplet_id\&quot;:\&quot;arabidopsis thaliana - Plant Roots - No Disease\&quot;,\&quot;sample_count\&quot;:408}
         ],
-    &quot;bin_type&quot;:&quot;known&quot;
+    &quot;bin_type&quot;:&quot;known&quot; #values are &#39;known&#39;, &#39;unknown&#39;, and &#39;class&#39; (compound classes)
 }
 </pre></div>
 </div>

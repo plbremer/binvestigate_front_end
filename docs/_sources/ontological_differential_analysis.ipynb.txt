@@ -65,9 +65,9 @@
    "source": [
     "```\n",
     "{\n",
-    "    \"from_species\":\"10114\",\n",
-    "    \"from_organ\":\"A03.620\",\n",
-    "    \"from_disease\":\"No Disease\",\n",
+    "    \"from_species\":\"10114\", #any NCBI species or parent ID\n",
+    "    \"from_organ\":\"A03.620\", #any MeSH organ ID\n",
+    "    \"from_disease\":\"No Disease\", #any MeSH disease ID\n",
     "    \"to_species\":\"314146\",\n",
     "    \"to_organ\":\"A03.556.875.500\",\n",
     "    \"to_disease\":\"No Disease\"\n",
@@ -142,7 +142,7 @@
     "            {\"from_or_to\": \"from\", \"triplet_id\": \"citrus reticulata - Plant Leaves - No Disease\", \"sample_count\": 43}, \n",
     "            {\"from_or_to\": \"to\", \"triplet_id\": \"malus x domestica - Fruit - No Disease\", \"sample_count\": 17}\n",
     "        ],\n",
-    "    \"bin_type\":\"known\"\n",
+    "    \"bin_type\":\"known\" #values are 'known', 'unknown', and 'class' (compound classes)\n",
     "}\n",
     "```"
    ]

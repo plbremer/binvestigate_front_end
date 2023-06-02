@@ -52,6 +52,11 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="binbrowser.html">BinBrowser</a></li>
 </ul>
+<p class="caption" role="heading"><span class="caption-text">Value Tables</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="triplets.html">Triplets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="compounds.html">Compounds</a></li>
+</ul>
 
         </div>
       </div>
@@ -112,10 +117,14 @@
 </div>
 <p>With the format</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>{
-    &quot;dropdown_triplet_selection_value&quot;: [&quot;homo sapiens - Serum - No Disease&quot;,&quot;homo sapiens - Plasma - No Disease&quot;],
-    &quot;slider_percent_present_value&quot;: 80,
-    &quot;toggle_average_true_value&quot;: &quot;True&quot;,
-    &quot;radio_items_filter_value&quot;:&quot;no_filter&quot;
+    &quot;dropdown_triplet_selection_value&quot;: [&quot;homo sapiens - Serum - No Disease&quot;,&quot;homo sapiens - Plasma - No Disease&quot;], #any triplet from our data
+    &quot;slider_percent_present_value&quot;: 80, #any integer from 0 to 100. what percent-obvserved
+                                        #for a triplet constitutes present
+    &quot;toggle_average_true_value&quot;: &quot;True&quot;, #valid values only True
+    &quot;radio_items_filter_value&quot;:&quot;no_filter&quot; #valid values &quot;no_filter&quot; and &quot;common&quot;
+                                           #if no filter, do nothing unusual
+                                           #if common, return only compounds present in all
+                                           #triplets
 }
 </pre></div>
 </div>

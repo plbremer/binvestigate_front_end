@@ -54,6 +54,11 @@
 <li class="toctree-l1"><a class="reference internal" href="upset.html">Upset Plot</a></li>
 <li class="toctree-l1"><a class="reference internal" href="binbrowser.html">BinBrowser</a></li>
 </ul>
+<p class="caption" role="heading"><span class="caption-text">Value Tables</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="triplets.html">Triplets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="compounds.html">Compounds</a></li>
+</ul>
 
         </div>
       </div>
@@ -116,10 +121,10 @@
 http://bindiscover.metabolomics.us:4999/treemetadataresource/
 ```<p>With the format</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>{
-    &quot;species&quot;:&quot;10114&quot;,
-    &quot;organ&quot;:&quot;A03.620&quot;,
-    &quot;disease&quot;:&quot;No Disease&quot;,
-    &quot;species_organ_disease&quot;:[&quot;arabidopsis thaliana - Plant Roots - No Disease&quot;]
+    &quot;species&quot;:&quot;10114&quot;, #any NCBI species or parent ID
+    &quot;organ&quot;:&quot;A03.620&quot;, #any MeSH organ ID
+    &quot;disease&quot;:&quot;No Disease&quot;, #any MeSH disease ID
+    &quot;species_organ_disease&quot;:[&quot;arabidopsis thaliana - Plant Roots - No Disease&quot;] #any triplet from our data
 }
 </pre></div>
 </div>
@@ -140,8 +145,8 @@ http://bindiscover.metabolomics.us:4999/treemetadataresource/
 <p>with the format</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>{
     &quot;metadata_triplets&quot;:[&quot;salmonella enterica - Cells - No Disease&quot;, &quot;faecalibacterium prausnitzii - Cells - No Disease&quot;, &quot;mycoplasma - Cells - No Disease&quot;],
-    &quot;data_type&quot;:&quot;percent_present&quot;,
-    &quot;bin_type&quot;:&quot;knowns&quot;
+    &quot;data_type&quot;:&quot;percent_present&quot;, #
+    &quot;bin_type&quot;:&quot;knowns&quot; #options are &quot;knowns&quot; (known compounds) or &quot;all&quot; (all compounds)
 }
 </pre></div>
 </div>

@@ -65,10 +65,10 @@
    "source": [
     "```\n",
     "{\n",
-    "    \"species\":\"10114\",\n",
-    "    \"organ\":\"A03.620\",\n",
-    "    \"disease\":\"No Disease\",\n",
-    "    \"species_organ_disease\":[\"arabidopsis thaliana - Plant Roots - No Disease\"]\n",
+    "    \"species\":\"10114\", #any NCBI species or parent ID\n",
+    "    \"organ\":\"A03.620\", #any MeSH organ ID\n",
+    "    \"disease\":\"No Disease\", #any MeSH disease ID\n",
+    "    \"species_organ_disease\":[\"arabidopsis thaliana - Plant Roots - No Disease\"] #any triplet from our data\n",
     "}\n",
     "```"
    ]
@@ -136,8 +136,8 @@
     "```\n",
     "{\n",
     "    \"metadata_triplets\":[\"salmonella enterica - Cells - No Disease\", \"faecalibacterium prausnitzii - Cells - No Disease\", \"mycoplasma - Cells - No Disease\"],\n",
-    "    \"data_type\":\"percent_present\",\n",
-    "    \"bin_type\":\"knowns\"\n",
+    "    \"data_type\":\"percent_present\", #\n",
+    "    \"bin_type\":\"knowns\" #options are \"knowns\" (known compounds) or \"all\" (all compounds)\n",
     "}\n",
     "```"
    ]
