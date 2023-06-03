@@ -707,8 +707,8 @@ def query_table(
                         dash_table.DataTable(
                             id='hgda_table',
                             columns=[
-                                {"name": "English Name", "id": "english_name",'presentation':'markdown'},
-                                {"name": "Identifier", "id": "identifier",'presentation':'markdown'},
+                                {"name": "English Name (link to Sunburst)", "id": "english_name",'presentation':'markdown'},
+                                {"name": "Identifier (link to BinBrowser)", "id": "identifier",'presentation':'markdown'},
                                 {"name": "log2 Fold Change", "id": "fold_change_average","type": "numeric","format": Format(group=Group.yes, precision=2, scheme=Scheme.exponent)},
                                 {"name": "Significance Welch", "id": "significance_welch","type": "numeric","format": Format(group=Group.yes, precision=2, scheme=Scheme.exponent)},
                             ],
