@@ -638,17 +638,25 @@ def query_table(
     div_clustergram_tanglegram_children=[
         dbc.Row(html.H2("Species Tanglegram"),style={'textAlign': 'center'}),
         dbc.Row(
-            html.Div(className="venn-thumbnail-container",
-                children=[
-                    html.Img(
-                        id='Img_tanglegram',
-                        height=200,
-                        width=200,
-                        src=plotly_fig
-                    ),
-                ]
-            ),
-            style={'textAlign': 'center'}
+            children=[
+                dbc.Col(
+                    children=[
+                        html.Div(#className="venn-thumbnail-container",
+                            children=[
+                                html.Img(
+                                    id='Img_tanglegram',
+                                    height=200,
+                                    width=200,
+                                    src=plotly_fig
+                                ),
+                            ]
+                        ),
+                    ],
+                    width='auto',
+                ),
+            ],
+            justify='center'
+            # style={'textAlign': 'center'}
         ),
         html.Br(),
         html.Br(),
@@ -671,6 +679,7 @@ def query_table(
             id='modal_tanglegram',
             centered=True,
             size='xl',
+            # fullscreen=True,
             is_open=False,
             style={"max-width": "none", "width": "90%"}
         ),
@@ -712,12 +721,19 @@ def query_table(
         ),
         dbc.Row(
             children=[
-                dcc.Graph(
-                    id='tree_clustergram_graph',
-                    figure=clustergram_figure
+                dbc.Col(
+                
+                    children=[
+                        dcc.Graph(
+                            id='tree_clustergram_graph',
+                            figure=clustergram_figure
+                        )
+                    ],
+                    width='auto'
                 )
-            ]
-        )
+            ],
+            justify='center'
+        ),
     ]
 
     return [div_clustergram_tanglegram_children,raw_data_clustergram_panda.to_dict(orient='index')]

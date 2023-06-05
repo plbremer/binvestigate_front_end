@@ -312,17 +312,25 @@ def perform_query_diagram(
                         children=[
                             dbc.Row(html.H2("Upset Plot"),style={'textAlign': 'center'}),
                             dbc.Row(
-                                html.Div(className="venn-thumbnail-container",
-                                    children=[
-                                        html.Img(
-                                            id='Img_venn',
-                                            height=200,
-                                            width=200,
-                                            src=temp_img
-                                        ),
-                                    ]
-                                ),
-                                style={'textAlign': 'center'}
+                                children=[
+                                    dbc.Col(
+                                        children=[
+                                            html.Div(#className="venn-thumbnail-container",
+                                                children=[
+                                                    html.Img(
+                                                        id='Img_venn',
+                                                        height=200,
+                                                        width=200,
+                                                        src=temp_img
+                                                    ),
+                                                ]
+                                            ),
+                                        ],
+                                        width='auto',
+                                    ),
+                                ],
+                                justify='center'
+                                # style={'textAlign': 'center'}
                             ),
                             dbc.Modal(
                                 children=[

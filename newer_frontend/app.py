@@ -19,9 +19,7 @@ my_page_link_list=[
     #default compound for sunburst to make linkin from differential datatables work
     html.Div(dbc.NavLink('Sunburst', href='/sunburst/2',style = {'color': 'white','font-weight':'bold',"textAlign": "center"}),className='px-2'),
     html.Div(dbc.NavLink('Upset Plot', href='/upset',style = {'color': 'white','font-weight':'bold',"textAlign": "center"}),className='px-2'),
-    
     html.Div(dbc.NavLink('BinBrowser', href='/bin-browser/2',style = {'color': 'white','font-weight':'bold',"textAlign": "center"}),className='px-2'),
-
     html.Div(dbc.NavLink('Tutorials F.A.Q.', href='/tutorials',style = {'color': 'white','font-weight':'bold',"textAlign": "center"}),className='px-2'),
 ]
 
@@ -45,11 +43,7 @@ app.layout = html.Div([
             brand='BinDiscover',
             color='#1A3E68',
             brand_style = {'color': '#FFCD00'},
-            #links_left=True,
-            #style={"height": "100px"}, 
-            # ), 
         ),
-        #html.Hr(style={'color':'red','height':'50px'}),
         # content of each page
         dash.page_container
     ]

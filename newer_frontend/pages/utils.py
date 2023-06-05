@@ -216,10 +216,6 @@ def create_fold_hist(hist_panda):
 
 def create_pvalue_hist(hist_panda):
     p_bin_edges=list()
-    # print('%'*50)
-    # print(hist_panda)
-    # print(hist_panda['y'].min())
-    # print(hist_panda['y'].max())
 
     #the "insignificant"
     if hist_panda['y'].min()<1:
@@ -235,18 +231,11 @@ def create_pvalue_hist(hist_panda):
         else:
             lower_limit=hist_panda['y'].min()
         p_bin_edges+=list(np.linspace(lower_limit,hist_panda['y'].max(),10))        
-    
-
 
     p_bin_edges=sorted(list(set(p_bin_edges)))
-    # print(p_bin_edges)
-
 
     widths=[(p_bin_edges[i+1]-p_bin_edges[i]) for i in range(len(p_bin_edges)-1)]
-    # print('widths')
-    # print(widths)
     y_positions=[(0.5*p_bin_edges[i]+0.5*p_bin_edges[i+1]) for i in range(len(p_bin_edges)-1)]
-    # print(x_positions)
 
     ######################
     marker_colors_gpbsf=[  "#2884f4" for temp_pos in y_positions     ]
@@ -347,15 +336,6 @@ def create_summary_stats(hist_panda):
             [0,1.30103,2,99999999999]
         ]
     )
-    # print(datatable_counts)
-    #datatable_counts[0]
-    
-    # datatable_counts=datatable_counts.T
-
-    # datatable_counts[0],datatable_counts[2]=datatable_counts[2],datatable_counts[0]
-
-    # print(datatable_counts)
-    # print('++++++++++++++++++++++++++++++++++++++++++++++++++++++')
 
     summary_stats=pd.DataFrame.from_dict(
         {
@@ -378,12 +358,6 @@ def create_summary_stats(hist_panda):
             {'name': 'Increased', 'id': 'increased'}
         ],
         data=data,
-        # page_current=0,
-        # page_size=10,
-        # page_action='native',
-        # sort_action='native',
-        # sort_mode='multi',
-        # filter_action='native',
         
         style_cell={
             'fontSize': 17,
