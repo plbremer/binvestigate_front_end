@@ -22,7 +22,7 @@ my_page_link_list=[
     html.Div(dbc.NavLink('BinBrowser', href='/bin-browser/2',style = {'color': 'white','font-weight':'bold',"textAlign": "center"}),className='px-2'),
     html.Div(dbc.NavLink('Tutorials F.A.Q.', href='/tutorials',style = {'color': 'white','font-weight':'bold',"textAlign": "center"}),className='px-2'),
 ]
-
+ 
 app.layout = html.Div([
         dbc.NavbarSimple(
             # dbc.Container(

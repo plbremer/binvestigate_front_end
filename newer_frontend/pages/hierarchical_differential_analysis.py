@@ -552,8 +552,18 @@ def perform_metadata_query(
                     ),
                     html.Br(),
                     dbc.Alert(
-                        "WARNING: Comparisons involving multiple types of organs are intrinsically semi-quantitative. Each organ's extraction method has a different sample amount, e.g., 20 µL of plasma or 4 mg of liver.",
-                        color='primary'
+                        children=[
+                            html.H6(
+                                'WARNING: Comparing different organs (e.g. plasma vs. liver) requires caution!', 
+                                className="alert-heading"
+                                ),
+                            html.Hr(),
+                            html.P(
+                                "In these cases, fold-changes and p-values should be interpretted qualitatively (e.g, large/small fold-changes or \"small\" p-values). It is challenging to normalize different sample amounts (e.g. 20 µL of plasma or 4 mg of liver) or definitively reproduce very low abundance analytes. However, we include them for a guideline as well as for a streamlined user experience. Please also explore our percent-presence tools.",
+                                className="mb-0",
+                            ),
+                        ],
+                        color='danger'
                     ),
                     # html.Br(),
                 ],

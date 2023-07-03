@@ -10,7 +10,7 @@ def build_summary_statistics_div_children(x_hist,y_hist,summary_stats_table):
 
     output_children.append(
         dbc.Row(
-            html.H2("Volcano Summary Statistics Triplets", className='text-center'),
+            html.H2("Volcano Summary Statistics", className='text-center'),
         )
     )
     output_children.append(html.Br())
